@@ -1,5 +1,11 @@
 package com.poly.repository;
 
-public class CategoryRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import com.poly.entity.CategoryEntity;
+
+@Repository
+public interface CategoryRepository extends JpaRepository<CategoryEntity, Integer> {
+	
 }
