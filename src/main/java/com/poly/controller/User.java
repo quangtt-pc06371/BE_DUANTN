@@ -112,7 +112,7 @@ public class User {
 //		              token2.put("vaitro",taikhoanalon.getVaitro());     
 		    return ResponseEntity.ok("Image uploaded successfully"+token2);
 	    }
-	 @PreAuthorize("hasAuthority('ROLE_Create')")
+//	 @PreAuthorize("hasAuthority('ROLE_Create')")
 	 @PostMapping("/user")
 	 public ResponseEntity<?> createTaiKhoan(@Valid @RequestBody TaiKhoanEntity taiKhoanEntity ,BindingResult result) throws IOException {
 		 if (result.getFieldError("email") != null) {

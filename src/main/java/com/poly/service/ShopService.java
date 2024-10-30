@@ -38,6 +38,8 @@ public class ShopService {
  	
  	@Autowired
     private JavaMailSender mailSender;
+ 	
+ 	private final String uploadDir = "D:\\Java5\\Image";
 
     public List<ShopEntity> getAllShop() {
         return shopRepository.findAll();
@@ -49,30 +51,8 @@ public class ShopService {
         return shopRepository.findByIsApproved(true);
     }
 
-
     public Optional<ShopEntity> getShopById(int id) {
         return shopRepository.findById(id);
-    }
-
-    private final String uploadDir = "D:\\Java5\\Image";
-    public ShopEntity saveShop(ShopEntity shop, MultipartFile shopImageFile) throws IOException {
-        if (shopImageFile != null && !shopImageFile.isEmpty()) {
-            String originalFileName = shopImageFile.getOriginalFilename();
-            String uniqueFileName = UUID.randomUUID() + "_" + originalFileName;
-            Path filePath = Paths.get(uploadDir, uniqueFileName);
-            Files.copy(shopImageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            shop.setShopImage(uniqueFileName);
-        } else {
-            shop.setShopImage("default-image.jpg"); // Thiết lập giá trị mặc định nếu không có ảnh
-        }
-
-        shop.setCreateAt(LocalDateTime.now());
-        shop.setUpdateAt(LocalDateTime.now());
-        return shopRepository.save(shop);
-    }
-
-    public void deleteShopById(int id) {
-        shopRepository.deleteById(id);
     }
 
     public ShopEntity updateShop(int id, ShopEntity shop) {
@@ -83,14 +63,15 @@ public class ShopService {
             shopUpdate.setShopName(shop.getShopName());
             shopUpdate.setShopDescription(shop.getShopDescription());
             shopUpdate.setShopRating(shop.getShopRating());
-            shopUpdate.setUpdateAt(shop.getUpdateAt());
+            shopUpdate.setUpdateAt(LocalDateTime.now());
             return shopRepository.save(shopUpdate);
         } else {
             return null;
         }
     }
-    // Đăng ký shop
-    public ShopEntity registerShop(ShopDTO shopDTO) {
+
+    // Đăng ký shop và lưu ảnh
+    public ShopEntity registerShop(ShopDTO shopDTO, MultipartFile shopImageFile) throws IOException {
         ShopEntity shop = new ShopEntity();
         shop.setShopName(shopDTO.getShopName());
         shop.setShopDescription(shopDTO.getShopDescription());
@@ -106,9 +87,44 @@ public class ShopService {
             throw new RuntimeException("Người dùng không tồn tại");
         }
 
+        // Xử lý file ảnh
+        if (shopImageFile != null && !shopImageFile.isEmpty()) {
+            String originalFileName = shopImageFile.getOriginalFilename();
+            String uniqueFileName = UUID.randomUUID() + "_" + originalFileName;
+            Path filePath = Paths.get(uploadDir, uniqueFileName);
+            Files.copy(shopImageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            shop.setShopImage(uniqueFileName);
+        } else {
+            shop.setShopImage("default-image.jpg");
+        }
+
         return shopRepository.save(shop);
     }
- // Duyệt shop và gửi mail
+
+    public void deleteShopById(int id) {
+        shopRepository.deleteById(id);
+    }
+
+//    // Đăng ký shop
+//    public ShopEntity registerShop(ShopDTO shopDTO) {
+//        ShopEntity shop = new ShopEntity();
+//        shop.setShopName(shopDTO.getShopName());
+//        shop.setShopDescription(shopDTO.getShopDescription());
+//        shop.setCreateAt(LocalDateTime.now());
+//        shop.setUpdateAt(LocalDateTime.now());
+//        shop.setIsApproved(false); // Mặc định là chưa duyệt
+//
+//        // Tìm người dùng từ DTO
+//        Optional<TaiKhoanEntity> userOptional = taiKhoanJPA.findById(shopDTO.getNguoiDung());
+//        if (userOptional.isPresent()) {
+//            shop.setNguoiDung(userOptional.get());
+//        } else {
+//            throw new RuntimeException("Người dùng không tồn tại");
+//        }
+//
+//        return shopRepository.save(shop);
+//    }
+    // Duyệt shop và gửi mail
     public ShopEntity approveShop(int shopId) {
         Optional<ShopEntity> optionalShop = shopRepository.findById(shopId);
         if (optionalShop.isPresent()) {
