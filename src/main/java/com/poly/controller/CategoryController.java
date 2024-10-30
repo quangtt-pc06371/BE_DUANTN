@@ -48,7 +48,7 @@ public class CategoryController {
         return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
     }
 
-    // Update
+    // Cập nhật
     @PutMapping("/{id}")
     public ResponseEntity<CategoryEntity> updateCategory(@PathVariable int id, @RequestBody CategoryEntity categoryDetails) {
         CategoryEntity updatedCategory = categoryService.updateCategory(id, categoryDetails);
