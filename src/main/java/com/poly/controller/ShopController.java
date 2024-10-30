@@ -95,6 +95,12 @@ public class ShopController {
         List<ShopEntity> unapprovedShops = shopService.getAllUnapprovedShops();
         return ResponseEntity.ok(unapprovedShops);
     }
+    // Lấy danh sách shop đã duyệt
+    @GetMapping("/approved")
+    public ResponseEntity<List<ShopEntity>> getApprovedShops() {
+        List<ShopEntity> approvedShops = shopService.getAllApprovedShops();
+        return ResponseEntity.ok(approvedShops);
+    }
 
     @PostMapping("/register")
     public ResponseEntity<ShopEntity> registerShop(
