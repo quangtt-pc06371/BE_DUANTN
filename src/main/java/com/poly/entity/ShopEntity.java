@@ -2,6 +2,8 @@ package com.poly.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,7 +42,8 @@ public class ShopEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_NGUOIDUNG", referencedColumnName = "ID_NGUOIDUNG", nullable = true)
-    private NguoiDungEntity nguoiDung;
+    @JsonIgnore
+    private TaiKhoanEntity nguoiDung;
 
     // Constructor
     public ShopEntity() {
