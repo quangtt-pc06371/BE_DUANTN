@@ -265,7 +265,7 @@ public class User {
            token2.put("sdt",tk.getSdt());
 //           token2.put("vaitro",tk.getVaitro());
            token2.put("quyen",tk.getQuyens());
-           token2.put("diachi",tk.getDiachi());
+           
            
             return ResponseEntity.ok(token2);
 //	     
