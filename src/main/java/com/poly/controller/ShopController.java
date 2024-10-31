@@ -13,6 +13,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,6 +72,7 @@ public class ShopController {
 //    }
 
     // Update shop
+    //@PreAuthorize("isAuthenticated()")
     @PutMapping("/{id}")
     public ResponseEntity<ShopEntity> updateShop(@PathVariable int id, @RequestBody ShopEntity shop) {
         ShopEntity updatedShop = shopService.updateShop(id, shop);
@@ -83,6 +85,7 @@ public class ShopController {
     }
 
     // Xóa
+    //@PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteShop(@PathVariable int id) {
         shopService.deleteShopById(id);
@@ -134,6 +137,7 @@ public class ShopController {
 
 
     // Duyệt shop
+    //@PreAuthorize("isAuthenticated()")
     @PutMapping("/approve/{id}")
     public ResponseEntity<ShopEntity> approveShop(@PathVariable int id) {
         // Lấy thông tin shop để kiểm tra
