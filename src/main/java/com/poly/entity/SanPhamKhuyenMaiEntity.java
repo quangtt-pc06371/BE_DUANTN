@@ -7,29 +7,32 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "DANHMUC")
-public class CategoryEntity implements Serializable{
-	@Id
+@Table(name = "SANPHAMKHUYENMAI")
+public class SanPhamKhuyenMaiEntity implements Serializable {
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_DANHMUC")
-    private int id;
+    @Column(name = "ID_SANPHAMKM")
+    private int idSanPhamKM;
 
-    @Column(name = "TENDANHMUC", nullable = false)
-    private String tenDanhMuc;
+    @ManyToOne
+    @JoinColumn(name = "ID_SANPHAM")
+    private SanPhamEntity sanPham;
 
-    @Column(name = "MOTA", nullable = false)
-    private String moTa;
-    
-    
+    @ManyToOne
+    @JoinColumn(name = "ID_KHUYENMAI")
+    private KhuyenMaiEntity khuyenMai;
 }
