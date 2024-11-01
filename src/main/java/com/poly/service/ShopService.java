@@ -105,25 +105,6 @@ public class ShopService {
         shopRepository.deleteById(id);
     }
 
-//    // Đăng ký shop
-//    public ShopEntity registerShop(ShopDTO shopDTO) {
-//        ShopEntity shop = new ShopEntity();
-//        shop.setShopName(shopDTO.getShopName());
-//        shop.setShopDescription(shopDTO.getShopDescription());
-//        shop.setCreateAt(LocalDateTime.now());
-//        shop.setUpdateAt(LocalDateTime.now());
-//        shop.setIsApproved(false); // Mặc định là chưa duyệt
-//
-//        // Tìm người dùng từ DTO
-//        Optional<TaiKhoanEntity> userOptional = taiKhoanJPA.findById(shopDTO.getNguoiDung());
-//        if (userOptional.isPresent()) {
-//            shop.setNguoiDung(userOptional.get());
-//        } else {
-//            throw new RuntimeException("Người dùng không tồn tại");
-//        }
-//
-//        return shopRepository.save(shop);
-//    }
     // Duyệt shop và gửi mail
     public ShopEntity approveShop(int shopId) {
         Optional<ShopEntity> optionalShop = shopRepository.findById(shopId);
