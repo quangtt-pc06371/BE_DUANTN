@@ -1,10 +1,7 @@
 package com.poly.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -47,14 +44,7 @@ public class ShopEntity {
     @JoinColumn(name = "ID_NGUOIDUNG", referencedColumnName = "ID_NGUOIDUNG", nullable = true)
     @JsonIgnore
     private TaiKhoanEntity nguoiDung;
-    
-    @OneToMany(mappedBy = "shop")
-    @JsonBackReference
-    private List<SanPhamEntity> sanPham;
 
-    @OneToMany(mappedBy = "shop")
-    @JsonBackReference(value = "khuyenMai")
-    private List<KhuyenMaiEntity> khuyenMai;
     // Constructor
     public ShopEntity() {
         this.createAt = LocalDateTime.now();
