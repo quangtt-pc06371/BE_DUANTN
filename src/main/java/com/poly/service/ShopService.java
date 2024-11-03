@@ -127,7 +127,9 @@ public class ShopService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(userEmail);
+            // Tiêu đề
             helper.setSubject("Thông báo duyệt cửa hàng");
+            // Nội dung
             helper.setText("Xin chúc mừng, cửa hàng '" + shopName + "' của bạn đã được duyệt thành công!", true);
             mailSender.send(message);
         } catch (MessagingException e) {

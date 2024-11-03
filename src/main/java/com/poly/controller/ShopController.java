@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,16 +64,15 @@ public class ShopController {
         }
     }
 
-//    // Thêm shop
-//    @PostMapping
-//    public ShopEntity createShop(
-//            @RequestPart("shop") ShopEntity shop,
-//            @RequestPart("shopImageFile") MultipartFile shopImageFile) throws IOException {
-//        return shopService.registerShop(null, shopImageFile);
-//    }
+    // Thêm shop
+    @PostMapping
+    public ShopEntity createShop(
+            @RequestPart("shop") ShopEntity shop,
+            @RequestPart("shopImageFile") MultipartFile shopImageFile) throws IOException {
+        return shopService.registerShop(null, shopImageFile);
+    }
 
     // Update shop
-    //@PreAuthorize("isAuthenticated()")
     @PutMapping("/{id}")
     public ResponseEntity<ShopEntity> updateShop(@PathVariable int id, @RequestBody ShopEntity shop) {
         ShopEntity updatedShop = shopService.updateShop(id, shop);
@@ -85,7 +85,6 @@ public class ShopController {
     }
 
     // Xóa
-    //@PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteShop(@PathVariable int id) {
         shopService.deleteShopById(id);
@@ -137,7 +136,6 @@ public class ShopController {
 
 
     // Duyệt shop
-    //@PreAuthorize("isAuthenticated()")
     @PutMapping("/approve/{id}")
     public ResponseEntity<ShopEntity> approveShop(@PathVariable int id) {
         // Lấy thông tin shop để kiểm tra
