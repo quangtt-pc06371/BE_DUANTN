@@ -5,9 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.poly.repository.ChiTietDonHangJPA;
-
-
+import com.duan.Repository.ChiTietDonHangJPA;
 
 @Service
 public class ThongkeService {
