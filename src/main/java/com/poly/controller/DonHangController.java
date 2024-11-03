@@ -112,5 +112,25 @@ public class DonHangController {
         }
     }
 	
-	
+ // Lấy tất cả đơn hàng đã thanh toán
+    @GetMapping("/da-thanh-toan")
+    public ResponseEntity<List<DonHangEntity>> getDonHangDaThanhToan() {
+        List<DonHangEntity> donHangList = donHangJPA.findByTrangthaithanhtoanTrue();
+        return ResponseEntity.ok(donHangList);
+    }
+
+    // Lấy tất cả đơn hàng chưa thanh toán
+    @GetMapping("/chua-thanh-toan")
+    public ResponseEntity<List<DonHangEntity>> getDonHangChuaThanhToan() {
+        List<DonHangEntity> donHangList = donHangJPA.findByTrangthaithanhtoanFalse();
+        return ResponseEntity.ok(donHangList);
+    }
+
+    // Lấy tất cả đơn hàng theo trạng thái và trạng thái thanh toán
+    @GetMapping("/trangthai/{trangthai}/thanhtoan/{trangthaithanhtoan}")
+    public ResponseEntity<List<DonHangEntity>> getDonHangByTrangthaiAndTrangthaithanhtoan(
+            @PathVariable boolean trangthai, @PathVariable boolean trangthaithanhtoan) {
+        List<DonHangEntity> donHangList = donHangJPA.findByTrangthaiAndTrangthaithanhtoan(trangthai, trangthaithanhtoan);
+        return ResponseEntity.ok(donHangList);
+    }
 }
