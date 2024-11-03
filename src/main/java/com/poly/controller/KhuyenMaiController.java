@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.duan.Service.KhuyenMaiService;
-
-import com.duan.Entity.*;
-import com.duan.Repository.shopRepository;
+import com.poly.entity.KhuyenMaiEntity;
+import com.poly.repository.*;
+import com.poly.entity.ShopEntity;
+import com.poly.service.KhuyenMaiService;
 
 import java.sql.Timestamp;
 import java.util.List;
