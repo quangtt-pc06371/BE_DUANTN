@@ -1,11 +1,13 @@
 package com.poly.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.poly.entity.HinhAnhEntity;
 import com.poly.entity.SanPhamEntity;
@@ -39,10 +41,11 @@ public class SanPhamService {
 
 	@Autowired
 	private TuyChonThuocTinhSkuJPA tuyChonThuocTinhSkuRepository;
-
+	  @Autowired
+	    private FirebaseService firebaseService;
 //	@Autowired
 //	private PhieuNhapJPA phieuNhapRepository;
-	
+
 	public List<SanPhamEntity> getAllSanPhams() {
 		return sanPhamRepository.findAll();
 	}
@@ -52,11 +55,11 @@ public class SanPhamService {
 	}
 
 	@Transactional
-	public SanPhamEntity saveSanPham(SanPhamEntity sanPham) {
+	public SanPhamEntity saveSanPham(SanPhamEntity sanPham, List<MultipartFile> files) throws IOException {
 		SanPhamEntity savedSanPham = sanPhamRepository.save(sanPham);
-		
+
 		if (sanPham.getSkus() != null) {
-		   
+
 			for (SkuEntity sku : sanPham.getSkus()) {
 
 				sku.setSanPham(savedSanPham);
@@ -79,9 +82,21 @@ public class SanPhamService {
 					}
 				}
 
-				if (sku.getHinhanhs() != null) {
-					for (HinhAnhEntity hinhAnh : sku.getHinhanhs()) {
+//				if (sku.getHinhanhs() != null) {
+//					for (HinhAnhEntity hinhAnh : sku.getHinhanhs()) {
+//						hinhAnh.setSku(savedSku);
+//						hinhAnhRepository.save(hinhAnh);
+//					}
+//				}
+				
+				if (files != null && !files.isEmpty()) {
+					for (MultipartFile file : files) {
+						String imageUrl = firebaseService.uploadFile(file);
+
+						// Tạo đối tượng HinhAnhEntity và lưu URL vào cơ sở dữ liệu
+						HinhAnhEntity hinhAnh = new HinhAnhEntity();
 						hinhAnh.setSku(savedSku);
+						hinhAnh.setTenAnh(imageUrl); // URL từ Firebase
 						hinhAnhRepository.save(hinhAnh);
 					}
 				}
@@ -95,7 +110,6 @@ public class SanPhamService {
 	public SanPhamEntity updateSanPham(int idSanPham, SanPhamEntity sanPhamDetails) {
 		// Tìm sản phẩm hiện có trong cơ sở dữ liệu
 		Optional<SanPhamEntity> optionalSanPham = sanPhamRepository.findById(idSanPham);
-
 
 		if (!optionalSanPham.isPresent()) {
 			System.out.println("Sản phẩm không tồn tại với ID: " + idSanPham);
@@ -125,7 +139,7 @@ public class SanPhamService {
 							if (existingOption != null) {
 								existingOption.setTuyChonThuocTinh(newOption.getTuyChonThuocTinh());
 								tuyChonThuocTinhSkuRepository.save(existingOption);
-							} 
+							}
 //							else {
 //								newOption.setSku(existingSku);
 //								tuyChonThuocTinhSkuRepository.save(newOption);
@@ -141,7 +155,7 @@ public class SanPhamService {
 							if (existingHinhAnh != null) {
 								existingHinhAnh.setTenAnh(newHinhAnh.getTenAnh());
 								hinhAnhRepository.save(existingHinhAnh);
-							} 
+							}
 //							else {
 //								newHinhAnh.setSku(existingSku);
 //								hinhAnhRepository.save(newHinhAnh);
@@ -151,7 +165,7 @@ public class SanPhamService {
 
 					skuRepository.save(existingSku);
 				} else {
-					
+
 					newSku.setSanPham(existingSanPham);
 					skuRepository.save(newSku);
 				}
@@ -164,20 +178,18 @@ public class SanPhamService {
 
 	@Transactional
 	public void deleteSanPhamById(int id) {
-		
+
 		Optional<SanPhamEntity> optionalSanPham = sanPhamRepository.findById(id);
 
-		
 		if (!optionalSanPham.isPresent()) {
 			// Xử lý nếu sản phẩm không tồn tại
 			System.out.println("Sản phẩm không tồn tại với ID: " + id);
 			return;
 		}
 
-	
 		SanPhamEntity existingSanPham = optionalSanPham.get();
 
-		// Xóa tất cả các SKU hiện tại của sản phẩm, bao gồm thuộc tính và hình ảnh 
+		// Xóa tất cả các SKU hiện tại của sản phẩm, bao gồm thuộc tính và hình ảnh
 		if (existingSanPham.getSkus() != null) {
 			for (SkuEntity sku : existingSanPham.getSkus()) {
 				// Xóa tất cả các thuộc tính của SKU
@@ -190,8 +202,14 @@ public class SanPhamService {
 			skuRepository.deleteAll(existingSanPham.getSkus());
 		}
 
-	
 		sanPhamRepository.deleteById(id);
+	}
+
+	public List<SanPhamEntity> getSanPhamByDanhMuc(int idDanhMuc) {
+		return sanPhamRepository.findByDanhMuc_IdDanhMuc(idDanhMuc);
+	}
+	public List<SanPhamEntity> timKiemSanPhamTheoTen(String ten) {
+	    return sanPhamRepository.findByTenSanPhamContaining(ten);
 	}
 
 }
