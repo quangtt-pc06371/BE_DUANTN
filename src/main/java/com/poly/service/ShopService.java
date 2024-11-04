@@ -54,6 +54,10 @@ public class ShopService {
     public Optional<ShopEntity> getShopById(int id) {
         return shopRepository.findById(id);
     }
+    
+    public Optional<ShopEntity> getShopByUserId(int userId) {
+        return shopRepository.findByNguoiDungId(userId);
+    }
 
     public ShopEntity updateShop(int id, ShopEntity shop) {
         Optional<ShopEntity> optionalShop = shopRepository.findById(id);
@@ -72,14 +76,18 @@ public class ShopService {
 
     // Đăng ký shop và lưu ảnh
     public ShopEntity registerShop(ShopDTO shopDTO, MultipartFile shopImageFile) throws IOException {
+    	Optional<ShopEntity> existingShop = shopRepository.findByNguoiDungId(shopDTO.getNguoiDung());
+        if (existingShop.isPresent()) {
+            throw new RuntimeException("Người dùng đã có cửa hàng");
+        }
+
         ShopEntity shop = new ShopEntity();
         shop.setShopName(shopDTO.getShopName());
         shop.setShopDescription(shopDTO.getShopDescription());
         shop.setCreateAt(LocalDateTime.now());
         shop.setUpdateAt(LocalDateTime.now());
-        shop.setIsApproved(false); // Mặc định là chưa duyệt
+        shop.setIsApproved(false);
 
-        // Tìm người dùng từ DTO
         Optional<TaiKhoanEntity> userOptional = taiKhoanJPA.findById(shopDTO.getNguoiDung());
         if (userOptional.isPresent()) {
             shop.setNguoiDung(userOptional.get());
@@ -100,6 +108,7 @@ public class ShopService {
 
         return shopRepository.save(shop);
     }
+
 
     public void deleteShopById(int id) {
         shopRepository.deleteById(id);

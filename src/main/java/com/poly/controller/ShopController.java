@@ -118,7 +118,6 @@ public class ShopController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         
-        // Lấy id người dùng từ token
         int userId = jwtSevice.getIdFromToken(token);
         if (userId == 0) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -129,11 +128,13 @@ public class ShopController {
         shopDTO.setShopDescription(shopDescription);
         shopDTO.setNguoiDung(userId);
 
-        ShopEntity shop = shopService.registerShop(shopDTO, shopImage);
-        return ResponseEntity.ok(shop);
+        try {
+            ShopEntity shop = shopService.registerShop(shopDTO, shopImage);
+            return ResponseEntity.ok(shop);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
-
-
 
     // Duyệt shop
     @PutMapping("/approve/{id}")
@@ -179,4 +180,23 @@ public class ShopController {
             return ResponseEntity.notFound().build();
         }
     }
+ // Lấy shop của người dùng dựa trên userId
+    @GetMapping("/user")
+    public ResponseEntity<ShopEntity> getShopByUserId(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        int userId = jwtSevice.getIdFromToken(token);
+        if (userId == 0) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
+        Optional<ShopEntity> optionalShop = shopService.getShopByUserId(userId);
+        return optionalShop.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }
