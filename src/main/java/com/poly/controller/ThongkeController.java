@@ -12,17 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class ThongkeController {
 
-//	    @Autowired
-//	    private StatisticsService statisticsService;
-//
-//	    @GetMapping("/product")
-//	    public List<ProductStats> getProductStatistics() {
-//	        return statisticsService.getProductStatistics();
-//	    }
-//
-//	    @GetMapping("/shop")
-//	    public List<ShopStats> getShopStatistics() {
-//	        return statisticsService.getShopStatistics();
-//	    
-//}
+	    @Autowired
+	    private StatisticsService statisticsService;
+
+	    @GetMapping("/product")
+	    public List<ProductStats> getProductStatistics() {
+	        return statisticsService.getProductStatistics();
+	    }
+
+	    @GetMapping("/shop")
+	    public List<ShopStats> getShopStatistics() {
+	        return statisticsService.getShopStatistics();
+	    
+}
 }

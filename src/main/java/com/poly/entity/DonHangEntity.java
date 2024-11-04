@@ -26,7 +26,7 @@ public class DonHangEntity {
 	@Column(name = "ID_SHOP")
 	private Long idShop;
 
-	@Column(name = "TENKHACHHANG")
-	private String tenKhachHang;
+//	@Column(name = "TENKHACHHANG")
+//	private String tenKhachHang;
 
 }

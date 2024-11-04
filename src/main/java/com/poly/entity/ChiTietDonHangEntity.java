@@ -28,9 +28,9 @@ public class ChiTietDonHangEntity {
     @Column(name = "SOLUONG")
     private Integer soLuong;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_DONHANG")
-    private DonHangEntity donHang;
+//    @ManyToOne
+//    @JoinColumn(name = "ID_DONHANG")
+//    private DonHangEntity donHang;
 
     @Column(name = "ID_SP")
     private Long idSp; // Product ID
