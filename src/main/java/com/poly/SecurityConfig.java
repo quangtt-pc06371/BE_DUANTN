@@ -60,6 +60,8 @@ public class SecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                 // Allow all GET requests to /api/**
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/**").permitAll()
+//                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 // Restrict POST requests to /api/taikhoan/** to users with ROLE_Create
                 .requestMatchers(HttpMethod.POST, "/api/taikhoan/**").hasAuthority("ROLE_Create")
                 .requestMatchers(HttpMethod.DELETE, "/api/taikhoan/**").hasAuthority("ROLE_Create")
