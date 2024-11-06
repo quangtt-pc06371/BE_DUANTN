@@ -2,10 +2,13 @@ package com.poly.controller;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -13,7 +16,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,14 +23,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poly.DtoEntity.ShopDTO;
 import com.poly.entity.ShopEntity;
+import com.poly.repository.ShopRepository;
 import com.poly.service.JwtSevice2;
 import com.poly.service.ShopService;
 
@@ -44,6 +50,9 @@ public class ShopController {
     
     @Autowired
     private JwtSevice2 jwtSevice;
+    
+    @Autowired
+    private ShopRepository shopRepository;
 
     // Lấy toàn bộ danh sách shop
     @GetMapping
@@ -72,7 +81,7 @@ public class ShopController {
         return shopService.registerShop(null, shopImageFile);
     }
 
-    // Update shop
+ // Update shop
     @PutMapping("/{id}")
     public ResponseEntity<ShopEntity> updateShop(@PathVariable int id, @RequestBody ShopEntity shop) {
         ShopEntity updatedShop = shopService.updateShop(id, shop);
@@ -83,6 +92,7 @@ public class ShopController {
             return ResponseEntity.notFound().build();
         }
     }
+
 
     // Xóa
     @DeleteMapping("/{id}")
@@ -198,5 +208,67 @@ public class ShopController {
         Optional<ShopEntity> optionalShop = shopService.getShopByUserId(userId);
         return optionalShop.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+    //
+    @PutMapping("/user/{id}")
+    public ResponseEntity<ShopEntity> updateShopForUser(
+            @PathVariable int id,
+            HttpServletRequest request,
+            @RequestPart("shop") ShopEntity shop, // Sử dụng @RequestPart thay vì @RequestBody
+            @RequestPart(value = "shopImageFile", required = false) MultipartFile shopImageFile) {
+
+        String token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        int userIdFromToken = jwtSevice.getIdFromToken(token);
+        Optional<ShopEntity> optionalShop = shopService.getShopById(id);
+
+        if (optionalShop.isPresent()) {
+            ShopEntity existingShop = optionalShop.get();
+
+            // Kiểm tra quyền truy cập của người dùng
+            if (existingShop.getNguoiDung().getId() != userIdFromToken) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            }
+
+            // Cập nhật thông tin cửa hàng
+            existingShop.setShopName(shop.getShopName());
+            existingShop.setShopDescription(shop.getShopDescription());
+
+            // Xử lý hình ảnh nếu có
+            if (shopImageFile != null && !shopImageFile.isEmpty()) {
+                try {
+                    // Lưu hình ảnh mới
+                    String newImageFileName = saveShopImage(shopImageFile);
+                    existingShop.setShopImage(newImageFileName);
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+                }
+            }
+
+            // Cập nhật thời gian sửa đổi
+            existingShop.updateTimestamps();
+
+            // Lưu cập nhật vào database
+            ShopEntity updatedShop = shopService.updateShop(id, existingShop);
+
+            return ResponseEntity.ok(updatedShop);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    private String saveShopImage(MultipartFile shopImageFile) throws IOException {
+        String uploadDir = "D:\\Java5\\Image";
+        String fileName = UUID.randomUUID().toString() + "_" + shopImageFile.getOriginalFilename();
+        Path path = Paths.get(uploadDir).resolve(fileName);
+        
+        Files.copy(shopImageFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        
+        return fileName;
+    }
+
 
 }
