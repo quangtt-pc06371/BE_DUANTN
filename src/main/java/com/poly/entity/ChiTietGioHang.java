@@ -1,8 +1,6 @@
 package com.poly.entity;
 
-import com.example.demo.Model.SanPham;
-import com.example.demo.Model.Shop;
-import com.example.demo.Model.GioHang.GioHang;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
@@ -36,11 +34,11 @@ public class ChiTietGioHang {
     
     @ManyToOne
     @JoinColumn(name = "ID_SHOP", referencedColumnName = "ID_SHOP", nullable = false)
-    private Shop idShop;
+    private int idShop;
     
     @ManyToOne
     @JoinColumn(name = "ID_SANPHAM", referencedColumnName = "ID_SANPHAM", nullable = false)
-    private SanPham idSanPham;
+    private int idSanPham;
 
     @Column(name = "SOLUONG", nullable = false)
     private int soLuong;
