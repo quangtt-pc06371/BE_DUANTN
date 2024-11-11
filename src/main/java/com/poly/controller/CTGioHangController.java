@@ -2,20 +2,25 @@ package com.poly.controller;
 
 import java.util.Optional;
 
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.DTO.CTGioHangDTO;
-import com.example.demo.Model.GioHang.ChiTietGioHang;
-import com.example.demo.Model.GioHang.GioHang;
-import com.example.demo.Service.ChiTietGioHangService;
-import com.example.demo.Service.GioHangService;
-import com.example.demo.Service.JwtSevice2;
+import com.poly.DtoEntity.CTGioHangDTO;
+import com.poly.entity.ChiTietGioHang;
+import com.poly.entity.GioHang;
+import com.poly.service.ChiTietGioHangService;
+import com.poly.service.GioHangService;
+import com.poly.service.JwtSevice2;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "http://localhost:3000")

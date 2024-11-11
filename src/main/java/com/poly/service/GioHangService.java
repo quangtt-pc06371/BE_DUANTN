@@ -1,20 +1,18 @@
 package com.poly.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.DTO.CTGioHangDTO;
-import com.example.demo.Model.TaiKhoanEntity;
-import com.example.demo.Model.GioHang.ChiTietGioHang;
-import com.example.demo.Model.GioHang.GioHang;
-import com.example.demo.Respository.GioHangReponsitory;
-import com.example.demo.Respository.taikhoanJPA;
+import com.poly.DtoEntity.CTGioHangDTO;
+import com.poly.entity.ChiTietGioHang;
+import com.poly.entity.GioHang;
+import com.poly.repository.GioHangReponsitory;
+import com.poly.repository.taikhoanJPA;
 
 import jakarta.transaction.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional

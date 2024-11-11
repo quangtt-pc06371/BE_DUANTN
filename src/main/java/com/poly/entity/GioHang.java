@@ -2,8 +2,6 @@ package com.poly.entity;
 
 import java.util.List;
 
-import com.example.demo.Model.TaiKhoanEntity;
-import com.example.demo.Model.GioHang.ChiTietGioHang;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;

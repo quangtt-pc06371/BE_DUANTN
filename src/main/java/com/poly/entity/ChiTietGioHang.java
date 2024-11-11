@@ -2,7 +2,6 @@ package com.poly.entity;
 
 import com.example.demo.Model.SanPham;
 import com.example.demo.Model.Shop;
-import com.example.demo.Model.GioHang.GioHang;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;

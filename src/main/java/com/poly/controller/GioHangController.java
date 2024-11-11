@@ -1,7 +1,5 @@
 package com.poly.controller;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,18 +7,19 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.DTO.CTGioHangDTO;
-import com.example.demo.Model.TaiKhoanEntity;
-import com.example.demo.Model.Vaitro;
-import com.example.demo.Model.GioHang.ChiTietGioHang;
-import com.example.demo.Model.GioHang.GioHang;
-import com.example.demo.Respository.*;
-import com.example.demo.Service.ChiTietGioHangService;
-import com.example.demo.Service.GioHangService;
-import com.example.demo.Service.JwtSevice2;
+import com.poly.DtoEntity.CTGioHangDTO;
+import com.poly.entity.ChiTietGioHang;
+import com.poly.entity.GioHang;
+import com.poly.entity.TaiKhoanEntity;
+import com.poly.repository.taikhoanJPA;
+import com.poly.service.ChiTietGioHangService;
+import com.poly.service.GioHangService;
+import com.poly.service.JwtSevice2;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
