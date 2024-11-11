@@ -1,5 +1,6 @@
 package com.poly.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ public class taiKhoanService  {
 	 private taikhoanJPA taikhoanjpa;
 	@Autowired
 	 private RoleRepository vaitro;
+	
 //	@Autowired
 //	  private PasswordEncoder passwordEncoder;
     public List<TaiKhoanEntity> getAllTaiKhoans() {
@@ -35,7 +37,9 @@ public class taiKhoanService  {
     public List<TaiKhoanEntity> getAllTaiKhoanbyvaitrouser() {
         return taikhoanjpa.Findbyvaitro(1);
     }
-   
+    public Optional<TaiKhoanEntity> findById(Integer id) {
+        return taikhoanjpa.findById(id);     
+    }
     public Optional<TaiKhoanEntity> getTaiKhoanById(Integer maTK) {
         return taikhoanjpa.findById(maTK);
     }
@@ -92,10 +96,10 @@ public class taiKhoanService  {
         	
         	tk2.setHoTen(taiKhoanEntity.getHoTen());        	   	     	
         	tk2.setSdt(taiKhoanEntity.getSdt());	
-        	tk2.setEmail(taiKhoanEntity.getEmail());
-        	tk2.setSdt(taiKhoanEntity.getDiachi());
+//        	tk2.setEmail(taiKhoanEntity.getEmail());
+        	
         	tk2.setCmnd(taiKhoanEntity.getCmnd());
-        	tk2.setDiachi(taiKhoanEntity.getCmnd());
+//        	tk2.setDiachi(taiKhoanEntity.getDiachi());
 //            taiKhoanEntity.setMaTK(maTK);
             return taikhoanjpa.save(tk2);
         }
@@ -123,6 +127,7 @@ public class taiKhoanService  {
     public TaiKhoanEntity findByEmail(String email) {
         return taikhoanjpa.FindbyEmail(email);     
     }
+   
     public boolean kiemTraEmailTonTai(String email) {
         return taikhoanjpa.existsByEmail(email);
     }
@@ -144,4 +149,31 @@ public class taiKhoanService  {
 //                Collections.singleton(authority)  // Trả về danh sách quyền (authorities)
 //        );
 //    }
+    public TaiKhoanEntity registerOrLoginWithGoogle(String email, String name) {
+        Optional<TaiKhoanEntity> existingUser = taikhoanjpa.FindbyEmailgg(email);
+        
+        if (existingUser.isPresent()) {
+            // Người dùng đã tồn tại, chỉ cần đăng nhập
+            return existingUser.get();
+        } else {
+            // Người dùng chưa tồn tại, đăng ký tài khoản mới
+            TaiKhoanEntity newUser = new TaiKhoanEntity();
+            newUser.setEmail(email);
+            newUser.setHoTen(name);
+
+            // Gán thêm các thông tin mặc định nếu cần
+//            newUser.setVaiTro("USER"); // Ví dụ: Vai trò mặc định là USER
+//            newUser.setTrangThai("ACTIVE"); // Ví dụ: Trạng thái tài khoản là ACTIVE
+            
+            // Lưu tài khoản mới vào cơ sở dữ liệu
+            try {
+                return taikhoanjpa.save(newUser);
+            } catch (Exception e) {
+                throw new RuntimeException("Không thể đăng ký người dùng mới", e);
+            }
+        }
+    }
+
+
+
 }

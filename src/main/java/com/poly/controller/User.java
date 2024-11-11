@@ -2,6 +2,7 @@ package com.poly.controller;
 
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import com.poly.loginggconifg;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.repository.taikhoanJPA;
 import com.poly.service.CustomUserDetailsService;
@@ -46,6 +48,8 @@ import jakarta.validation.Valid;
 public class User {
 	@Autowired
 	private  taiKhoanService taikhoansevice;
+	@Autowired
+	private  loginggconifg logggconfig;
 
 //	private JwtSevice jwtsevice;
 	 @Autowired
@@ -84,6 +88,14 @@ public class User {
 	@GetMapping("/user")
 	 public ResponseEntity<List<TaiKhoanEntity>> getalltaikhoanuser(){
 		 List<TaiKhoanEntity> taikhoan = taikhoansevice.getAllTaiKhoanbyvaitrouser();
+		 return ResponseEntity.ok(taikhoan);
+	 }
+	@GetMapping("/userid")
+	 public ResponseEntity<?> getalltaikhoanuserid(HttpServletRequest request){
+		 String token  = request.getHeader("Authorization");
+		 int id = jwtsevice2.getIdFromToken(token);
+		 Optional<TaiKhoanEntity> taikhoan = taikhoansevice.findById(id);
+//		 TaiKhoanEntity taikhoane   =  taikhoan.get();
 		 return ResponseEntity.ok(taikhoan);
 	 }
 
@@ -152,25 +164,26 @@ public class User {
 		 if (result.getFieldError("email") != null) {
 		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError("email").getDefaultMessage());
 		    }
-		 else if (result.getFieldError("sdt") != null) {	        
-		            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError("sdt").getDefaultMessage());
-		        }
+//		 else if (result.getFieldError("sdt") != null) {	        
+//		            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError("sdt").getDefaultMessage());
+//		        }
 //	 
 		 boolean existsgmail = taikhoansevice.kiemTraEmailTonTai(taiKhoanEntity.getEmail());
-		 boolean existssdt = taikhoansevice.kiemTraSdtTonTai(taiKhoanEntity.getSdt());
+//		 boolean existssdt = taikhoansevice.kiemTraSdtTonTai(taiKhoanEntity.getSdt());
 	        if (existsgmail) {
 	        	
 	        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email đã tồn tại");
 	           
-	        } else if(existssdt) {
-	        	
-	        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại đã tồn tại");
-	           
-	        }
+	        } 
+//	        else if(existssdt) {
+//	        	
+//	        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại đã tồn tại");
+//	           
+//	        }
 	        else {
 	        	 String token  = request.getHeader("Authorization"); 
-//	             int id = jwtsevice.getEmailFromToken(token);
-	        	 int id = 1;
+	             int id = jwtsevice2.getIdFromToken(token);
+//	        	 int id = 1;
 	    	     TaiKhoanEntity updatedTaiKhoan = taikhoansevice.updateTaiKhoan(id, taiKhoanEntity);
 	    	     return updatedTaiKhoan != null ? ResponseEntity.ok(updatedTaiKhoan) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	        }
@@ -290,6 +303,23 @@ public class User {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No token found");
 	    }
 	  
+	  
+	  @PostMapping("/google22")
+	    public ResponseEntity<?> googleAuth(HttpServletRequest request) throws GeneralSecurityException, IOException {
+		  String token  = request.getHeader("Authorization");
+		  
+	        TaiKhoanEntity user = logggconfig.registerOrLogin(token);
+	        return ResponseEntity.ok(user);
+	    }
+	  @GetMapping("/google")
+	    public String getLoginInfo(OAuth2AuthenticationToken authentication) {
+	        // Lấy thông tin người dùng từ OAuth2AuthenticationToken
+	        String userName = authentication.getPrincipal().getAttribute("name");
+	        String userEmail = authentication.getPrincipal().getAttribute("email");
+
+	        // Hiển thị tên và email của người dùng
+	        return "Welcome, " + userName + "! Your email is " + userEmail;
+	    }
 //	  @PostMapping("/logout")
 //	    public ResponseEntity<String> logout(HttpServletResponse response) {
 //	        // Tạo một cookie mới với tên "token" và giá trị rỗng
