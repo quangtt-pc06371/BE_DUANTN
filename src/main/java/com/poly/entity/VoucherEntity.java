@@ -38,8 +38,8 @@ public class VoucherEntity{
     private Date ngayHetHan;
 	
 	@ManyToOne
-	@JoinColumn(name = "ID_HOADON", nullable = false)
-	private DonHangEntity donhang;
+	@JoinColumn(name = "ID_NGUOIDUNG", nullable = false)
+	private TaiKhoanEntity user;
 	
 	public void VoucherBill() {}
 	
@@ -48,7 +48,7 @@ public class VoucherEntity{
         this.soLuong = soLuong;
         this.ngaybatdau = ngayBatDau;
         this.ngayHetHan = ngayHetHan;
-        this.donhang = donHang;
+        this.user = user;
     }
 
 	public int getIdvoucher() {
@@ -91,13 +91,15 @@ public class VoucherEntity{
 		this.ngayHetHan = ngayHetHan;
 	}
 
-	public DonHangEntity getDonhang() {
-		return donhang;
+	public TaiKhoanEntity getUser() {
+		return user;
 	}
 
-	public void setDonhang(DonHangEntity donhang) {
-		this.donhang = donhang;
+	public void setUser(TaiKhoanEntity user) {
+		this.user = user;
 	}
+
+	
 	
 	
 	
