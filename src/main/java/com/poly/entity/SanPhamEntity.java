@@ -1,8 +1,11 @@
 package com.poly.entity;
 
+
+
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -38,6 +41,9 @@ public class SanPhamEntity implements Serializable {
 
     @Column(name = "MOTA")
     private String moTa;
+    
+    @Column(name = "TRANGTHAI")
+    private boolean trangThai;
 
     @ManyToOne
     @JoinColumn(name = "ID_SHOP")
@@ -53,5 +59,10 @@ public class SanPhamEntity implements Serializable {
     @JsonManagedReference
     private List<SkuEntity> skus;
 
+    @OneToMany(mappedBy = "sanPham")
+    @JsonBackReference
+    private List<SanPhamKhuyenMaiEntity> sanPhamKhuyenMai;
+    
+    
 
 }

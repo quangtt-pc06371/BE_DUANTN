@@ -1,13 +1,11 @@
 package com.poly.service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.poly.entity.HinhAnhEntity;
 import com.poly.entity.SanPhamEntity;
@@ -19,7 +17,7 @@ import com.poly.repository.SanPhamJPA;
 import com.poly.repository.SkuJPA;
 import com.poly.repository.ThuocTinhJPA;
 import com.poly.repository.TuyChonThuocTinhJPA;
-import com.poly.repository.TuyChonThuocTinhSkuJPA; 
+import com.poly.repository.TuyChonThuocTinhSkuJPA;
 
 @Service
 public class SanPhamService {
@@ -41,8 +39,7 @@ public class SanPhamService {
 
 	@Autowired
 	private TuyChonThuocTinhSkuJPA tuyChonThuocTinhSkuRepository;
-	  @Autowired
-	    private FirebaseService firebaseService;
+	 
 //	@Autowired
 //	private PhieuNhapJPA phieuNhapRepository;
 
@@ -55,7 +52,7 @@ public class SanPhamService {
 	}
 
 	@Transactional
-	public SanPhamEntity saveSanPham(SanPhamEntity sanPham, List<MultipartFile> files) throws IOException {
+	public SanPhamEntity saveSanPham(SanPhamEntity sanPham)  {
 		SanPhamEntity savedSanPham = sanPhamRepository.save(sanPham);
 
 		if (sanPham.getSkus() != null) {
@@ -82,24 +79,24 @@ public class SanPhamService {
 					}
 				}
 
-//				if (sku.getHinhanhs() != null) {
-//					for (HinhAnhEntity hinhAnh : sku.getHinhanhs()) {
-//						hinhAnh.setSku(savedSku);
-//						hinhAnhRepository.save(hinhAnh);
-//					}
-//				}
-				
-				if (files != null && !files.isEmpty()) {
-					for (MultipartFile file : files) {
-						String imageUrl = firebaseService.uploadFile(file);
-
-						// Tạo đối tượng HinhAnhEntity và lưu URL vào cơ sở dữ liệu
-						HinhAnhEntity hinhAnh = new HinhAnhEntity();
+				if (sku.getHinhanhs() != null) {
+					for (HinhAnhEntity hinhAnh : sku.getHinhanhs()) {
 						hinhAnh.setSku(savedSku);
-						hinhAnh.setTenAnh(imageUrl); // URL từ Firebase
 						hinhAnhRepository.save(hinhAnh);
 					}
 				}
+				
+//				if (files != null && !files.isEmpty()) {
+//					for (MultipartFile file : files) {
+//						String imageUrl = firebaseService.uploadFile(file);
+//
+//						// Tạo đối tượng HinhAnhEntity và lưu URL vào cơ sở dữ liệu
+//						HinhAnhEntity hinhAnh = new HinhAnhEntity();
+//						hinhAnh.setSku(savedSku);
+//						hinhAnh.setTenAnh(imageUrl); // URL từ Firebase
+//						hinhAnhRepository.save(hinhAnh);
+//					}
+//				}
 			}
 		}
 
