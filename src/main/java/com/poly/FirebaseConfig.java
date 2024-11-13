@@ -1,7 +1,8 @@
 package com.poly;
 
-
-
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -13,6 +14,10 @@ import com.google.firebase.FirebaseOptions;
 
 import jakarta.annotation.PostConstruct;
 
+
+import java.io.FileInputStream;
+import java.io.IOException;
+
 @Configuration
 public class FirebaseConfig {
 
@@ -20,6 +25,7 @@ public class FirebaseConfig {
 	@PostConstruct
 	public void initialize() {
 	    try {
+	        FileInputStream serviceAccount = new FileInputStream("src/main/resources/duantotnghiep-940ce-firebase-adminsdk.json");
 	    	FileInputStream serviceAccount = new FileInputStream("src/main/resources/duantotnghiep-940ce-firebase-adminsdk.json");
 
 	        FirebaseOptions options = new FirebaseOptions.Builder()
