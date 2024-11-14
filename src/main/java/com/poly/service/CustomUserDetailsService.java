@@ -1,46 +1,38 @@
 package com.poly.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.poly.entity.TaiKhoanEntity;
-import com.poly.repository.taikhoanJPA;
+import com.example.demo.Model.TaiKhoanEntity;
+import com.example.demo.Respository.taikhoanJPA;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private taikhoanJPA taikhoanjpa;
+	@Autowired
+	private taikhoanJPA taikhoanjpa;
 
 //    public CustomUserDetailsService(taikhoanJPA taikhoanjpa) {
 //        this.taikhoanjpa = taikhoanjpa;
 //    }
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    	TaiKhoanEntity taikhoan = taikhoanjpa.FindbyEmail(email);
-               
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		TaiKhoanEntity taikhoan = taikhoanjpa.FindbyEmail(email);
 
-    	Set<GrantedAuthority> authorities = taikhoan.getQuyens().stream()
-    		    .map((role) -> new SimpleGrantedAuthority(role.getName()))
-    		    .collect(Collectors.toSet());
+		Set<GrantedAuthority> authorities = taikhoan.getQuyens().stream()
+				.map((role) -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
 
-        return new org.springframework.security.core.userdetails.User(taikhoan.getEmail(),
-        		taikhoan.getMatKhau(),
-                authorities);
-    }
+		return new org.springframework.security.core.userdetails.User(taikhoan.getEmail(), taikhoan.getMatKhau(),
+				authorities);
+	}
 }
 //    @Override
 //    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -63,4 +55,3 @@ public class CustomUserDetailsService implements UserDetailsService {
 //        );
 ////    	 khoan.getEmail(), taikhoan.getMatKhau(), authorities);
 //    }
-
