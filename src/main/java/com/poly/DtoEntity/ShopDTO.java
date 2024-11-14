@@ -1,16 +1,12 @@
 package com.poly.DtoEntity;
 
-import java.util.List;
-
-
 import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.web.multipart.MultipartFile;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import lombok.*;
 
 
 @Getter
@@ -19,9 +15,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShopDTO {
-    private String shopName;
+	private String shopName;
     private String shopDescription;
+    private MultipartFile  shopImage;
     private int nguoiDung;
-    private String shopImage;
-
 }

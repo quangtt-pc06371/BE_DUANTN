@@ -1,17 +1,24 @@
 package com.poly.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import com.poly.entity.KhuyenMaiEntity;
-import com.poly.repository.*;
-import com.poly.entity.ShopEntity;
-import com.poly.service.KhuyenMaiService;
-
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.poly.entity.KhuyenMaiEntity;
+import com.poly.entity.ShopEntity;
+import com.poly.repository.ShopRepository;
+import com.poly.service.KhuyenMaiService;
 
 @RestController
 @CrossOrigin("*")
@@ -21,7 +28,7 @@ public class KhuyenMaiController {
 	@Autowired
 	private KhuyenMaiService khuyenMaiService;
 	@Autowired
-	private shopRepository shopRepository;
+	private ShopRepository shopRepository;
 
 	@GetMapping
 	public List<KhuyenMaiEntity> getAllKhuyenMai() {

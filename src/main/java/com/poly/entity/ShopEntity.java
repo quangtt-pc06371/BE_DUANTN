@@ -60,6 +60,9 @@ public class ShopEntity {
 
     @Column(name = "IS_APPROVED", nullable = true)
     private Boolean isApproved = false;
+    
+    @Column(name = "SHOP_IMAGE")
+    private String shopImage;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

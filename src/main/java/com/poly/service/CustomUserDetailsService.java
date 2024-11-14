@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Model.TaiKhoanEntity;
-import com.example.demo.Respository.taikhoanJPA;
+import com.poly.entity.TaiKhoanEntity;
+import com.poly.repository.taikhoanJPA;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
