@@ -3,9 +3,6 @@ package com.poly.entity;
 import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,7 +26,7 @@ import lombok.Setter;
 @Table(name = "SKU")
 public class SkuEntity implements Serializable {
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_SKU")
     private int idSku;
@@ -41,17 +38,16 @@ public class SkuEntity implements Serializable {
     private int soLuong;
     
     @ManyToOne
-    @JoinColumn(name = "ID_SANPHAM")
-    @JsonBackReference
-    private SanPhamEntity sanPham;
+    @JoinColumn(name = "ID_SANPHAM") 
+    private SanPhamEntity sanPhamEntity;
+    
+    @OneToMany(mappedBy = "sku")
+    // Chỉ định rằng JSON serialization sẽ xử lý danh sách này
+    private List<TuyChonThuocTinhSkuEntity> tuyChonThuocTinhSku;
 
     @OneToMany(mappedBy = "sku")
-    @JsonManagedReference
-    private List<TuyChonThuocTinhSkuEntity> tuyChonThuocTinhSkus;
-
-    @OneToMany(mappedBy = "sku")
-    @JsonManagedReference
-    private List<HinhAnhEntity> hinhanhs;
+  // Chỉ định rằng JSON serialization sẽ xử lý danh sách này
+    private List<HinhAnhEntity> hinhAnh;
 
 }
 

@@ -11,14 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.DTO.*;
-import com.example.demo.Mapper.ChiTietGioHangMapper;
-import com.example.demo.Model.*;
-import com.example.demo.Service.*;
+
 import com.poly.DtoEntity.CTGioHangDTO;
+import com.poly.Mapper.ChiTietGioHangMapper;
 import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.GioHang;
 import com.poly.repository.GioHangReponsitory;
+import com.poly.service.ChiTietGioHangService;
 import com.poly.service.GioHangService;
 import com.poly.service.JwtSevice2;
 
@@ -31,7 +30,7 @@ import jakarta.validation.Valid;
 public class CTGioHangController {
 
 	@Autowired
-	private ChiTietGiohangService chiTietGiohangService;
+	private ChiTietGioHangService chiTietGioHangService;
 	@Autowired
 	private ChiTietGioHangMapper chiTietGioHangMapper;
 	@Autowired
@@ -59,7 +58,7 @@ public class CTGioHangController {
 	    }
 
 	    // Thêm chi tiết vào giỏ hàng
-	    CTGioHangDTO result = chiTietGiohangService.addDetailToCart(chiTietGioHang, idNguoiDung);
+	    CTGioHangDTO result = chiTietGioHangService.addDetailToCart(chiTietGioHang, idNguoiDung);
 
 	    // Trả về kết quả
 	    return ResponseEntity.ok(result);
@@ -70,7 +69,7 @@ public class CTGioHangController {
 	public ResponseEntity<?> updateDetail(HttpServletRequest request, @RequestBody ChiTietGioHang idDetail) {
 		String token = request.getHeader("Authorization");
 		int idNguoiDung = jwtSevice2.getIdFromToken(token);
-		CTGioHangDTO chiTietGioHang = chiTietGiohangService.updateDetailToCart(idDetail, idNguoiDung);
+		CTGioHangDTO chiTietGioHang = chiTietGioHangService.updateDetailToCart(idDetail, idNguoiDung);
 
 		return ResponseEntity.ok(chiTietGioHang);
 	}
@@ -79,7 +78,7 @@ public class CTGioHangController {
 	public ResponseEntity<?> deleteDetail(HttpServletRequest request, @RequestBody ChiTietGioHang idDetail) {
 		String token = request.getHeader("Authorization");
 		int idNguoiDung = jwtSevice2.getIdFromToken(token);
-		CTGioHangDTO chiTietGioHang = chiTietGiohangService.deleteDetailToCart(idDetail, idNguoiDung);
+		CTGioHangDTO chiTietGioHang = chiTietGioHangService.deleteDetailToCart(idDetail, idNguoiDung);
 
 		return ResponseEntity.ok(chiTietGioHang);
 	}

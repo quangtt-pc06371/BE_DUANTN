@@ -2,6 +2,7 @@ package com.poly.entity;
 
 import java.util.List;
 
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -26,16 +27,18 @@ import lombok.Setter;
 @Entity
 @Table(name = "GIOHANG")
 public class GioHang {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_CART") // Tên cột trong bảng
-    private Integer idCart; // ID_CART
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_CART") // Tên cột trong bảng
+	private Integer idCart; // ID_CART
+	
+	@Column(name = "TONGTIEN") 
+	private Double tongTien; 
+	
+	@OneToOne
+	@JoinColumn(name = "ID_NGUOIDUNG", nullable = false) // Tên cột tham chiếu
+	private TaiKhoanEntity idNguoiDung; // ID_NGUOIDUNG
 
-    @OneToOne
-    @JoinColumn(name = "ID_NGUOIDUNG", nullable = false) // Tên cột tham chiếu
-    private TaiKhoanEntity idNguoiDung; // ID_NGUOIDUNG
-    
-    @OneToMany(mappedBy = "idCart", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<ChiTietGioHang> chiTietGioHangList; // Danh sách chi tiết giỏ hàng
+	@OneToMany(mappedBy = "gioHang")
+	private List<ChiTietGioHang> chiTietGioHangList; // Danh sách chi tiết giỏ hàng
 }

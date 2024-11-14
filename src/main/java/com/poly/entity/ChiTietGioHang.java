@@ -22,30 +22,36 @@ import lombok.Setter;
 @AllArgsConstructor @NoArgsConstructor
 public class ChiTietGioHang {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_DETAIL")
-    private Integer idDetail;
-    
-    @ManyToOne
-    @JoinColumn(name = "ID_CART", referencedColumnName = "ID_CART", nullable = false)
-    @JsonBackReference
-    private GioHang idCart;
-    
-    @ManyToOne
-    @JoinColumn(name = "ID_SHOP", referencedColumnName = "ID_SHOP", nullable = false)
-    private ShopEntity idShop;
-    
-    @ManyToOne
-    @JoinColumn(name = "ID_SANPHAM", referencedColumnName = "ID_SANPHAM", nullable = false)
-    private SanPhamEntity idSanPham;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_DETAIL")
+	private Integer idDetail;
+	
+	@Column(name = "SOLUONG", nullable = false)
+	private int soLuongMua;
 
-    @Column(name = "SOLUONG", nullable = false)
-    private int soLuong;
-
-    @Column(name = "GIA", nullable = false)
-    private int gia;
-    
-    @Column(name = "TRANGTHAI", nullable = false)
-    private boolean trangThai;
+	@Column(name = "GIA", nullable = false)
+	private double giaMua;
+	
+	@Column(name = "TRANGTHAI")
+	private boolean trangThai;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_CART", referencedColumnName = "ID_CART", nullable = false)
+	@JsonBackReference
+	private GioHang gioHang;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_SKU", referencedColumnName = "ID_SKU", nullable = false)
+	private SkuEntity skuEntity;
+	
+//	@OneToMany(mappedBy = "chiTietGioHang")
+//	private List<ChiTietDonHang> chiTietDonHangs;
+	
+	// Phương thức tính toán giá mua
+    public void capNhatGiaMua() {
+        if (skuEntity != null) {
+            this.giaMua = this.soLuongMua * skuEntity.getGiaSanPham();
+        }
+    }
 }

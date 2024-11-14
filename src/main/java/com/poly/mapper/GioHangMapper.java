@@ -1,9 +1,9 @@
-package com.poly.mapper;
+package com.poly.Mapper;
 
 import org.mapstruct.Mapper;
-import org.springframework.web.bind.annotation.Mapping;
+import org.mapstruct.Mapping;
 
-import com.example.demo.DTO.GioHangDTO;
+import com.poly.DtoEntity.GioHangDTO;
 import com.poly.entity.GioHang;
 
 @Mapper(componentModel = "spring", uses = ChiTietGioHangMapper.class)
