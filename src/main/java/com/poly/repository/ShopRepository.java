@@ -1,17 +1,17 @@
 package com.poly.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.Model.ShopEntity;
-
-
-
-public interface shopRepository extends JpaRepository<ShopEntity, Integer> {
-
-import java.util.List;
+import com.poly.entity.ShopEntity;
 
 
 
 public interface ShopRepository extends JpaRepository<ShopEntity, Integer>{
-	ShopEntity findById(int id);
+	Optional<ShopEntity> findByShopName(String shopName);
+	List<ShopEntity> findByIsApprovedFalse();
+	List<ShopEntity> findByIsApproved(boolean isApproved);
+	Optional<ShopEntity> findByNguoiDungId(int userId);
 }

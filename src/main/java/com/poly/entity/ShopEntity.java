@@ -62,10 +62,10 @@ public class ShopEntity {
     private Boolean isApproved = false;
 
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "ID_NGUOIDUNG", referencedColumnName = "ID_NGUOIDUNG", nullable = true)
-//    @JsonIgnore
-//    private TaiKhoanEntity nguoiDung;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_NGUOIDUNG", referencedColumnName = "ID_NGUOIDUNG", nullable = true)
+    @JsonIgnore
+    private TaiKhoanEntity nguoiDung;
     
     @OneToMany(mappedBy = "shop")
     @JsonBackReference

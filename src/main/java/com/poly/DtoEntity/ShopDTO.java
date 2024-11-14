@@ -18,11 +18,8 @@ import lombok.*;
 @NoArgsConstructor
 public class ShopDTO {
     private String shopName;
-
     private String shopDescription;
-    private MultipartFile  shopImage;
     private int nguoiDung;
-
     private String shopImage;
 
 }

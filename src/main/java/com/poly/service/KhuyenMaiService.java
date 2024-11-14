@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.poly.entity.KhuyenMaiEntity;
 import com.poly.repository.KhuyenMaiJPA;
+import com.poly.repository.ShopRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,7 @@ public class KhuyenMaiService {
     @Autowired
     private KhuyenMaiJPA khuyenMaiRepository;
     @Autowired
-    private com.poly.repository.shopRepository shopRepository;
+    private ShopRepository shopRepository;
     
     public Optional<KhuyenMaiEntity> findById(int id) {
         return khuyenMaiRepository.findById(id);
