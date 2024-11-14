@@ -1,17 +1,26 @@
 package com.poly.DtoEntity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.List;
+
+import com.example.demo.Model.SkuEntity;
+
+import lombok.*;
 
 @Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CTGioHangDTO {
-	private Integer idDetail;
-    private Integer idShop;
-    private Integer idSanPham;
-    private int soLuong;
-    private int gia;
-    private boolean trangThai;
+	private int idDetail;
+	private int soLuongMua;
+	private double thanhTien;
+	private boolean trangThai;
+	private SkuDTO skuDTO;
+	
+	// Phương thức tính toán giá mua
+    public void capNhatGiaMua() {
+        if (skuDTO != null) {
+            this.thanhTien = this.soLuongMua * skuDTO.getGiaSanPham();
+        }
+    }
 }

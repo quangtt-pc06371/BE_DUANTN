@@ -1,7 +1,10 @@
 package com.poly.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -13,7 +16,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "SHOP")
 public class ShopEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_SHOP")
@@ -37,14 +39,19 @@ public class ShopEntity {
     @Column(name = "IS_APPROVED", nullable = true)
     private Boolean isApproved = false;
 
-    @Column(name = "SHOP_IMAGE")
-    private String shopImage;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_NGUOIDUNG", referencedColumnName = "ID_NGUOIDUNG", nullable = true)
-    @JsonIgnore
-    private TaiKhoanEntity nguoiDung;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "ID_NGUOIDUNG", referencedColumnName = "ID_NGUOIDUNG", nullable = true)
+//    @JsonIgnore
+//    private TaiKhoanEntity nguoiDung;
+    
+    @OneToMany(mappedBy = "shop")
+    @JsonBackReference
+    private List<SanPhamEntity> sanPhamEntities;
 
+    @OneToMany(mappedBy = "shop")
+    @JsonBackReference(value = "khuyenMai")
+    private List<KhuyenMaiEntity> khuyenMai;
     // Constructor
     public ShopEntity() {
         this.createAt = LocalDateTime.now();

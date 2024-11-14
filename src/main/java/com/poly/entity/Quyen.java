@@ -9,10 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+
 
 @Getter
 @Setter
@@ -22,12 +21,12 @@ import lombok.Setter;
 @Table(name = "nguoidung_quyen")
 public class Quyen {
 	private static final long serialVersionUID = 1L;
-	 @Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    @Column(name = "ID_NGUOIDUNG_QUYEN")
-	    private int id;
-	 @Column(name = "NAME")
-	    private String name;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_NGUOIDUNG_QUYEN")
+	private int id;
+	@Column(name = "NAME")
+	private String name;
 //	 @ManyToMany(mappedBy = "quyens")
 //	    private Set<TaiKhoanEntity> taikhoans;
 }

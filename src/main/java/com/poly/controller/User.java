@@ -28,13 +28,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import com.poly.entity.TaiKhoanEntity;
-import com.poly.repository.taikhoanJPA;
-import com.poly.service.CustomUserDetailsService;
-import com.poly.service.FirebaseService;
-import com.poly.service.JwtSevice2;
-import com.poly.service.taiKhoanService;
+import com.example.demo.Model.TaiKhoanEntity;
+import com.example.demo.Respository.taikhoanJPA;
+import com.example.demo.Service.*;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
