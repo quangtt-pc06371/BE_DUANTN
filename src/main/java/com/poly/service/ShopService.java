@@ -39,8 +39,11 @@ public class ShopService {
 
     @Autowired
     private JavaMailSender mailSender;
+    
+    @Autowired
+    private FirebaseService firebaseService;
 
-    private final String bucketName = "duantotnghiep-940ce.appspot.com"; // Tên bucket Firebase Storage
+//    private final String bucketName = "duantotnghiep-940ce.appspot.com"; // Tên bucket Firebase Storage
 
     public List<ShopEntity> getAllShop() {
         return shopRepository.findAll();
@@ -62,48 +65,48 @@ public class ShopService {
         return shopRepository.findByNguoiDungId(userId);
     }
 
-    public String updateShopImageFirebase(MultipartFile shopImageFile) throws IOException {
-        // Tạo tên file ngẫu nhiên để tránh bị trùng
-        String fileName = UUID.randomUUID().toString() + "_" + shopImageFile.getOriginalFilename();
+//    private String uploadImageToFirebase(MultipartFile file) throws IOException {
+//        Storage storage = StorageOptions.getDefaultInstance().getService();
+//        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();  // Tạo tên file duy nhất
+//
+//        BlobId blobId = BlobId.of(bucketName, fileName);
+//        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
+//
+//        // Tải tệp lên Firebase Storage
+//        Blob blob = storage.create(blobInfo, file.getBytes());
+//
+//        // Trả về URL của ảnh
+//        return String.format("https://storage.googleapis.com/%s/%s", bucketName, fileName);
+//    }
 
-        // Lấy Firebase Storage Bucket
-        Bucket bucket = StorageClient.getInstance().bucket();
-
-        // Tải file lên Firebase Storage
-        Blob blob = bucket.create(fileName, shopImageFile.getBytes(), shopImageFile.getContentType());
-
-        // Trả về URL công khai của ảnh
-        return blob.getMediaLink();
-    }
-    public ShopEntity updateShop(int id, ShopEntity shop, MultipartFile shopImageFile) {
+    public ShopEntity updateShop(int id, ShopEntity shop, MultipartFile shopImageFile) throws IOException {
         Optional<ShopEntity> optionalShop = shopRepository.findById(id);
         if (optionalShop.isPresent()) {
             ShopEntity existingShop = optionalShop.get();
+
+            // Cập nhật thông tin
             existingShop.setShopName(shop.getShopName());
             existingShop.setShopDescription(shop.getShopDescription());
 
+            // Cập nhật hình ảnh nếu có
             if (shopImageFile != null && !shopImageFile.isEmpty()) {
-                try {
-                    String imageUrl = updateShopImageFirebase(shopImageFile);
-                    existingShop.setShopImage(imageUrl);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+                String fileUrl = firebaseService.uploadFile(shopImageFile);
+                existingShop.setShopImage(fileUrl);
             }
 
             return shopRepository.save(existingShop);
         }
-        return null;
+        throw new RuntimeException("Cửa hàng không tồn tại");
     }
 
-    // Đăng ký shop và lưu ảnh vào Firebase
+
     public ShopEntity registerShop(ShopDTO shopDTO, MultipartFile shopImageFile) throws IOException {
-        Optional<ShopEntity> existingShop = shopRepository.findByNguoiDungId(shopDTO.getNguoiDung());
-        if (existingShop.isPresent()) {
+        // Kiểm tra người dùng đã có cửa hàng chưa
+        if (shopRepository.findByNguoiDungId(shopDTO.getNguoiDung()).isPresent()) {
             throw new RuntimeException("Người dùng đã có cửa hàng");
         }
 
+        // Tạo mới ShopEntity
         ShopEntity shop = new ShopEntity();
         shop.setShopName(shopDTO.getShopName());
         shop.setShopDescription(shopDTO.getShopDescription());
@@ -111,40 +114,21 @@ public class ShopService {
         shop.setUpdateAt(LocalDateTime.now());
         shop.setIsApproved(false);
 
-        Optional<TaiKhoanEntity> userOptional = taiKhoanJPA.findById(shopDTO.getNguoiDung());
-        if (userOptional.isPresent()) {
-            shop.setNguoiDung(userOptional.get());
-        } else {
-            throw new RuntimeException("Người dùng không tồn tại");
-        }
+        // Gắn người dùng
+        TaiKhoanEntity user = taiKhoanJPA.findById(shopDTO.getNguoiDung())
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+        shop.setNguoiDung(user);
 
-        // Xử lý file ảnh và tải lên Firebase Storage
+        // Upload ảnh nếu có
         if (shopImageFile != null && !shopImageFile.isEmpty()) {
-            String originalFileName = shopImageFile.getOriginalFilename();
-            String uniqueFileName = UUID.randomUUID() + "_" + originalFileName;
-
-            // Tải ảnh lên Firebase Storage
-            String imageUrl = uploadImageToFirebase(shopImageFile, uniqueFileName);
-            shop.setShopImage(imageUrl); // Lưu URL ảnh từ Firebase vào DB
+        	String fileUrl = firebaseService.uploadFile(shopImageFile);
+            shop.setShopImage(fileUrl);
         } else {
             shop.setShopImage("default-image.jpg");
         }
 
+        // Lưu vào database
         return shopRepository.save(shop);
-    }
-
-    // Phương thức tải ảnh lên Firebase Storage
-    private String uploadImageToFirebase(MultipartFile file, String fileName) throws IOException {
-        Storage storage = StorageOptions.getDefaultInstance().getService();
-
-        BlobId blobId = BlobId.of(bucketName, fileName);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
-
-        // Tải tệp lên Firebase Storage
-        Blob blob = storage.create(blobInfo, file.getBytes());
-
-        // Trả về URL của ảnh
-        return String.format("https://storage.googleapis.com/%s/%s", bucketName, fileName);
     }
 
     public void deleteShopById(int id) {

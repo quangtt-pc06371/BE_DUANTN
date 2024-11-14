@@ -29,9 +29,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
-@AllArgsConstructor
-
 @Getter
 @Setter
 @Entity
@@ -79,38 +76,4 @@ public class ShopEntity {
     public void updateTimestamps() {
         this.updateAt = LocalDateTime.now();
     }
-
-public class ShopEntity implements Serializable {
-	
-		@Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    @Column(name = "ID_SHOP")
-	    private Integer idShop;
-
-	    @Column(name = "SHOP_NAME")
-	    private String shopName;
-
-	    @Column(name = "SHOP_DESCRIPTION")
-	    private String shopDescription;
-
-	    @Column(name = "SHOP_RATING")
-	    private String shopRating;
-
-	    @Temporal(TemporalType.TIMESTAMP)
-	    @Column(name = "CREATE_AT")
-	    private String createAt;
-
-	    @Temporal(TemporalType.TIMESTAMP)
-	    @Column(name = "UPDATE_AT")
-	    private String updateAt;
-	    
-//	    @OneToMany(mappedBy = "shop")
-//	    @JsonBackReference
-//	    private List<SanPhamEntity> sanPham;
-
-	    @OneToMany(mappedBy = "shop")
-	    @JsonBackReference(value = "khuyenMai")
-	    private List<KhuyenMaiEntity> khuyenMai;
-
-
 }

@@ -13,16 +13,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poly.DtoEntity.ErrorResponse;
 import com.poly.DtoEntity.ShopDTO;
 import com.poly.entity.ShopEntity;
 import com.poly.repository.ShopRepository;
+import com.poly.service.FirebaseService;
 import com.poly.service.JwtSevice2;
 import com.poly.service.ShopService;
 
@@ -41,6 +44,12 @@ public class ShopController {
 
     @Autowired
     private ShopRepository shopRepository;
+    
+    @Autowired
+    private FirebaseService firebaseService;
+    
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    
 
     // Lấy toàn bộ danh sách shop
     @GetMapping
@@ -98,19 +107,21 @@ public class ShopController {
     public ResponseEntity<?> registerShop(
             @RequestParam("shopName") String shopName,
             @RequestParam("shopDescription") String shopDescription,
-            @RequestParam(value = "shopImage", required = false) MultipartFile shopImage,
+            @RequestParam("shopImage") MultipartFile shopImage,
             HttpServletRequest request) throws IOException {
 
         String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse("Thiếu hoặc sai định dạng token"));
         }
-
-        int userId = jwtSevice.getIdFromToken(token);
-        if (userId == 0) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        token = token.substring(7);
+        int userId;
+        try {
+            userId = jwtSevice.getIdFromToken(token);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ErrorResponse("Token không hợp lệ hoặc đã hết hạn"));
         }
 
         ShopDTO shopDTO = new ShopDTO();
@@ -122,11 +133,12 @@ public class ShopController {
             ShopEntity shop = shopService.registerShop(shopDTO, shopImage);
             return ResponseEntity.ok(shop);
         } catch (RuntimeException e) {
-            ErrorResponse errorResponse = new ErrorResponse("Người dùng đã có cửa hàng");
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse(e.getMessage().equals("Người dùng đã có cửa hàng") ?
+                            "Bạn đã đăng ký cửa hàng trước đó" :
+                            "Đã xảy ra lỗi, vui lòng thử lại sau"));
         }
     }
-
     // Duyệt shop
     @PutMapping("/approve/{id}")
     public ResponseEntity<ShopEntity> approveShop(@PathVariable int id) {
@@ -169,16 +181,18 @@ public class ShopController {
     public ResponseEntity<ShopEntity> updateShopForUser(
             @PathVariable int id,
             HttpServletRequest request,
-            @RequestPart("shop") ShopEntity shop, 
+            @RequestPart("shop") String shopJson, 
             @RequestPart(value = "shopImageFile", required = false) MultipartFile shopImageFile) {
 
+        // Lấy token từ header
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        // Lấy userId từ token
         int userIdFromToken = jwtSevice.getIdFromToken(token);
         Optional<ShopEntity> optionalShop = shopService.getShopById(id);
 
@@ -187,16 +201,36 @@ public class ShopController {
 
             // Kiểm tra quyền truy cập của người dùng
             if (existingShop.getNguoiDung().getId() != userIdFromToken) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            // Gọi updateShop với shopImageFile (có thể là null nếu không có ảnh)
-            ShopEntity updatedShop = shopService.updateShop(id, shop, shopImageFile);
+            try {
+                // Chuyển JSON thành đối tượng ShopEntity
+                ShopEntity shop = objectMapper.readValue(shopJson, ShopEntity.class);
 
-            return ResponseEntity.ok(updatedShop);
+                // Cập nhật thông tin cửa hàng và hình ảnh nếu có
+                ShopEntity updatedShop = shopService.updateShop(id, shop, shopImageFile);
+                return ResponseEntity.ok(updatedShop);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/upload/{id}")
+    public ResponseEntity<?> uploadFile(@PathVariable int id, @RequestParam("shopImage") MultipartFile shopImage) throws IOException {
+        String fileUrl = firebaseService.uploadFile(shopImage);
+        Optional<ShopEntity> shop = shopRepository.findById(id);
+        if(shop.isPresent()) {
+            ShopEntity shoptwo = shop.get();
+            shoptwo.setShopImage(fileUrl);
+            shopRepository.save(shoptwo);
+
+            return ResponseEntity.ok("Image uploaded successfully");
+        }
+        return ResponseEntity.notFound().build();
     }
 
 }

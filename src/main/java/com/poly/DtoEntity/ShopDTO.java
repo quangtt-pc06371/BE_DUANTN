@@ -1,6 +1,8 @@
 package com.poly.DtoEntity;
 
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +11,6 @@ import lombok.Setter;
 public class ShopDTO {
     private String shopName;
     private String shopDescription;
-    private String shopImage;
+    private MultipartFile  shopImage;
     private int nguoiDung;
 }
