@@ -31,7 +31,7 @@ public class VoucherBillService {
 			voucherEntity.setSoLuong(updateVoucherEntity.getSoLuong());
 			voucherEntity.setNgaybatdau(updateVoucherEntity.getNgaybatdau());
 			voucherEntity.setNgayHetHan(updateVoucherEntity.getNgayHetHan());
-			voucherEntity.setDonhang(updateVoucherEntity.getDonhang());
+			voucherEntity.setUser(updateVoucherEntity.getUser());
 			return voucherBillRepository.save(voucherEntity);
 		}else {
 			throw new RuntimeException("voucherBill not found with id "+ id);
