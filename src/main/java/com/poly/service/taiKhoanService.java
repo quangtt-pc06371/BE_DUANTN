@@ -2,32 +2,18 @@ package com.poly.service;
 
 
 
-import java.io.IOException;
-import java.sql.Blob;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.example.demo.Model.TaiKhoanEntity;
-import com.example.demo.Model.Vaitro;
-import com.example.demo.Respository.RoleRepository;
-import com.example.demo.Respository.taikhoanJPA;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import com.poly.entity.TaiKhoanEntity;
+import com.poly.entity.Vaitro;
+import com.poly.repository.RoleRepository;
+import com.poly.repository.taikhoanJPA;
 
 @Service
 public class taiKhoanService {
