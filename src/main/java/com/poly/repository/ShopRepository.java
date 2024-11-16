@@ -1,10 +1,12 @@
 package com.poly.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.example.demo.Model.ShopEntity;
-
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.poly.entity.ShopEntity;
 
 @Repository
 public interface ShopRepository extends JpaRepository<ShopEntity, Integer> {
