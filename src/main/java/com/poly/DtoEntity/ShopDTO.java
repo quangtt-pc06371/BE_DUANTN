@@ -16,7 +16,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ShopDTO {
     private String shopName;
-    private String shopImage;
     private String shopDescription;
     private MultipartFile  shopImage;
     private int nguoiDung;

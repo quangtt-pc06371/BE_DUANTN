@@ -184,6 +184,18 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-oauth2-client</artifactId>
 </dependency>
+<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>1.5.3.Final</version> <!-- Chọn phiên bản mới nhất -->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>1.5.3.Final</version> <!-- Chọn phiên bản mới nhất -->
+			<scope>provided</scope>
+		</dependency>
 
 	</dependencies>
 
