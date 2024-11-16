@@ -1,17 +1,18 @@
 package com.poly;
 
-
-
-import java.io.FileInputStream;
-import java.io.IOException;
-
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
+
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
 import jakarta.annotation.PostConstruct;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 @Configuration
 public class FirebaseConfig {
@@ -20,8 +21,8 @@ public class FirebaseConfig {
 	@PostConstruct
 	public void initialize() {
 	    try {
-	    	FileInputStream serviceAccount = new FileInputStream("src/main/resources/duantotnghiep-940ce-firebase-adminsdk.json");
 
+	        FileInputStream serviceAccount = new FileInputStream("src/main/resources/duantotnghiep-940ce-firebase-adminsdk.json");
 	        FirebaseOptions options = new FirebaseOptions.Builder()
 	            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
 	            .setStorageBucket("duantotnghiep-940ce.appspot.com") // Thay thế bằng tên bucket của bạn

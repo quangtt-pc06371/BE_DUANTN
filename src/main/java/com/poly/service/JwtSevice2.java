@@ -26,10 +26,15 @@ import java.security.Key;
 
 @Service
 public class JwtSevice2 {
-	@Autowired
-	private taiKhoanService taiKhoansevice;
-	// Tạo khóa bí mật cho HS256 từ chuỗi khóa
-	private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+	  @Autowired
+	    private taiKhoanService taiKhoansevice;
+    // Tạo khóa bí mật cho HS256 từ chuỗi khóa
+    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    
+    private static final Logger logger = LoggerFactory.getLogger(JwtSevice.class);
+    
+    private static final long EXPIRATION_TIME = 1 * 60 * 1000; // 30 phút
 
 	private static final Logger logger = LoggerFactory.getLogger(JwtSevice.class);
 

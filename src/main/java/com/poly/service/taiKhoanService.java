@@ -1,7 +1,5 @@
 package com.poly.service;
 
-import java.io.IOException;
-import java.sql.Blob;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,31 +29,31 @@ public class taiKhoanService {
 	@Autowired
 	private taikhoanJPA taikhoanjpa;
 	@Autowired
-	private RoleRepository vaitro;
 
+	 private RoleRepository vaitro;
+	
 //	@Autowired
 //	  private PasswordEncoder passwordEncoder;
-	public List<TaiKhoanEntity> getAllTaiKhoans() {
-		return taikhoanjpa.findAll();
-	}
+    public List<TaiKhoanEntity> getAllTaiKhoans() {
+        return taikhoanjpa.findAll();
+    }
+    public List<TaiKhoanEntity> getAllTaiKhoanbyvaitronv() {
+        return taikhoanjpa.Findbyvaitro(4);
+    }
+    public List<TaiKhoanEntity> getAllTaiKhoanbyvaitroshop() {
+        return taikhoanjpa.Findbyvaitro(3);
+    }
+    public List<TaiKhoanEntity> getAllTaiKhoanbyvaitrouser() {
+        return taikhoanjpa.Findbyvaitro(1);
+    }
+    public Optional<TaiKhoanEntity> findById(Integer id) {
+        return taikhoanjpa.findById(id);     
+    }
+    public Optional<TaiKhoanEntity> getTaiKhoanById(Integer maTK) {
+        return taikhoanjpa.findById(maTK);
+    }
+    // Hàm upload ảnh lên Firebase
 
-	public List<TaiKhoanEntity> getAllTaiKhoanbyvaitronv() {
-		return taikhoanjpa.Findbyvaitro(4);
-	}
-
-	public List<TaiKhoanEntity> getAllTaiKhoanbyvaitroshop() {
-		return taikhoanjpa.Findbyvaitro(3);
-	}
-
-	public List<TaiKhoanEntity> getAllTaiKhoanbyvaitrouser() {
-		return taikhoanjpa.Findbyvaitro(1);
-	}
-
-	public Optional<TaiKhoanEntity> getTaiKhoanById(Integer maTK) {
-		return taikhoanjpa.findById(maTK);
-	}
-
-	// Hàm upload ảnh lên Firebase
 //    public String uploadImage(MultipartFile file) throws IOException {
 //        // Tạo tên file duy nhất với UUID
 //        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
@@ -107,14 +105,16 @@ public class taiKhoanService {
 		if (taikhoanjpa.existsById(maTK)) {
 			Optional<TaiKhoanEntity> tk = taikhoanjpa.findById(maTK);
 //        	 PasswordenEncoder pas = (PasswordenEncoder) new BCryptPasswordEncoder(10);
-			TaiKhoanEntity tk2 = tk.get();
 
-			tk2.setHoTen(taiKhoanEntity.getHoTen());
-			tk2.setSdt(taiKhoanEntity.getSdt());
-			tk2.setEmail(taiKhoanEntity.getEmail());
-//			tk2.setSdt(taiKhoanEntity.getDiachi());
-			tk2.setCmnd(taiKhoanEntity.getCmnd());
-//			tk2.setDiachi(taiKhoanEntity.getCmnd());
+        	TaiKhoanEntity tk2 = tk.get();
+        	
+        	tk2.setHoTen(taiKhoanEntity.getHoTen());        	   	     	
+        	tk2.setSdt(taiKhoanEntity.getSdt());	
+//        	tk2.setEmail(taiKhoanEntity.getEmail());
+        	
+        	tk2.setCmnd(taiKhoanEntity.getCmnd());
+//        	tk2.setDiachi(taiKhoanEntity.getDiachi());
+
 //            taiKhoanEntity.setMaTK(maTK);
 			return taikhoanjpa.save(tk2);
 		}
@@ -141,5 +141,56 @@ public class taiKhoanService {
 	public boolean kiemTraSdtTonTai(String sdt) {
 		return taikhoanjpa.existsBySdt(sdt);
 	}
+
+    public TaiKhoanEntity findByEmail(String email) {
+        return taikhoanjpa.FindbyEmail(email);     
+    }
+   
+    public boolean kiemTraEmailTonTai(String email) {
+        return taikhoanjpa.existsByEmail(email);
+    }
+    public boolean kiemTraSdtTonTai(String sdt) {
+        return taikhoanjpa.existsBySdt(sdt);
+    }
+    
+   
+//    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException{
+//        // Lấy người dùng từ cơ sở dữ liệu
+//        TaiKhoanEntity taikhoan = taikhoanjpa.Findbygmail(email);
+//        // Lấy quyền (role) từ đối tượng người dùng và đảm bảo role có tiền tố "ROLE_"
+//       System.out.println(taikhoan.getVaitro().getName());
+//        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" +taikhoan.getVaitro().getName());
+//
+//        return new org.springframework.security.core.userdetails.User(
+//        		taikhoan.getEmail(),
+//        		taikhoan.getMatKhau(),
+//                Collections.singleton(authority)  // Trả về danh sách quyền (authorities)
+//        );
+//    }
+    public TaiKhoanEntity registerOrLoginWithGoogle(String email, String name) {
+        Optional<TaiKhoanEntity> existingUser = taikhoanjpa.FindbyEmailgg(email);
+        
+        if (existingUser.isPresent()) {
+            // Người dùng đã tồn tại, chỉ cần đăng nhập
+            return existingUser.get();
+        } else {
+            // Người dùng chưa tồn tại, đăng ký tài khoản mới
+            TaiKhoanEntity newUser = new TaiKhoanEntity();
+            newUser.setEmail(email);
+            newUser.setHoTen(name);
+
+            // Gán thêm các thông tin mặc định nếu cần
+//            newUser.setVaiTro("USER"); // Ví dụ: Vai trò mặc định là USER
+//            newUser.setTrangThai("ACTIVE"); // Ví dụ: Trạng thái tài khoản là ACTIVE
+            
+            // Lưu tài khoản mới vào cơ sở dữ liệu
+            try {
+                return taikhoanjpa.save(newUser);
+            } catch (Exception e) {
+                throw new RuntimeException("Không thể đăng ký người dùng mới", e);
+            }
+        }
+    }
+
 
 }
