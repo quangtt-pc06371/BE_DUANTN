@@ -5,11 +5,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Model.SanPham;
-import com.example.demo.Model.Shop;
 import com.poly.DtoEntity.CTGioHangDTO;
 import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.GioHang;
+import com.poly.entity.SanPhamEntity;
+import com.poly.entity.ShopEntity;
 import com.poly.repository.ChiTietGioHangReponsitory;
 
 @Service
@@ -36,11 +36,11 @@ public class ChiTietGioHangService {
 	    chiTietGioHang.setIdCart(gioHang);
 	    
 	    // Gán idShop và idSanPham bằng cách tạo đối tượng Shop và SanPham
-	    Shop shop = new Shop();
+	    ShopEntity shop = new ShopEntity();
 	    shop.setIdShop(dto.getIdShop());
 	    chiTietGioHang.setIdShop(shop);
 
-	    SanPham sanPham = new SanPham();
+	    SanPhamEntity sanPham = new SanPhamEntity();
 	    sanPham.setIdSanPham(dto.getIdSanPham());
 	    chiTietGioHang.setIdSanPham(sanPham);
 	    

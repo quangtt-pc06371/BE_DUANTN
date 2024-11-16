@@ -47,10 +47,10 @@ public class SkuEntity implements Serializable {
 
     @OneToMany(mappedBy = "sku")
     @JsonManagedReference
-    private List<TuyChonThuocTinhSkuEntity> tuyChonThuocTinhSkus;
+    private List<TuyChonThuocTinhSkuEntity> tuyChonThuocTinhSku;
 
     @OneToMany(mappedBy = "sku")
     @JsonManagedReference
-    private List<HinhAnhEntity> hinhanhs;
+    private List<HinhAnhEntity> hinhanh;
 
 }
