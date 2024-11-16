@@ -1,14 +1,13 @@
 package com.poly.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.example.demo.Model.TaiKhoanEntity;
-import com.example.demo.Model.GioHang.ChiTietGioHang;
-import com.example.demo.Model.GioHang.GioHang;
-
-import java.util.List;
-import java.util.Optional;
+import com.poly.entity.ChiTietGioHang;
+import com.poly.entity.GioHang;
+import com.poly.entity.TaiKhoanEntity;
 
 public interface GioHangReponsitory extends JpaRepository<GioHang, Integer> {
 

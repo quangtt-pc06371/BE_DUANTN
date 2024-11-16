@@ -5,9 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import com.example.demo.Model.TaiKhoanEntity;
+import com.poly.entity.TaiKhoanEntity;
 
 public interface taikhoanJPA extends JpaRepository<TaiKhoanEntity, Integer> {
 
@@ -27,7 +26,7 @@ public interface taikhoanJPA extends JpaRepository<TaiKhoanEntity, Integer> {
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE (t.email = ?1 OR t.sdt = ?1) ")
 	TaiKhoanEntity  FindbyEmail(String email);
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE (t.email = ?1 OR t.sdt = ?1) ")
-Optional<TaiKhoanEntity>  FindbyEmailgg(String email);
+	Optional<TaiKhoanEntity>  FindbyEmailgg(String email);
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE t.vaitro.id = ?1  ")
 	List<TaiKhoanEntity>  Findbyvaitro(int vaitro);
 	
@@ -36,10 +35,4 @@ Optional<TaiKhoanEntity>  FindbyEmailgg(String email);
 		 }
 
 
-	@Query("SELECT t FROM TaiKhoanEntity t WHERE t.vaitro.id = ?1  ")
-	List<TaiKhoanEntity> Findbyvaitro(int vaitro);
-
-	boolean existsByEmail(String email);
-
-	boolean existsBySdt(String sdt);
-}
+	

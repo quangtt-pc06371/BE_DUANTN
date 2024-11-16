@@ -1,39 +1,23 @@
 package com.poly.controller;
 
-import com.example.demo.DTO.CTDonHangDTO;
-import com.example.demo.DTO.CTGioHangDTO;
-import com.example.demo.DTO.DonHangDTO;
-import com.example.demo.DTO.VoucherDTO;
-import com.example.demo.Mapper.DonHangMapper;
-import com.example.demo.Model.ChiTietDonHang;
-import com.example.demo.Model.DonHang;
-import com.example.demo.Model.TaiKhoanEntity;
-import com.example.demo.Model.VoucherEntity;
-import com.example.demo.Model.GioHang.ChiTietGioHang;
-import com.example.demo.Model.GioHang.GioHang;
-import com.example.demo.Respository.taikhoanJPA;
-
-import com.example.demo.Service.DonHangService;
-import com.example.demo.Service.GioHangService;
-import com.example.demo.Service.JwtSevice2;
-import com.example.demo.Service.VnPayService;
-
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.Getter;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.DTO.DonHangDTO;
+import com.example.demo.DTO.VoucherDTO;
+import com.example.demo.Mapper.DonHangMapper;
+import com.poly.service.DonHangService;
+import com.poly.service.JwtSevice2;
+
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController

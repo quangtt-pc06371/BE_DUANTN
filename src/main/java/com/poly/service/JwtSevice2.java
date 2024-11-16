@@ -1,28 +1,27 @@
 package com.poly.service;
 
+import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Model.TaiKhoanEntity;
+import com.poly.entity.TaiKhoanEntity;
 
-import org.slf4j.Logger;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import java.security.Key;
 
 @Service
 public class JwtSevice2 {
@@ -36,9 +35,7 @@ public class JwtSevice2 {
     
     private static final long EXPIRATION_TIME = 1 * 60 * 1000; // 30 phút
 
-	private static final Logger logger = LoggerFactory.getLogger(JwtSevice.class);
 
-	private static final long EXPIRATION_TIME = 30 * 60 * 1000; // 30 phút
 
 	private static final long REFRESH_EXPIRATION_TIME = 7 * 24 * 60 * 60 * 1000; // 7 ngày
 

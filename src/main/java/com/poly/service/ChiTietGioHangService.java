@@ -1,28 +1,16 @@
 package com.poly.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import com.example.demo.DTO.CTGioHangDTO;
 import com.example.demo.Model.SanPham;
 import com.example.demo.Model.Shop;
-import com.example.demo.Model.GioHang.ChiTietGioHang;
-import com.example.demo.Model.GioHang.GioHang;
-import com.example.demo.Respository.ChiTietGioHangReponsitory;
-import com.example.demo.Respository.GioHangReponsitory;
-
-import jakarta.servlet.http.HttpServletRequest;
+import com.poly.DtoEntity.CTGioHangDTO;
+import com.poly.entity.ChiTietGioHang;
+import com.poly.entity.GioHang;
+import com.poly.repository.ChiTietGioHangReponsitory;
 
 @Service
 public class ChiTietGioHangService {
