@@ -30,4 +30,6 @@ public class CategoryEntity implements Serializable{
 
     @Column(name = "MOTA", nullable = false)
     private String moTa;
+    
+    
 }

@@ -55,6 +55,14 @@ public class ShopEntity {
     @JsonIgnore
     private TaiKhoanEntity nguoiDung;
     
+
+    @OneToMany(mappedBy = "shop")
+    @JsonBackReference
+    private List<SanPhamEntity> sanPham;
+
+    @OneToMany(mappedBy = "shop")
+    @JsonBackReference(value = "khuyenMai")
+    private List<KhuyenMaiEntity> khuyenMai;
     // Constructor
     public ShopEntity() {
         this.createAt = LocalDateTime.now();

@@ -1,5 +1,7 @@
 package com.poly.entity;
 
+
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,31 +28,41 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "SKU")
-public class SkuEntity implements Serializable {
+@Table(name = "SANPHAM")
+public class SanPhamEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_SKU")
-    private int idSku;
+    @Column(name = "ID_SANPHAM")
+    private int idSanPham;
 
-    @Column(name = "GIASANPHAM")
-    private double giaSanPham;
+    @Column(name = "TENSANPHAM")
+    private String tenSanPham;
+
+    @Column(name = "MOTA")
+    private String moTa;
     
-    @Column(name = "SOLUONG")
-    private int soLuong;
+    @Column(name = "TRANGTHAI")
+    private boolean trangThai;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_SHOP")
+    @JsonIgnoreProperties(value = "sanPham")
+    private ShopEntity shop;
     
     @ManyToOne
-    @JoinColumn(name = "ID_SANPHAM")
+    @JoinColumn(name = "ID_DANHMUC")
+    @JsonIgnoreProperties(value= "sanPhams")
+    private DanhMucEntity danhMuc;
+    
+    @OneToMany(mappedBy = "sanPham")
+    @JsonManagedReference
+    private List<SkuEntity> skus;
+
+    @OneToMany(mappedBy = "sanPham")
     @JsonBackReference
-    private SanPhamEntity sanPham;
-
-    @OneToMany(mappedBy = "sku")
-    @JsonManagedReference
-    private List<TuyChonThuocTinhSkuEntity> tuyChonThuocTinhSkus;
-
-    @OneToMany(mappedBy = "sku")
-    @JsonManagedReference
-    private List<HinhAnhEntity> hinhanhs;
+    private List<SanPhamKhuyenMaiEntity> sanPhamKhuyenMai;
+    
+    
 
 }
