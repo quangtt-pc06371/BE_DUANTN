@@ -1,10 +1,6 @@
 package com.poly.service;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +12,13 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import com.google.firebase.cloud.StorageClient;
 import com.poly.DtoEntity.ShopDTO;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
@@ -25,28 +28,31 @@ import com.poly.repository.taikhoanJPA;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-
 @Service
 public class ShopService {
 
-	
- 	@Autowired
+    @Autowired
     private ShopRepository shopRepository;
- 	
- 	@Autowired
+
+    @Autowired
     private taikhoanJPA taiKhoanJPA;
- 	
- 	@Autowired
+
+    @Autowired
     private JavaMailSender mailSender;
- 	
- 	private final String uploadDir = "D:\\Java5\\Image";
+    
+    @Autowired
+    private FirebaseService firebaseService;
+
+//    private final String bucketName = "duantotnghiep-940ce.appspot.com"; // Tên bucket Firebase Storage
 
     public List<ShopEntity> getAllShop() {
         return shopRepository.findAll();
     }
+
     public List<ShopEntity> getAllUnapprovedShops() {
         return shopRepository.findByIsApprovedFalse();
     }
+
     public List<ShopEntity> getAllApprovedShops() {
         return shopRepository.findByIsApproved(true);
     }
@@ -55,49 +61,73 @@ public class ShopService {
         return shopRepository.findById(id);
     }
 
-    public ShopEntity updateShop(int id, ShopEntity shop) {
-        Optional<ShopEntity> optionalShop = shopRepository.findById(id);
-
-        if (optionalShop.isPresent()) {
-            ShopEntity shopUpdate = optionalShop.get();
-            shopUpdate.setShopName(shop.getShopName());
-            shopUpdate.setShopDescription(shop.getShopDescription());
-            shopUpdate.setShopRating(shop.getShopRating());
-            shopUpdate.setUpdateAt(LocalDateTime.now());
-            return shopRepository.save(shopUpdate);
-        } else {
-            return null;
-        }
+    public Optional<ShopEntity> getShopByUserId(int userId) {
+        return shopRepository.findByNguoiDungId(userId);
     }
 
-    // Đăng ký shop và lưu ảnh
+//    private String uploadImageToFirebase(MultipartFile file) throws IOException {
+//        Storage storage = StorageOptions.getDefaultInstance().getService();
+//        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();  // Tạo tên file duy nhất
+//
+//        BlobId blobId = BlobId.of(bucketName, fileName);
+//        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
+//
+//        // Tải tệp lên Firebase Storage
+//        Blob blob = storage.create(blobInfo, file.getBytes());
+//
+//        // Trả về URL của ảnh
+//        return String.format("https://storage.googleapis.com/%s/%s", bucketName, fileName);
+//    }
+
+    public ShopEntity updateShop(int id, ShopEntity shop, MultipartFile shopImageFile) throws IOException {
+        Optional<ShopEntity> optionalShop = shopRepository.findById(id);
+        if (optionalShop.isPresent()) {
+            ShopEntity existingShop = optionalShop.get();
+
+            // Cập nhật thông tin
+            existingShop.setShopName(shop.getShopName());
+            existingShop.setShopDescription(shop.getShopDescription());
+
+            // Cập nhật hình ảnh nếu có
+            if (shopImageFile != null && !shopImageFile.isEmpty()) {
+                String fileUrl = firebaseService.uploadFile(shopImageFile);
+                existingShop.setShopImage(fileUrl);
+            }
+
+            return shopRepository.save(existingShop);
+        }
+        throw new RuntimeException("Cửa hàng không tồn tại");
+    }
+
+
     public ShopEntity registerShop(ShopDTO shopDTO, MultipartFile shopImageFile) throws IOException {
+        // Kiểm tra người dùng đã có cửa hàng chưa
+        if (shopRepository.findByNguoiDungId(shopDTO.getNguoiDung()).isPresent()) {
+            throw new RuntimeException("Người dùng đã có cửa hàng");
+        }
+
+        // Tạo mới ShopEntity
         ShopEntity shop = new ShopEntity();
         shop.setShopName(shopDTO.getShopName());
         shop.setShopDescription(shopDTO.getShopDescription());
         shop.setCreateAt(LocalDateTime.now());
         shop.setUpdateAt(LocalDateTime.now());
-        shop.setIsApproved(false); // Mặc định là chưa duyệt
+        shop.setIsApproved(false);
 
-        // Tìm người dùng từ DTO
-        Optional<TaiKhoanEntity> userOptional = taiKhoanJPA.findById(shopDTO.getNguoiDung());
-        if (userOptional.isPresent()) {
-            shop.setNguoiDung(userOptional.get());
-        } else {
-            throw new RuntimeException("Người dùng không tồn tại");
-        }
+        // Gắn người dùng
+        TaiKhoanEntity user = taiKhoanJPA.findById(shopDTO.getNguoiDung())
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+        shop.setNguoiDung(user);
 
-        // Xử lý file ảnh
+        // Upload ảnh nếu có
         if (shopImageFile != null && !shopImageFile.isEmpty()) {
-            String originalFileName = shopImageFile.getOriginalFilename();
-            String uniqueFileName = UUID.randomUUID() + "_" + originalFileName;
-            Path filePath = Paths.get(uploadDir, uniqueFileName);
-            Files.copy(shopImageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            shop.setShopImage(uniqueFileName);
+        	String fileUrl = firebaseService.uploadFile(shopImageFile);
+            shop.setShopImage(fileUrl);
         } else {
             shop.setShopImage("default-image.jpg");
         }
 
+        // Lưu vào database
         return shopRepository.save(shop);
     }
 
@@ -105,25 +135,6 @@ public class ShopService {
         shopRepository.deleteById(id);
     }
 
-//    // Đăng ký shop
-//    public ShopEntity registerShop(ShopDTO shopDTO) {
-//        ShopEntity shop = new ShopEntity();
-//        shop.setShopName(shopDTO.getShopName());
-//        shop.setShopDescription(shopDTO.getShopDescription());
-//        shop.setCreateAt(LocalDateTime.now());
-//        shop.setUpdateAt(LocalDateTime.now());
-//        shop.setIsApproved(false); // Mặc định là chưa duyệt
-//
-//        // Tìm người dùng từ DTO
-//        Optional<TaiKhoanEntity> userOptional = taiKhoanJPA.findById(shopDTO.getNguoiDung());
-//        if (userOptional.isPresent()) {
-//            shop.setNguoiDung(userOptional.get());
-//        } else {
-//            throw new RuntimeException("Người dùng không tồn tại");
-//        }
-//
-//        return shopRepository.save(shop);
-//    }
     // Duyệt shop và gửi mail
     public ShopEntity approveShop(int shopId) {
         Optional<ShopEntity> optionalShop = shopRepository.findById(shopId);
@@ -140,6 +151,7 @@ public class ShopService {
             throw new RuntimeException("Cửa hàng không tồn tại");
         }
     }
+
     // Phương thức gửi email thông báo
     private void sendApprovalEmail(String userEmail, String shopName) {
         try {
@@ -154,6 +166,4 @@ public class ShopService {
             throw new RuntimeException("Không thể gửi email");
         }
     }
-
-
 }
