@@ -51,12 +51,12 @@ public class TaiKhoanEntity implements Serializable {
     @Column(name = "EMAIL")
     private String email;
     
-    @Pattern(regexp = "^(0|\\+84)[3|5|7|8|9][0-9]{8}$", message = "Số điện thoại không đúng định dạng")
+//    @Pattern(regexp = "^(0|\\+84)[3|5|7|8|9][0-9]{8}$", message = "Số điện thoại không đúng định dạng")
     @Column(name = "SDT")
     private String sdt;
 //  
-    @Column(name = "DIACHI")
-    private String diachi;
+//    @Column(name = "DIACHI")
+//    private String diachi;
    
     @Column(name = "CMND")
     private String cmnd;
@@ -68,9 +68,16 @@ public class TaiKhoanEntity implements Serializable {
     private Vaitro vaitro ;
 //    private Vaitro vaitro = new HashSet<>();
   
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "NGUOIDUNG_VAITRO_QUYEN",
-        joinColumns = @JoinColumn(name = "ID_NGUOIDUNG", referencedColumnName = "ID_NGUOIDUNG"),
-        inverseJoinColumns = @JoinColumn(name = "ID_NGUOIDUNG_QUYEN", referencedColumnName = "ID_NGUOIDUNG_QUYEN"))
+        joinColumns = @JoinColumn(name = "ID_NGUOIDUNG",referencedColumnName = "ID_NGUOIDUNG"),
+        	    inverseJoinColumns = @JoinColumn(name = "ID_NGUOIDUNG_QUYEN", referencedColumnName = "ID_NGUOIDUNG_QUYEN"))
+//        inverseJoinColumns = @JoinColumn(name = "ID_QUYEN"))
     private Set<Quyen> quyens = new HashSet<>();
+
+//    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @JoinTable(name = "NGUOIDUNG_VAITRO_QUYEN",
+//        joinColumns = @JoinColumn(name = "ID_NGUOIDUNG", referencedColumnName = "ID_NGUOIDUNG"),
+//        inverseJoinColumns = @JoinColumn(name = "ID_NGUOIDUNG_QUYEN", referencedColumnName = "ID_NGUOIDUNG_QUYEN"))
+//    private Set<Quyen> quyens = new HashSet<>();
 }
