@@ -39,7 +39,7 @@ public class JwtSevice2 {
     
     private static final Logger logger = LoggerFactory.getLogger(JwtSevice.class);
     
-    private static final long EXPIRATION_TIME = 1 * 60 * 1000; // 30 phút
+    private static final long EXPIRATION_TIME = 5 * 60 * 1000; // 30 phút
 
     private static final long REFRESH_EXPIRATION_TIME = 7 * 24 * 60 * 60 * 1000; // 7 ngày
     

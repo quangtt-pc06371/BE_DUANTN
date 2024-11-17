@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.validation.BindingResult;
@@ -30,8 +31,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+import com.google.firebase.auth.UserRecord;
 import com.poly.loginggconifg;
+import com.poly.entity.Quyen;
 import com.poly.entity.TaiKhoanEntity;
+import com.poly.entity.TokenRequest;
+import com.poly.entity.Vaitro;
+import com.poly.repository.QuyenJPA;
+import com.poly.repository.RoleRepository;
 import com.poly.repository.taikhoanJPA;
 import com.poly.service.CustomUserDetailsService;
 import com.poly.service.FirebaseService;
@@ -67,6 +77,12 @@ public class User {
 	    private CustomUserDetailsService userDetailsService;
 	  @Autowired
 	    private FirebaseService firebaseService;
+	  
+	  @Autowired
+		 private RoleRepository vaitro;
+	  @Autowired
+		 private QuyenJPA quyenjpa;
+	  
 	@GetMapping
 	 public ResponseEntity<List<TaiKhoanEntity>> getalltaikhoan(){
 		 List<TaiKhoanEntity> taikhoan = taikhoansevice.getAllTaiKhoans();
@@ -105,7 +121,7 @@ public class User {
 	     return taiKhoanEntity.map(ResponseEntity::ok)
 	                          .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	 }
-	 @PreAuthorize("hasAuthority('ROLE_Create')")
+//	 @PreAuthorize("hasAuthority('ROLE_Create')")
 	 @PostMapping("/upload/{maTK}")
 	    public ResponseEntity<?> uploadFile(@PathVariable int maTK ,@RequestParam("file") MultipartFile file) throws IOException {
 	        // Kiểm tra nếu file không rỗng
@@ -124,7 +140,7 @@ public class User {
 //		              token2.put("vaitro",taikhoanalon.getVaitro());     
 		    return ResponseEntity.ok("Image uploaded successfully"+token2);
 	    }
-	 @PreAuthorize("hasAuthority('ROLE_Create')")
+//	 @PreAuthorize("hasAuthority('ROLE_Create')")
 	 @PostMapping("/user")
 	 public ResponseEntity<?> createTaiKhoan(@Valid @RequestBody TaiKhoanEntity taiKhoanEntity ,BindingResult result) throws IOException {
 		 if (result.getFieldError("email") != null) {
@@ -311,15 +327,72 @@ public class User {
 	        TaiKhoanEntity user = logggconfig.registerOrLogin(token);
 	        return ResponseEntity.ok(user);
 	    }
-	  @GetMapping("/google")
-	    public String getLoginInfo(OAuth2AuthenticationToken authentication) {
-	        // Lấy thông tin người dùng từ OAuth2AuthenticationToken
-	        String userName = authentication.getPrincipal().getAttribute("name");
-	        String userEmail = authentication.getPrincipal().getAttribute("email");
+	  @PostMapping("/google")  
+	  public ResponseEntity<?> handleGoogleLogin(@RequestBody TokenRequest tokenRequest) {
+	      try {
+	          // Lấy token từ body của request
+	          String token = tokenRequest.getToken();
+	          
+	          // Xác thực token với Firebase Admin SDK
+	          FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+	          
+	          // Nếu token hợp lệ, lấy UID người dùng
+	          String uid = decodedToken.getUid();
+	          
+	          // Lấy thông tin người dùng từ Firebase dựa trên UID
+	          UserRecord userRecord = FirebaseAuth.getInstance().getUser(uid);
 
-	        // Hiển thị tên và email của người dùng
-	        return "Welcome, " + userName + "! Your email is " + userEmail;
-	    }
+	          // Kiểm tra sự tồn tại của tài khoản, sử dụng UID (chuỗi) thay vì chuyển thành int
+	          boolean exists = taikhoansevice.kiemTraEmailTonTai(userRecord.getEmail());
+	          if(exists) {
+	        	  UserDetails userDetails = userDetailsService.loadUserByUsername( userRecord.getEmail());
+	        	  String refreshToken = jwtsevice2.generateRefreshToken(userDetails);
+	              String tokensucces = jwtsevice2.generateToken(userDetails);
+	              Map<String, String> tokens = new HashMap<>();
+	              tokens.put("token", tokensucces);
+	              tokens.put("refreshToken", refreshToken);
+//	              tokens.put("profile", userDetails.getUsername());
+	              return ResponseEntity.ok(tokens);
+	          }else {
+	        	 TaiKhoanEntity taikhoan = new TaiKhoanEntity();
+	        	 Optional<Vaitro>  roles = vaitro.findById(3);
+  	           Vaitro vaitro= roles.get();
+  	         Optional<Quyen>  quyens = quyenjpa.findById(2);
+	         
+	        	 taikhoan.setEmail(userRecord.getEmail());
+	        	 taikhoan.setHoTen(userRecord.getDisplayName());
+	        	 taikhoan.setAnh("");	
+	        	 taikhoan.setCmnd("") ;	
+	        	 taikhoan.setMatKhau("") ;	
+	        	 taikhoan.setSdt("");	
+//	        	
+	        	 taikhoan.getQuyens().add(quyens.get());
+	        	 taikhoan.setVaitro(vaitro);
+	        	 taikhoanjpa.save(taikhoan);
+	        	 
+	        	 UserDetails userDetails = userDetailsService.loadUserByUsername( taikhoan.getEmail());
+	        	  String refreshToken = jwtsevice2.generateRefreshToken(userDetails);
+	              String tokensucces = jwtsevice2.generateToken(userDetails);
+	              Map<String, String> tokens = new HashMap<>();
+	              tokens.put("token", tokensucces);
+	              tokens.put("refreshToken", refreshToken);
+//	              tokens.put("profile", userDetails.getUsername());
+	              return ResponseEntity.ok(tokens);
+	          }
+	          // Ví dụ xử lý nếu tài khoản chưa tồn tại\\\\\\\\\\\\\\\\\\\\\\
+//	          if (!exists) {
+//	              // Tiến hành đăng ký hoặc xử lý logic khác nếu tài khoản chưa tồn tại
+//	              // Có thể tạo mới tài khoản tại đây...
+//	          }
+	          
+	          // Trả về thông tin người dùng
+	         
+	      } catch (FirebaseAuthException e) {
+	          // Nếu token không hợp lệ
+	          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Lỗi xác thực token: " + e.getMessage());
+	      }
+	  }
+
 //	  @PostMapping("/logout")
 //	    public ResponseEntity<String> logout(HttpServletResponse response) {
 //	        // Tạo một cookie mới với tên "token" và giá trị rỗng

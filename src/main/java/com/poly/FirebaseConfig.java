@@ -39,7 +39,22 @@ public class FirebaseConfig {
 	        System.out.println("Failed to initialize Firebase.");
 	    }
 	}
-	
+	 @PostConstruct
+	    public void initFirebase() {
+	        try {
+	            FileInputStream serviceAccount = new FileInputStream("src/main/resources/duantotnghiep-940ce-firebase-adminsdk.json");
+
+	            FirebaseOptions options = FirebaseOptions.builder()
+	                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+	                    .build();
+
+	            if (FirebaseApp.getApps().isEmpty()) {
+	                FirebaseApp.initializeApp(options);
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
 	
 //  
 //	  @Bean

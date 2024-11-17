@@ -31,5 +31,6 @@ Optional<TaiKhoanEntity>  FindbyEmailgg(String email);
 	
 	   boolean existsByEmail(String email);
 	   boolean existsBySdt(String sdt);
+	   boolean existsById(int id);
 		 }
 
