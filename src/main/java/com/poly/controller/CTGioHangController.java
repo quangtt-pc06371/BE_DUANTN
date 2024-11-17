@@ -1,6 +1,5 @@
 package com.poly.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,8 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.poly.DtoEntity.CTGioHangDTO;
 import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.GioHang;
-import com.poly.mapper.ChiTietGioHangMapper;
+import com.poly.Mapper.ChiTietGioHangMapper;
 import com.poly.repository.GioHangReponsitory;
+import com.poly.service.ChiTietGioHangService;
 import com.poly.service.GioHangService;
 import com.poly.service.JwtSevice2;
 
@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 public class CTGioHangController {
 
 	@Autowired
-	private ChiTietGiohangService chiTietGiohangService;
+	private ChiTietGioHangService chiTietGiohangService;
 	@Autowired
 	private ChiTietGioHangMapper chiTietGioHangMapper;
 	@Autowired

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.DtoEntity.DonHangDTO;
 import com.poly.DtoEntity.VoucherDTO;
-import com.poly.mapper.DonHangMapper;
+import com.poly.Mapper.DonHangMapper;
 import com.poly.service.DonHangService;
 import com.poly.service.JwtSevice2;
 
@@ -49,15 +49,6 @@ public class DonHangController {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không có đơn hàng nào.");
 	        }
 	        
-	        // Lấy voucher cho từng đơn hàng
-	        for (DonHangDTO donHang : donHangList) {
-	            // Lấy voucher cho đơn hàng từ service
-	            VoucherDTO voucherDTO = donHangService.getVoucherForDonHang(donHang.getIdDonHang());
-	            
-	            // Gán voucher cho đơn hàng
-	            donHang.setVoucherDTO(voucherDTO); // Giả sử DonHangDTO có trường voucherDTO
-	        }
-
 	        // Trả về thông tin danh sách đơn hàng cùng voucher
 	        return ResponseEntity.ok(donHangList);
 	    } catch (Exception e) {
