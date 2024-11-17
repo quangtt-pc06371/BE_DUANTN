@@ -68,7 +68,7 @@ public class TaiKhoanEntity implements Serializable {
     private Vaitro vaitro ;
 //    private Vaitro vaitro = new HashSet<>();
   
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "NGUOIDUNG_VAITRO_QUYEN",
         joinColumns = @JoinColumn(name = "ID_NGUOIDUNG",referencedColumnName = "ID_NGUOIDUNG"),
         	    inverseJoinColumns = @JoinColumn(name = "ID_NGUOIDUNG_QUYEN", referencedColumnName = "ID_NGUOIDUNG_QUYEN"))
