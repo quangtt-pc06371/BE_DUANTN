@@ -47,6 +47,6 @@ public interface SkuMapper {
 	TuyChonThuocTinhDTO toTuyChonThuocTinhDTO(TuyChonThuocTinhEntity entity);
 
 	ThuocTinhDTO toThuocTinhDTO(ThuocTinhEntity entity);
-
+//
 }
 
