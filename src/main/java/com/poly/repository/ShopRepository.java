@@ -1,4 +1,5 @@
 package com.poly.repository;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,6 @@ public interface ShopRepository extends JpaRepository<ShopEntity, Integer> {
 	Optional<ShopEntity> findByShopName(String shopName);
 	List<ShopEntity> findByIsApprovedFalse();
 	List<ShopEntity> findByIsApproved(boolean isApproved);
+	Optional<ShopEntity> findByNguoiDungId(int userId);
 
 }
-
