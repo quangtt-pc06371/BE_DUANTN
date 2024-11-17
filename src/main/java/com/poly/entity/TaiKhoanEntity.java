@@ -70,4 +70,5 @@ public class TaiKhoanEntity implements Serializable {
         joinColumns = @JoinColumn(name = "ID_NGUOIDUNG", referencedColumnName = "ID_NGUOIDUNG"),
         inverseJoinColumns = @JoinColumn(name = "ID_NGUOIDUNG_QUYEN", referencedColumnName = "ID_NGUOIDUNG_QUYEN"))
     private Set<Quyen> quyens = new HashSet<>();
+    
 }
