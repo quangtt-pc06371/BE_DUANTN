@@ -14,4 +14,5 @@ public interface ShopRepository extends JpaRepository<ShopEntity, Integer> {
 	List<ShopEntity> findByIsApprovedFalse();
 	List<ShopEntity> findByIsApproved(boolean isApproved);
 	Optional<ShopEntity> findByNguoiDungId(int userId);
+
 }

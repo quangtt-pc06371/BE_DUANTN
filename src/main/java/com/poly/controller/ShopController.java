@@ -127,7 +127,7 @@ public class ShopController {
         ShopDTO shopDTO = new ShopDTO();
         shopDTO.setShopName(shopName);
         shopDTO.setShopDescription(shopDescription);
-        shopDTO.setNguoiDung(userId);
+        shopDTO.setNguoiDung(userId);  // Gắn idShop vào ShopDTO
 
         try {
             ShopEntity shop = shopService.registerShop(shopDTO, shopImage);
@@ -139,6 +139,7 @@ public class ShopController {
                             "Đã xảy ra lỗi, vui lòng thử lại sau"));
         }
     }
+
     // Duyệt shop
     @PutMapping("/approve/{id}")
     public ResponseEntity<ShopEntity> approveShop(@PathVariable int id) {
@@ -218,6 +219,7 @@ public class ShopController {
             return ResponseEntity.notFound().build();
         }
     }
+
 
     @PostMapping("/upload/{id}")
     public ResponseEntity<?> uploadFile(@PathVariable int id, @RequestParam("shopImage") MultipartFile shopImage) throws IOException {
