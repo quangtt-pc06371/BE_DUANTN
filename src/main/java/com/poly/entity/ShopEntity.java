@@ -55,7 +55,14 @@ public class ShopEntity {
     @JsonIgnore
     private TaiKhoanEntity nguoiDung;
     
+<<<<<<< HEAD
 
+=======
+    @ManyToOne
+    @JoinColumn(name = "ID_NGUOIDUNG")
+    private TaiKhoanEntity nguoiDung;
+    
+>>>>>>> 6198ae8 (update shop)
     @OneToMany(mappedBy = "shop")
     @JsonBackReference
     private List<SanPhamEntity> sanPham;

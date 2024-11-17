@@ -62,7 +62,7 @@ public class ShopService {
     }
 
     public Optional<ShopEntity> getShopByUserId(int userId) {
-        return shopRepository.findByNguoiDungId(userId);
+        return shopRepository.findByNguoiDungId(userId);  // Sử dụng idShop để tìm shop
     }
 
 //    private String uploadImageToFirebase(MultipartFile file) throws IOException {
@@ -114,14 +114,14 @@ public class ShopService {
         shop.setUpdateAt(LocalDateTime.now());
         shop.setIsApproved(false);
 
-        // Gắn người dùng
+        // Lấy thông tin người dùng từ bảng TaiKhoanEntity qua idShop
         TaiKhoanEntity user = taiKhoanJPA.findById(shopDTO.getNguoiDung())
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
         shop.setNguoiDung(user);
 
         // Upload ảnh nếu có
         if (shopImageFile != null && !shopImageFile.isEmpty()) {
-        	String fileUrl = firebaseService.uploadFile(shopImageFile);
+            String fileUrl = firebaseService.uploadFile(shopImageFile);
             shop.setShopImage(fileUrl);
         } else {
             shop.setShopImage("default-image.jpg");
@@ -130,6 +130,7 @@ public class ShopService {
         // Lưu vào database
         return shopRepository.save(shop);
     }
+
 
     public void deleteShopById(int id) {
         shopRepository.deleteById(id);
