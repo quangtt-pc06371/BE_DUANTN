@@ -3,10 +3,15 @@ package com.poly.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
-import org.springframework.web.bind.annotation.Mapping;
+import org.mapstruct.Mapping;
 
+import com.poly.DtoEntity.HinhAnhDTO;
+import com.poly.DtoEntity.SanPhamDTO;
 import com.poly.DtoEntity.ShopDTO;
 import com.poly.DtoEntity.SkuDTO;
+import com.poly.DtoEntity.ThuocTinhDTO;
+import com.poly.DtoEntity.TuyChonThuocTinhDTO;
+import com.poly.DtoEntity.TuyChonThuocTinhSkuDTO;
 import com.poly.entity.HinhAnhEntity;
 import com.poly.entity.SanPhamEntity;
 import com.poly.entity.ShopEntity;
@@ -19,10 +24,10 @@ import com.poly.entity.TuyChonThuocTinhSkuEntity;
 public interface SkuMapper {
 
 	@Mapping(source = "tuyChonThuocTinhSku", target = "tuyChonThuocTinhSkus")
-	@Mapping(source = "hinhAnh", target = "hinhanhs")
-	@Mapping(source = "sanPhamEntity", target = "sanPhamDTO")
-	@Mapping(source = "sanPhamEntity.tenSanPham", target = "sanPhamDTO.tenSanPham")
-	@Mapping(source = "sanPhamEntity.shop", target = "sanPhamDTO.shopDTO")
+	@Mapping(source = "hinhanh", target = "hinhanhs")
+	@Mapping(source = "sanPham", target = "sanPhamDTO")
+	@Mapping(source = "sanPham.tenSanPham", target = "sanPhamDTO.tenSanPham")
+	@Mapping(source = "sanPham.shop", target = "sanPhamDTO.shopDTO")
 	@Mapping(source = "soLuong", target = "soLuongKho")
 	SkuDTO toSkuDTO(SkuEntity skuEntity);
 

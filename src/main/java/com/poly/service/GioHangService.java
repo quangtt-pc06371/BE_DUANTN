@@ -7,23 +7,21 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.poly.entity.GioHangEntity;
-import com.poly.repository.GioHangJPA;
+import com.poly.entity.GioHang;
 
 @Service
 public class GioHangService {
 
 	
- @Autowired
-    private GioHangJPA gioHangRepository;
+ private final GioHangRepository gioHangRepository;
 
     // Lấy tất cả các giỏ hàng
-    public List<GioHangEntity> getAllGioHang() {
+    public List<GioHang> getAllGioHang() {
         return gioHangRepository.findAll();
     }
 
     // Lấy giỏ hàng theo ID
-    public Optional<GioHangEntity> getGioHangById(int idCart) {
+    public Optional<GioHang> getGioHangById(int idCart) {
         return gioHangRepository.findById(idCart);
     }
 

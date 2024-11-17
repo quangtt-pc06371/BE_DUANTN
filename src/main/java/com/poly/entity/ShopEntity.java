@@ -53,9 +53,7 @@ public class ShopEntity {
     @ManyToOne
     @JoinColumn(name = "ID_NGUOIDUNG")
     private TaiKhoanEntity nguoiDung;
-    @ManyToOne
-    @JoinColumn(name = "ID_NGUOIDUNG")
-    private TaiKhoanEntity nguoiDung;
+
     
     @OneToMany(mappedBy = "shop")
     @JsonBackReference
