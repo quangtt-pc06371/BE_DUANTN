@@ -3,7 +3,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.poly.entity.Quyen;
+import com.example.demo.Model.Quyen;
 
 
 public interface QuyenJPA extends JpaRepository<Quyen, Integer> {

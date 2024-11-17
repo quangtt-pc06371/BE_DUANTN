@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.poly.DtoEntity.LoginDto;
-import com.poly.entity.TaiKhoanEntity;
-import com.poly.service.CustomUserDetailsService;
-import com.poly.service.JwtSevice;
-import com.poly.service.JwtSevice2;
-import com.poly.service.taiKhoanService;
+import com.example.demo.DTO.LoginDto;
+import com.example.demo.Model.TaiKhoanEntity;
+import com.example.demo.Service.CustomUserDetailsService;
+import com.example.demo.Service.JwtSevice;
+import com.example.demo.Service.JwtSevice2;
+import com.example.demo.Service.taiKhoanService;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
