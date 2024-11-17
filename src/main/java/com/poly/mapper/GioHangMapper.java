@@ -13,5 +13,5 @@ public interface GioHangMapper extends BaseMapper<GioHang, GioHangDTO>{
 	
 	@Mapping(source = "idNguoiDung",target = "idNguoiDung")
 	GioHangDTO toGioHangDTO(GioHang gioHang);
-	
+	//
 }

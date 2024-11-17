@@ -21,8 +21,6 @@ public interface ChiTietGioHangMapper extends BaseMapper<ChiTietGioHang, CTGioHa
 	@Mapping(source = "soLuongMua", target = "soLuongMua")
 	@Mapping(source = "skuEntity", target = "skuDTO")
 	List<CTGioHangDTO> toSkuDTOList(List<ChiTietGioHang> chiTietGioHangs);
-	
-
 }
 
 
