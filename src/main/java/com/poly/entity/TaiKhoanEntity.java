@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.poly.DtoEntity.Shopcuaquang;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -66,6 +67,9 @@ public class TaiKhoanEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "Vaitro")
     private Vaitro vaitro ;
+    @OneToOne
+    @JoinColumn(name = "SHOP")
+    private ShopEntity shop ;
 //    private Vaitro vaitro = new HashSet<>();
   
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
