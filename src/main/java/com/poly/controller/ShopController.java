@@ -1,6 +1,7 @@
 package com.poly.controller;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +24,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poly.DtoEntity.ShopDTO;
 import com.poly.DtoEntity.Shopcuaquang;
 import com.poly.entity.ShopEntity;
+import com.poly.entity.TaiKhoanEntity;
 import com.poly.repository.ErrorResponse;
 import com.poly.repository.ShopRepository;
+import com.poly.repository.taikhoanJPA;
 import com.poly.service.FirebaseService;
 import com.poly.service.JwtSevice2;
 import com.poly.service.ShopService;
@@ -38,7 +41,8 @@ public class ShopController {
 
     @Autowired
     private ShopService shopService;
-
+    @Autowired
+	 private taikhoanJPA taikhoanjpa;
     @Autowired
     private JwtSevice2 jwtSevice;
 
@@ -66,12 +70,12 @@ public class ShopController {
     }
 
     // Thêm shop
-    @PostMapping
-    public ShopEntity createShop(
-            @RequestPart("shop") ShopEntity shop,
-            @RequestPart("shopImageFile") MultipartFile shopImageFile) throws IOException {
-        return shopService.registerShop(null, shopImageFile);
-    }
+//    @PostMapping
+//    public ShopEntity createShop(
+//            @RequestPart("shop") ShopEntity shop,
+//            @RequestPart("shopImageFile") MultipartFile shopImageFile) throws IOException {
+//        return shopService.registerShop(null, shopImageFile);
+//    }
 
     // Update shop
 //    @PutMapping("/{id}")
@@ -102,7 +106,6 @@ public class ShopController {
         List<ShopEntity> approvedShops = shopService.getAllApprovedShops();
         return ResponseEntity.ok(approvedShops);
     }
-
     @PostMapping("/register")
     public ResponseEntity<?> registerShop(
             @RequestParam("shopName") String shopName,
@@ -115,43 +118,58 @@ public class ShopController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse("Thiếu hoặc sai định dạng token"));
         }
-        token = token.substring(7);
-        int userId;
-        try {
-            userId = jwtSevice.getIdFromToken(token);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new ErrorResponse("Token không hợp lệ hoặc đã hết hạn"));
-        }
 
+        // Loại bỏ tiền tố "Bearer " khỏi token
+        token = token.substring(7);
+        int userId = jwtSevice.getIdFromToken(token);
+
+        // Tạo DTO cửa hàng
         Shopcuaquang shopDTO = new Shopcuaquang();
         shopDTO.setShopName(shopName);
         shopDTO.setShopDescription(shopDescription);
-        shopDTO.setNguoiDung(userId);  // Gắn idShop vào ShopDTO
 
         try {
-            ShopEntity shop = shopService.registerShop(shopDTO, shopImage);
+            // Lấy tài khoản người dùng từ database
+            TaiKhoanEntity taikhoan2 = taikhoanjpa.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+
+            // Kiểm tra nếu người dùng đã có cửa hàng
+            if (taikhoan2.getShop() != null) {
+//                return ResponseEntity.badRequest()
+//                        .body(new ErrorResponse("Bạn đã đăng ký cửa hàng trước đó"));
+                return ResponseEntity.status(401).body(Collections.singletonMap("error", "tài khoản đã được đăng kí"));
+            }
+
+            // Đăng ký cửa hàng mới
+            ShopEntity shop = shopService.registerShop(userId, shopDTO, shopImage);
+            taikhoan2.setShop(shop);  // Gắn cửa hàng vào tài khoản
+            taikhoanjpa.save(taikhoan2);
+
+            // Trả về thông tin cửa hàng vừa tạo
             return ResponseEntity.ok(shop);
+
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest()
-                    .body(new ErrorResponse(e.getMessage().equals("Người dùng đã có cửa hàng") ?
-                            "Bạn đã đăng ký cửa hàng trước đó" :
-                            "Đã xảy ra lỗi, vui lòng thử lại sau"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Đã xảy ra lỗi, vui lòng thử lại sau"));
         }
     }
 
-    // Duyệt shop
+
+//     Duyệt shop
     @PutMapping("/approve/{id}")
     public ResponseEntity<ShopEntity> approveShop(@PathVariable int id) {
         ShopEntity shop = shopService.getShopById(id).orElse(null);
+      TaiKhoanEntity taikhoan = taikhoanjpa.Findbyshop(id);
+        
         if (shop == null) {
             return ResponseEntity.notFound().build();
         }
-        if (shop.getNguoiDung() == null || shop.getNguoiDung().getEmail() == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        ShopEntity approvedShop = shopService.approveShop(id);
-        sendApprovalEmail(shop.getNguoiDung().getEmail());
+//        if (shop.getNguoiDung() == null || shop.getNguoiDung().getEmail() == null) {
+//            return ResponseEntity.badRequest().body(null);
+//        }
+       String a= taikhoan.getEmail();
+        ShopEntity approvedShop = shopService.approveShop(id,a);
+       sendApprovalEmail(taikhoan.getEmail());
         return ResponseEntity.ok(approvedShop);
     }
 
@@ -159,7 +177,7 @@ public class ShopController {
         System.out.println("Gửi email thông báo cho: " + email);
     }
 
-    // Lấy shop của người dùng dựa trên userId
+//     Lấy shop của người dùng dựa trên userId
     @GetMapping("/user")
     public ResponseEntity<ShopEntity> getShopByUserId(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
@@ -173,9 +191,12 @@ public class ShopController {
         if (userId == 0) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
-
-        Optional<ShopEntity> optionalShop = shopService.getShopByUserId(userId);
-        return optionalShop.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        TaiKhoanEntity taikhoan = taikhoanjpa.Findbyshop(userId);
+        int a = taikhoan.getShop().getId();
+        ShopEntity shop = shopService.getShopById(a).orElse(null);
+      
+//      
+        return ResponseEntity.ok(shop);
     }
 
     @PutMapping("/user/{id}")
@@ -188,22 +209,22 @@ public class ShopController {
         // Lấy token từ header
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
+           token = token.substring(7);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         // Lấy userId từ token
-        int userIdFromToken = jwtSevice.getIdFromToken(token);
+//        int userIdFromToken = jwtSevice.getIdFromToken(token);
         Optional<ShopEntity> optionalShop = shopService.getShopById(id);
 
         if (optionalShop.isPresent()) {
             ShopEntity existingShop = optionalShop.get();
 
             // Kiểm tra quyền truy cập của người dùng
-            if (existingShop.getNguoiDung().getId() != userIdFromToken) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
+//            if (existingShop.getNguoiDung().getId() != userIdFromToken) {
+//                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//            }
 
             try {
                 // Chuyển JSON thành đối tượng ShopEntity
@@ -215,8 +236,8 @@ public class ShopController {
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-        } else {
-            return ResponseEntity.notFound().build();
+       } else {
+           return ResponseEntity.notFound().build();
         }
     }
 

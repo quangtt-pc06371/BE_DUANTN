@@ -60,6 +60,10 @@ public class SecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                 // Allow all GET requests to /api/**
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+//                .requestMatchers(HttpMethod.POST, "/api/taikhoan/upload/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/danhmuc/**").permitAll()
+               
+                .requestMatchers(HttpMethod.POST, "/api/shops/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/**").permitAll()
 //                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 // Restrict POST requests to /api/taikhoan/** to users with ROLE_Create
@@ -68,7 +72,7 @@ public class SecurityConfig {
                 // Allow all requests to /api/auth/**
                 .requestMatchers("/api/auth/**").permitAll()
                 // All other requests must be authenticated
-//                .anyRequest().authenticated()
+                .anyRequest().authenticated()
             )
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Sử dụng JWT, không cần session

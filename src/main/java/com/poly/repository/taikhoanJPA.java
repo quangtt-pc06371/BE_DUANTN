@@ -28,9 +28,13 @@ public interface taikhoanJPA extends JpaRepository<TaiKhoanEntity, Integer > {
 Optional<TaiKhoanEntity>  FindbyEmailgg(String email);
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE t.vaitro.id = ?1  ")
 	List<TaiKhoanEntity>  Findbyvaitro(int vaitro);
+	@Query("SELECT t FROM TaiKhoanEntity t WHERE t.shop.id = ?1  ")
+	TaiKhoanEntity  Findbyshop(int id);
+
 	
 	   boolean existsByEmail(String email);
 	   boolean existsBySdt(String sdt);
 	   boolean existsById(int id);
+//	   boolean existsby(int id);
 		 }
 

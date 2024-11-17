@@ -152,11 +152,19 @@ public class User {
 //	 
 		 boolean existsgmail = taikhoansevice.kiemTraEmailTonTai(taiKhoanEntity.getEmail());
 		 boolean existssdt = taikhoansevice.kiemTraSdtTonTai(taiKhoanEntity.getSdt());
+		
 	        if (existsgmail) {
 	        	
 	        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email đã tồn tại");
 	           
-	        } else if(existssdt) {
+	        } 
+	        else if(result.getFieldError("email") == null ) {
+	        	
+	        	 TaiKhoanEntity createdTaiKhoan = taikhoansevice.createTaiKhoan(taiKhoanEntity); 	        	
+	    	     return ResponseEntity.status(HttpStatus.CREATED).body(createdTaiKhoan);
+	           
+	        }
+	        else if(existssdt ) {
 	        	
 	        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại đã tồn tại");
 	           

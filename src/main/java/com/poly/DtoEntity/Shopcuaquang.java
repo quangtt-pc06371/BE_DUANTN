@@ -17,5 +17,5 @@ public class Shopcuaquang {
     private String shopName;
     private String shopDescription;
     private String  shopImage;
-    private int nguoiDung;
+  
 }

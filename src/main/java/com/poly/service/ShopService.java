@@ -62,9 +62,9 @@ public class ShopService {
         return shopRepository.findById(id);
     }
 
-    public Optional<ShopEntity> getShopByUserId(int userId) {
-        return shopRepository.findByNguoiDungId(userId);  // Sử dụng idShop để tìm shop
-    }
+//    public Optional<ShopEntity> getShopByUserId(int userId) {
+//        return shopRepository.findByNguoiDungId(userId);  // Sử dụng idShop để tìm shop
+//    }
 
 //    private String uploadImageToFirebase(MultipartFile file) throws IOException {
 //        Storage storage = StorageOptions.getDefaultInstance().getService();
@@ -101,11 +101,9 @@ public class ShopService {
     }
 
 
-    public ShopEntity registerShop(Shopcuaquang shopDTO, MultipartFile shopImageFile) throws IOException {
+    public ShopEntity registerShop(int iduser,Shopcuaquang shopDTO, MultipartFile shopImageFile) throws IOException {
         // Kiểm tra người dùng đã có cửa hàng chưa
-        if (shopRepository.findByNguoiDungId(shopDTO.getNguoiDung()).isPresent()) {
-            throw new RuntimeException("Người dùng đã có cửa hàng");
-        }
+      
 
         // Tạo mới ShopEntity
         ShopEntity shop = new ShopEntity();
@@ -116,9 +114,9 @@ public class ShopService {
         shop.setIsApproved(false);
 
         // Lấy thông tin người dùng từ bảng TaiKhoanEntity qua idShop
-        TaiKhoanEntity user = taiKhoanJPA.findById(shopDTO.getNguoiDung())
+        TaiKhoanEntity user = taiKhoanJPA.findById(iduser)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
-        shop.setNguoiDung(user);
+//        shop.setNguoiDung(user);
 
         // Upload ảnh nếu có
         if (shopImageFile != null && !shopImageFile.isEmpty()) {
@@ -138,7 +136,7 @@ public class ShopService {
     }
 
     // Duyệt shop và gửi mail
-    public ShopEntity approveShop(int shopId) {
+    public ShopEntity approveShop(int shopId, String gmailuser) {
         Optional<ShopEntity> optionalShop = shopRepository.findById(shopId);
         if (optionalShop.isPresent()) {
             ShopEntity shop = optionalShop.get();
@@ -147,7 +145,7 @@ public class ShopService {
             shopRepository.save(shop);
 
             // Gửi mail thông báo sau khi duyệt
-            sendApprovalEmail(shop.getNguoiDung().getEmail(), shop.getShopName());
+            sendApprovalEmail(gmailuser, shop.getShopName());
             return shop;
         } else {
             throw new RuntimeException("Cửa hàng không tồn tại");
