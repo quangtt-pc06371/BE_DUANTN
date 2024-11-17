@@ -1,27 +1,17 @@
 package com.poly.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.poly.DtoEntity.CTGioHangDTO;
-import com.poly.Mapper.ChiTietGioHangMapper;
-import com.poly.Mapper.SkuMapper;
 import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.GioHang;
-import com.poly.entity.SanPhamEntity;
-import com.poly.entity.ShopEntity;
 import com.poly.entity.SkuEntity;
+import com.poly.mapper.ChiTietGioHangMapper;
+import com.poly.mapper.SkuMapper;
 import com.poly.repository.ChiTietGioHangReponsitory;
 import com.poly.repository.GioHangReponsitory;
 

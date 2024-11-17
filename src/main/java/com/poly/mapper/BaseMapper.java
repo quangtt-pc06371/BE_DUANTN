@@ -1,4 +1,4 @@
-package com.poly.Mapper;
+package com.poly.mapper;
 
 import org.mapstruct.MapperConfig;
 

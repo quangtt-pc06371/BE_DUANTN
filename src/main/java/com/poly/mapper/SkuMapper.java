@@ -1,4 +1,4 @@
-package com.poly.Mapper;
+package com.poly.mapper;
 
 import java.util.List;
 
@@ -16,6 +16,7 @@ import com.poly.entity.HinhAnhEntity;
 import com.poly.entity.SanPhamEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.SkuEntity;
+import com.poly.entity.TaiKhoanEntity;
 import com.poly.entity.ThuocTinhEntity;
 import com.poly.entity.TuyChonThuocTinhEntity;
 import com.poly.entity.TuyChonThuocTinhSkuEntity;
@@ -36,7 +37,8 @@ public interface SkuMapper {
 	@Mapping(source = "shop", target = "shopDTO")
 	SanPhamDTO toSanPhamDTO(SanPhamEntity entity);
 	
-	ShopDTO toShopDTO(ShopEntity entity);
+	@Mapping(source = "nguoiDung", target = "nguoiDung")
+    ShopDTO toShopDTO(ShopEntity entity);
 	// Ánh xạ đối tượng HinhAnhEntity thành HinhAnhDTO
 
 	@Mapping(source = "tenAnh", target = "anhSanPham")
@@ -52,6 +54,9 @@ public interface SkuMapper {
 	TuyChonThuocTinhDTO toTuyChonThuocTinhDTO(TuyChonThuocTinhEntity entity);
 
 	ThuocTinhDTO toThuocTinhDTO(ThuocTinhEntity entity);
+	default int mapNguoiDung(TaiKhoanEntity nguoiDung) {
+        return nguoiDung != null ? nguoiDung.getId() : 0; // Trả về 0 nếu nguoiDung là null
+    }
 //
 }
 

@@ -50,6 +50,10 @@ public class ShopEntity {
     @Column(name = "SHOP_IMAGE")
     private String shopImage;
     
+    @ManyToOne
+    @JoinColumn(name = "ID_NGUOIDUNG")
+    private TaiKhoanEntity nguoiDung;
+    
     @OneToMany(mappedBy = "shop")
     @JsonBackReference
     private List<SanPhamEntity> sanPham;
