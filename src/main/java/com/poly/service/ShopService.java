@@ -65,18 +65,18 @@ public class ShopService {
 //    public Optional<ShopEntity> getShopByUserId(int userId) {
 //        return shopRepository.findByNguoiDungId(userId);  // Sử dụng idShop để tìm shop
 //    }
-
+//
 //    private String uploadImageToFirebase(MultipartFile file) throws IOException {
 //        Storage storage = StorageOptions.getDefaultInstance().getService();
 //        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();  // Tạo tên file duy nhất
-//
+//////
 //        BlobId blobId = BlobId.of(bucketName, fileName);
 //        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
-//
+//////
 //        // Tải tệp lên Firebase Storage
 //        Blob blob = storage.create(blobInfo, file.getBytes());
-//
-//        // Trả về URL của ảnh
+//////
+//////        // Trả về URL của ảnh
 //        return String.format("https://storage.googleapis.com/%s/%s", bucketName, fileName);
 //    }
 
