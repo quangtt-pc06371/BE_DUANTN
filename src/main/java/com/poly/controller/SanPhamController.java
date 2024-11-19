@@ -20,11 +20,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.poly.entity.HinhAnhEntity;
 import com.poly.entity.SanPhamEntity;
+import com.poly.entity.ShopEntity;
 import com.poly.entity.SkuEntity;
 import com.poly.repository.HinhAnhJPA;
+import com.poly.repository.ShopRepository;
 import com.poly.repository.SkuJPA;
 import com.poly.service.FirebaseService;
+import com.poly.service.JwtSevice2;
 import com.poly.service.SanPhamService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 
@@ -32,7 +37,10 @@ import com.poly.service.SanPhamService;
 @RestController
 @RequestMapping("/api/sanpham")
 public class SanPhamController {
-
+	  @Autowired
+	    private JwtSevice2 jwtsevice2;
+	  @Autowired
+		private ShopRepository shopRepository;
     @Autowired
     private SanPhamService sanPhamService;
     @Autowired
@@ -75,9 +83,19 @@ public class SanPhamController {
 
     
     @PostMapping
-    public SanPhamEntity createSanPham(@RequestBody SanPhamEntity sanPham) {
-        return sanPhamService.saveSanPham(sanPham);
-    }
+	public SanPhamEntity createSanPham(@RequestBody SanPhamEntity sanPham, HttpServletRequest request) {
+//		String token = request.getHeader("Authorization");
+//
+//		// Trích xuất ID người dùng từ token
+//		int idNguoiDung = jwtsevice2.getIdFromToken(token);
+////
+////		// Kiểm tra xem người dùng đã có giỏ hàng chưa
+//		ShopEntity shop = shopRepository.findShopByNguoiDungId(idNguoiDung);
+//
+//		sanPham.setShop(shop);
+
+		return sanPhamService.saveSanPham(sanPham);
+	}
     @PostMapping("/upload/{idSku}")
     public ResponseEntity<?> createAnh(@PathVariable int idSku, @RequestParam("file") MultipartFile[] files) throws IOException {
         Optional<SkuEntity> optionalSku = skuRepository.findById(idSku);
