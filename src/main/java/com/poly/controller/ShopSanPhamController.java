@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.poly.entity.SanPhamEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.service.ShopSanPhamService;
 
@@ -22,34 +23,44 @@ import com.poly.service.ShopSanPhamService;
 @RequestMapping("/api/shop")
 public class ShopSanPhamController {
 	@Autowired
-    private ShopSanPhamService shopService;
+	private ShopSanPhamService shopService;
 
-    @GetMapping
-    public List<ShopEntity> getAllShop() {
-        return shopService.getAllShop();
-    }
+	@GetMapping
+	public List<ShopEntity> getAllShop() {
+		return shopService.getAllShop();
+	}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ShopEntity> getShopById(@PathVariable int id) {
-        Optional<ShopEntity> optionalShop = shopService.getShopById(id);
+	@GetMapping("/{id}")
+	public ResponseEntity<ShopEntity> getShopById(@PathVariable int id) {
+		Optional<ShopEntity> optionalShop = shopService.getShopById(id);
 
-        if (optionalShop.isPresent()) {
-            return ResponseEntity.ok(optionalShop.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+		if (optionalShop.isPresent()) {
+			return ResponseEntity.ok(optionalShop.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
-    @PostMapping
-    public ShopEntity createShop(@RequestBody ShopEntity shop) {
-        return shopService.saveShop(shop);
-    }
+	@PostMapping
+	public ShopEntity createShop(@RequestBody ShopEntity shop) {
+		return shopService.saveShop(shop);
+	}
 
- 
+	@GetMapping("/shop/{id}")
+	public ResponseEntity<List<SanPhamEntity>> getSanPhamByShop(@PathVariable int id) {
+		List<SanPhamEntity> sanPhams = shopService.getSanPhamByShop(id);
+		return ResponseEntity.ok(sanPhams);
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteShop(@PathVariable int id) {
-        shopService.deleteShopById(id);
-        return ResponseEntity.noContent().build();
-    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteShop(@PathVariable int id) {
+		shopService.deleteShopById(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/nguoidung/{idNguoiDung}")
+	public ResponseEntity<ShopEntity> getShopByNguoiDung(@PathVariable Integer idNguoiDung) {
+		ShopEntity shop = shopService.getShopByNguoiDungId(idNguoiDung);
+		return ResponseEntity.ok(shop);
+	}
 }

@@ -16,5 +16,7 @@ public interface ShopRepository extends JpaRepository<ShopEntity, Integer> {
 	List<ShopEntity> findByIsApproved(boolean isApproved);
 //	@Query("SELECT t FROM ShopEntity t WHERE t..id = ?1  ")
 //	Optional<ShopEntity> findByNguoiDungId(int userId);
-
+	
+	@Query("SELECT s FROM ShopEntity s WHERE s.id = (SELECT t.shop.id FROM TaiKhoanEntity t WHERE t.id = ?1)")
+    ShopEntity findShopByNguoiDungId(Integer idNguoiDung);
 }
