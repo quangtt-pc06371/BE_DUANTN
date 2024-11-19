@@ -191,8 +191,9 @@ public class ShopController {
         if (userId == 0) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
-        TaiKhoanEntity taikhoan = taikhoanjpa.Findbyshop(userId);
-        int a = taikhoan.getShop().getId();
+        Optional<TaiKhoanEntity> taikhoan = taikhoanjpa.findById(userId);
+        TaiKhoanEntity taikhoan2 = taikhoan.get();
+        int a = taikhoan2.getShop().getId();
         ShopEntity shop = shopService.getShopById(a).orElse(null);
       
 //      
