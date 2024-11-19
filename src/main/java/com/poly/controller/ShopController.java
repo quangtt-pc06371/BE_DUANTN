@@ -241,8 +241,7 @@ public class ShopController {
            return ResponseEntity.notFound().build();
         }
     }
-
-
+    
     @PostMapping("/upload/{id}")
     public ResponseEntity<?> uploadFile(@PathVariable int id, @RequestParam("shopImage") MultipartFile shopImage) throws IOException {
         String fileUrl = firebaseService.uploadFile(shopImage);
