@@ -1,8 +1,8 @@
 package com.poly.repository;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.apache.el.stream.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -24,11 +24,17 @@ public interface taikhoanJPA extends JpaRepository<TaiKhoanEntity, Integer > {
 //		 
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE (t.email = ?1 OR t.sdt = ?1) ")
 	TaiKhoanEntity  FindbyEmail(String email);
-	
+	@Query("SELECT t FROM TaiKhoanEntity t WHERE (t.email = ?1 OR t.sdt = ?1) ")
+Optional<TaiKhoanEntity>  FindbyEmailgg(String email);
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE t.vaitro.id = ?1  ")
 	List<TaiKhoanEntity>  Findbyvaitro(int vaitro);
+	@Query("SELECT t FROM TaiKhoanEntity t WHERE t.shop.id = ?1  ")
+	TaiKhoanEntity  Findbyshop(int id);
+
 	
 	   boolean existsByEmail(String email);
 	   boolean existsBySdt(String sdt);
+	   boolean existsById(int id);
+//	   boolean existsby(int id);
 		 }
 

@@ -1,5 +1,6 @@
 package com.poly.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,8 +9,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.poly.entity.Quyen;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.entity.Vaitro;
+import com.poly.repository.QuyenJPA;
 import com.poly.repository.RoleRepository;
 import com.poly.repository.taikhoanJPA;
 
@@ -21,6 +24,9 @@ public class taiKhoanService  {
 	 private taikhoanJPA taikhoanjpa;
 	@Autowired
 	 private RoleRepository vaitro;
+	@Autowired
+	 private QuyenJPA quyenjpa;
+	
 //	@Autowired
 //	  private PasswordEncoder passwordEncoder;
     public List<TaiKhoanEntity> getAllTaiKhoans() {
@@ -35,7 +41,9 @@ public class taiKhoanService  {
     public List<TaiKhoanEntity> getAllTaiKhoanbyvaitrouser() {
         return taikhoanjpa.Findbyvaitro(1);
     }
-   
+    public Optional<TaiKhoanEntity> findById(Integer id) {
+        return taikhoanjpa.findById(id);     
+    }
     public Optional<TaiKhoanEntity> getTaiKhoanById(Integer maTK) {
         return taikhoanjpa.findById(maTK);
     }
@@ -53,7 +61,9 @@ public class taiKhoanService  {
 //    }
     public TaiKhoanEntity createTaiKhoan(TaiKhoanEntity taiKhoanEntity) {
     	
-    	TaiKhoanEntity taiEntity = new TaiKhoanEntity();    
+    	TaiKhoanEntity taiEntity = new TaiKhoanEntity();   
+    	Optional<Quyen> quyen = quyenjpa.findById(2);
+    	 
     	PasswordEncoder pas = new BCryptPasswordEncoder(10);
 	        Vaitro roles = vaitro.findById(taiKhoanEntity.getVaitro().getId()).get();
     	taiEntity.setHoTen(taiKhoanEntity.getHoTen());
@@ -61,26 +71,26 @@ public class taiKhoanService  {
     	taiEntity.setMatKhau(pas.encode(taiKhoanEntity.getMatKhau()));
     	taiEntity.setSdt(taiKhoanEntity.getSdt());
     	taiEntity.setVaitro(roles); 	
-    	taiEntity.setDiachi(taiKhoanEntity.getDiachi());   	
+//    	taiEntity.setDiachi(taiKhoanEntity.getDiachi());   	
     	taiEntity.setCmnd(taiKhoanEntity.getCmnd());
+    	
+    	taiEntity.getQuyens().add(quyen.get());
+
         return taikhoanjpa.save(taiEntity);
     }
     public TaiKhoanEntity createTaiKhoannv(TaiKhoanEntity taiKhoanEntity) {
     	TaiKhoanEntity taiEntity = new TaiKhoanEntity();
-//    	 Vaitro vaitro = new Vaitro();
+    	Optional<Quyen> quyen = quyenjpa.findById(4);
     	 PasswordenEncoder pas = (PasswordenEncoder) new BCryptPasswordEncoder(10);
-//	        vaitro.setId(2);  	 
-//	        vaitro.setName("admin");
     	  Vaitro roles = vaitro.findById(taiKhoanEntity.getVaitro().getId()).get();
     	taiEntity.setHoTen(taiKhoanEntity.getHoTen());
     	taiEntity.setEmail(taiKhoanEntity.getEmail());
     	taiEntity.setMatKhau(pas.encode(taiKhoanEntity.getMatKhau()));
     	taiEntity.setSdt(taiKhoanEntity.getSdt());
     	taiEntity.setVaitro(roles);
-    	taiEntity.setDiachi(taiKhoanEntity.getDiachi());
-    	
-//    	taiEntity.setAnh(taiKhoanEntity.getAnh());
+//    	taiEntity.setDiachi(taiKhoanEntity.getDiachi());
     	taiEntity.setCmnd(taiKhoanEntity.getCmnd());
+    	taiEntity.getQuyens().add(quyen.get());
         return taikhoanjpa.save(taiEntity);
     }
 
@@ -92,10 +102,10 @@ public class taiKhoanService  {
         	
         	tk2.setHoTen(taiKhoanEntity.getHoTen());        	   	     	
         	tk2.setSdt(taiKhoanEntity.getSdt());	
-        	tk2.setEmail(taiKhoanEntity.getEmail());
-        	tk2.setSdt(taiKhoanEntity.getDiachi());
+//        	tk2.setEmail(taiKhoanEntity.getEmail());
+        	
         	tk2.setCmnd(taiKhoanEntity.getCmnd());
-        	tk2.setDiachi(taiKhoanEntity.getCmnd());
+//        	tk2.setDiachi(taiKhoanEntity.getDiachi());
 //            taiKhoanEntity.setMaTK(maTK);
             return taikhoanjpa.save(tk2);
         }
@@ -123,8 +133,12 @@ public class taiKhoanService  {
     public TaiKhoanEntity findByEmail(String email) {
         return taikhoanjpa.FindbyEmail(email);     
     }
+   
     public boolean kiemTraEmailTonTai(String email) {
         return taikhoanjpa.existsByEmail(email);
+    }
+    public boolean kiemTraIdTonTai(int id) {
+        return taikhoanjpa.existsById(id);
     }
     public boolean kiemTraSdtTonTai(String sdt) {
         return taikhoanjpa.existsBySdt(sdt);
@@ -144,4 +158,31 @@ public class taiKhoanService  {
 //                Collections.singleton(authority)  // Trả về danh sách quyền (authorities)
 //        );
 //    }
+    public TaiKhoanEntity registerOrLoginWithGoogle(String email, String name) {
+        Optional<TaiKhoanEntity> existingUser = taikhoanjpa.FindbyEmailgg(email);
+        
+        if (existingUser.isPresent()) {
+            // Người dùng đã tồn tại, chỉ cần đăng nhập
+            return existingUser.get();
+        } else {
+            // Người dùng chưa tồn tại, đăng ký tài khoản mới
+            TaiKhoanEntity newUser = new TaiKhoanEntity();
+            newUser.setEmail(email);
+            newUser.setHoTen(name);
+
+            // Gán thêm các thông tin mặc định nếu cần
+//            newUser.setVaiTro("USER"); // Ví dụ: Vai trò mặc định là USER
+//            newUser.setTrangThai("ACTIVE"); // Ví dụ: Trạng thái tài khoản là ACTIVE
+            
+            // Lưu tài khoản mới vào cơ sở dữ liệu
+            try {
+                return taikhoanjpa.save(newUser);
+            } catch (Exception e) {
+                throw new RuntimeException("Không thể đăng ký người dùng mới", e);
+            }
+        }
+    }
+
+
+
 }

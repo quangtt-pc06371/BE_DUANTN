@@ -1,5 +1,6 @@
 package com.poly.entity;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -30,4 +31,6 @@ public class Quyen {
 	    private String name;
 //	 @ManyToMany(mappedBy = "quyens")
 //	    private Set<TaiKhoanEntity> taikhoans;
+//	 @ManyToMany(mappedBy = "quyens")
+//	    private Set<TaiKhoanEntity> users = new HashSet<>();
 }

@@ -1,159 +1,176 @@
-package com.poly.service;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.poly.DtoEntity.ShopDTO;
-import com.poly.entity.ShopEntity;
-import com.poly.entity.TaiKhoanEntity;
-import com.poly.repository.ShopRepository;
-import com.poly.repository.taikhoanJPA;
-
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-
-
-@Service
-public class ShopService {
-
-	
- 	@Autowired
-    private ShopRepository shopRepository;
- 	
- 	@Autowired
-    private taikhoanJPA taiKhoanJPA;
- 	
- 	@Autowired
-    private JavaMailSender mailSender;
- 	
- 	private final String uploadDir = "D:\\Java5\\Image";
-
-    public List<ShopEntity> getAllShop() {
-        return shopRepository.findAll();
-    }
-    public List<ShopEntity> getAllUnapprovedShops() {
-        return shopRepository.findByIsApprovedFalse();
-    }
-    public List<ShopEntity> getAllApprovedShops() {
-        return shopRepository.findByIsApproved(true);
-    }
-
-    public Optional<ShopEntity> getShopById(int id) {
-        return shopRepository.findById(id);
-    }
-
-    public ShopEntity updateShop(int id, ShopEntity shop) {
-        Optional<ShopEntity> optionalShop = shopRepository.findById(id);
-
-        if (optionalShop.isPresent()) {
-            ShopEntity shopUpdate = optionalShop.get();
-            shopUpdate.setShopName(shop.getShopName());
-            shopUpdate.setShopDescription(shop.getShopDescription());
-            shopUpdate.setShopRating(shop.getShopRating());
-            shopUpdate.setUpdateAt(LocalDateTime.now());
-            return shopRepository.save(shopUpdate);
-        } else {
-            return null;
-        }
-    }
-
-    // Đăng ký shop và lưu ảnh
-    public ShopEntity registerShop(ShopDTO shopDTO, MultipartFile shopImageFile) throws IOException {
-        ShopEntity shop = new ShopEntity();
-        shop.setShopName(shopDTO.getShopName());
-        shop.setShopDescription(shopDTO.getShopDescription());
-        shop.setCreateAt(LocalDateTime.now());
-        shop.setUpdateAt(LocalDateTime.now());
-        shop.setIsApproved(false); // Mặc định là chưa duyệt
-
-        // Tìm người dùng từ DTO
-        Optional<TaiKhoanEntity> userOptional = taiKhoanJPA.findById(shopDTO.getNguoiDung());
-        if (userOptional.isPresent()) {
-            shop.setNguoiDung(userOptional.get());
-        } else {
-            throw new RuntimeException("Người dùng không tồn tại");
-        }
-
-        // Xử lý file ảnh
-        if (shopImageFile != null && !shopImageFile.isEmpty()) {
-            String originalFileName = shopImageFile.getOriginalFilename();
-            String uniqueFileName = UUID.randomUUID() + "_" + originalFileName;
-            Path filePath = Paths.get(uploadDir, uniqueFileName);
-            Files.copy(shopImageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            shop.setShopImage(uniqueFileName);
-        } else {
-            shop.setShopImage("default-image.jpg");
-        }
-
-        return shopRepository.save(shop);
-    }
-
-    public void deleteShopById(int id) {
-        shopRepository.deleteById(id);
-    }
-
-//    // Đăng ký shop
-//    public ShopEntity registerShop(ShopDTO shopDTO) {
+//package com.poly.service;
+//
+//import java.io.IOException;
+//import java.nio.file.Files;
+//import java.nio.file.Paths;
+//import java.nio.file.StandardCopyOption;
+//import java.time.LocalDateTime;
+//import java.util.List;
+//import java.util.Optional;
+//import java.util.UUID;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.mail.javamail.JavaMailSender;
+//import org.springframework.mail.javamail.MimeMessageHelper;
+//import org.springframework.stereotype.Service;
+//import org.springframework.web.multipart.MultipartFile;
+//
+//
+//import com.poly.DtoEntity.Shopcuaquang;
+//import com.poly.entity.ShopEntity;
+//import com.poly.entity.TaiKhoanEntity;
+//import com.poly.repository.ShopRepository;
+//import com.poly.repository.taikhoanJPA;
+//
+//import jakarta.mail.MessagingException;
+//import jakarta.mail.internet.MimeMessage;
+//
+//
+//
+//@Service
+//public class ShopService {
+//
+//	@Autowired
+//	private ShopRepository shopRepository;
+//
+//	@Autowired
+//	private taikhoanJPA taiKhoanJPA;
+//
+//	@Autowired
+//	private JavaMailSender mailSender;
+//
+//	private final String uploadDir = "D:\\Java5\\Image";
+//
+//	@Autowired
+//	private FirebaseService firebaseService;
+//
+////    private final String bucketName = "duantotnghiep-940ce.appspot.com"; // Tên bucket Firebase Storage
+//
+//	public List<ShopEntity> getAllShop() {
+//		return shopRepository.findAll();
+//	}
+//
+//	public List<ShopEntity> getAllUnapprovedShops() {
+//		return shopRepository.findByIsApprovedFalse();
+//	}
+//
+//	public List<ShopEntity> getAllApprovedShops() {
+//		return shopRepository.findByIsApproved(true);
+//	}
+//
+//	public Optional<ShopEntity> getShopById(int id) {
+//		return shopRepository.findById(id);
+//	}
+//
+//	public ShopEntity updateShop(int id, ShopEntity shop, MultipartFile shopImageFile) throws IOException {
+//
+//		Optional<ShopEntity> optionalShop = shopRepository.findById(id);
+//		if (optionalShop.isPresent()) {
+//
+//			ShopEntity shopUpdate = optionalShop.get();
+//			shopUpdate.setShopName(shop.getShopName());
+//			shopUpdate.setShopDescription(shop.getShopDescription());
+//			shopUpdate.setShopRating(shop.getShopRating());
+//			shopUpdate.setUpdateAt(LocalDateTime.now());
+//			return shopRepository.save(shopUpdate);
+//		} else {
+//			return null;
+//
+//			ShopEntity existingShop = optionalShop.get();
+//
+//			// Cập nhật thông tin
+//			existingShop.setShopName(shop.getShopName());
+//			existingShop.setShopDescription(shop.getShopDescription());
+//
+//			// Cập nhật hình ảnh nếu có
+//			if (shopImageFile != null && !shopImageFile.isEmpty()) {
+//				String fileUrl = firebaseService.uploadFile(shopImageFile);
+//				existingShop.setShopImage(fileUrl);
+//			}
+//
+//			return shopRepository.save(existingShop);
+//
+//		}
+//		throw new RuntimeException("Cửa hàng không tồn tại");
+//	}
+//
+//	public ShopEntity registerShop(int iduser,Shopcuaquang shopDTO, MultipartFile shopImageFile) throws IOException {
+//        // Kiểm tra người dùng đã có cửa hàng chưa
+//      
+//
+//        // Tạo mới ShopEntity
+//
 //        ShopEntity shop = new ShopEntity();
 //        shop.setShopName(shopDTO.getShopName());
 //        shop.setShopDescription(shopDTO.getShopDescription());
 //        shop.setCreateAt(LocalDateTime.now());
 //        shop.setUpdateAt(LocalDateTime.now());
-//        shop.setIsApproved(false); // Mặc định là chưa duyệt
+//        shop.setIsApproved(false);
 //
-//        // Tìm người dùng từ DTO
-//        Optional<TaiKhoanEntity> userOptional = taiKhoanJPA.findById(shopDTO.getNguoiDung());
-//        if (userOptional.isPresent()) {
-//            shop.setNguoiDung(userOptional.get());
+//        // Lấy thông tin người dùng từ bảng TaiKhoanEntity qua idShop
+//        TaiKhoanEntity user = taiKhoanJPA.findById(iduser)
+//                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+////        shop.setNguoiDung(user);
+//
+//        // Upload ảnh nếu có
+//        if (shopImageFile != null && !shopImageFile.isEmpty()) {
+//            String fileUrl = firebaseService.uploadFile(shopImageFile);
+//            shop.setShopImage(fileUrl);
 //        } else {
-//            throw new RuntimeException("Người dùng không tồn tại");
+//            shop.setShopImage("default-image.jpg");
+//        }
+//
+//
+//        // Xử lý file ảnh
+//        if (shopImageFile != null && !shopImageFile.isEmpty()) {
+//            String originalFileName = shopImageFile.getOriginalFilename();
+//            String uniqueFileName = UUID.randomUUID() + "_" + originalFileName;
+//            Path filePath = Paths.get(uploadDir, uniqueFileName);
+//            Files.copy(shopImageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+//            shop.setShopImage(uniqueFileName);
+//        } else {
+//            shop.setShopImage("default-image.jpg");
 //        }
 //
 //        return shopRepository.save(shop);
 //    }
-    // Duyệt shop và gửi mail
-    public ShopEntity approveShop(int shopId) {
-        Optional<ShopEntity> optionalShop = shopRepository.findById(shopId);
-        if (optionalShop.isPresent()) {
-            ShopEntity shop = optionalShop.get();
-            shop.setIsApproved(true);
-            shop.setUpdateAt(LocalDateTime.now());
-            shopRepository.save(shop);
-
-            // Gửi mail thông báo sau khi duyệt
-            sendApprovalEmail(shop.getNguoiDung().getEmail(), shop.getShopName());
-            return shop;
-        } else {
-            throw new RuntimeException("Cửa hàng không tồn tại");
-        }
-    }
-    // Phương thức gửi email thông báo
-    private void sendApprovalEmail(String userEmail, String shopName) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(userEmail);
-            helper.setSubject("Thông báo duyệt cửa hàng");
-            helper.setText("Xin chúc mừng, cửa hàng '" + shopName + "' của bạn đã được duyệt thành công!", true);
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Không thể gửi email");
-        }
-    }
-
-
-}
+//
+//
+//
+//	public void deleteShopById(int id) {
+//        shopRepository.deleteById(id);
+//    }
+//
+//	// Duyệt shop và gửi mail
+//	public ShopEntity approveShop(int shopId, String gmailuser) {
+//
+//        Optional<ShopEntity> optionalShop = shopRepository.findById(shopId);
+//        if (optionalShop.isPresent()) {
+//            ShopEntity shop = optionalShop.get();
+//            shop.setIsApproved(true);
+//            shop.setUpdateAt(LocalDateTime.now());
+//            shopRepository.save(shop);
+//
+//            // Gửi mail thông báo sau khi duyệt
+//            sendApprovalEmail(gmailuser, shop.getShopName());
+//            return shop;
+//        } else {
+//            throw new RuntimeException("Cửa hàng không tồn tại");
+//        }
+//    }
+//
+//	// Phương thức gửi email thông báo
+//	private void sendApprovalEmail(String userEmail, String shopName) {
+//        try {
+//            MimeMessage message = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+//            helper.setTo(userEmail);
+//            helper.setSubject("Thông báo duyệt cửa hàng");
+//            helper.setText("Xin chúc mừng, cửa hàng '" + shopName + "' của bạn đã được duyệt thành công!", true);
+//            mailSender.send(message);
+//        } catch (MessagingException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Không thể gửi email");
+//        }
+//    }
+//}
