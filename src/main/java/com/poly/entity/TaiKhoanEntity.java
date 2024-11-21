@@ -64,9 +64,12 @@ public class TaiKhoanEntity implements Serializable {
 //   
     @Column(name = "ANH")
     private String anh;
+    @Column(name = "TRANGTHAI")
+    private boolean trangthai= true;
     @ManyToOne
     @JoinColumn(name = "Vaitro")
     private Vaitro vaitro ;
+    
     @OneToOne
     @JoinColumn(name = "SHOP")
     private ShopEntity shop ;

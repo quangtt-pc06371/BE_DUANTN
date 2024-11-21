@@ -39,7 +39,7 @@ public class taiKhoanService  {
         return taikhoanjpa.Findbyvaitro(3);
     }
     public List<TaiKhoanEntity> getAllTaiKhoanbyvaitrouser() {
-        return taikhoanjpa.Findbyvaitro(1);
+        return taikhoanjpa.Findbyvaitro(2);
     }
     public Optional<TaiKhoanEntity> findById(Integer id) {
         return taikhoanjpa.findById(id);     
@@ -73,7 +73,7 @@ public class taiKhoanService  {
     	taiEntity.setVaitro(roles); 	
 //    	taiEntity.setDiachi(taiKhoanEntity.getDiachi());   	
     	taiEntity.setCmnd(taiKhoanEntity.getCmnd());
-    	
+    	taiEntity.setTrangthai(true);
     	taiEntity.getQuyens().add(quyen.get());
 
         return taikhoanjpa.save(taiEntity);
