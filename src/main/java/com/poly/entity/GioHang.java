@@ -2,6 +2,8 @@ package com.poly.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,5 +38,6 @@ public class GioHang {
 	private TaiKhoanEntity idNguoiDung; // ID_NGUOIDUNG
 
 	@OneToMany(mappedBy = "gioHang")
+	@JsonBackReference
 	private List<ChiTietGioHang> chiTietGioHangList; // Danh sách chi tiết giỏ hàng
 }

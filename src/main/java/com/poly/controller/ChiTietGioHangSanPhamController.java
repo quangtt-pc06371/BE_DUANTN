@@ -35,8 +35,8 @@ public class ChiTietGioHangSanPhamController {
 	private taikhoanJPA taikhoanjpa;
 
 	@Autowired
-	private  taiKhoanService taikhoansevice;
-	
+	private taiKhoanService taikhoansevice;
+
 	@Autowired
 	private GioHangReponsitory gioHangReponsitory;
 
@@ -63,36 +63,37 @@ public class ChiTietGioHangSanPhamController {
 
 	@PostMapping
 	public ResponseEntity<?> addChiTietGioHang(@RequestBody ChiTietGioHang chiTietGioHang, HttpServletRequest request) {
-	   
-	        String token = request.getHeader("Authorization");
-	      
-	        // Trích xuất ID người dùng từ token
-	        int idNguoiDung = jwtsevice2.getIdFromToken(token);
 
-	        // Kiểm tra xem người dùng đã có giỏ hàng chưa
-	        GioHang gioHang = gioHangReponsitory.findByIdNguoiDung(idNguoiDung);
-	        
-	   	 Optional<TaiKhoanEntity> taikhoan = taikhoansevice.findById(idNguoiDung);
-		 TaiKhoanEntity taiKhoanEntity = taikhoan.get();
-	        // Nếu chưa có giỏ hàng, tạo giỏ hàng mới
-	        if (gioHang == null) {
-	            gioHang = new GioHang();
-	            gioHang.setIdNguoiDung(taiKhoanEntity);
-	            gioHang.setTongTien(0.0); 
+		String token = request.getHeader("Authorization");
 
-	            // Lưu giỏ hàng mới
-	            gioHang = gioHangReponsitory.save(gioHang);
-	        }
+		// Trích xuất ID người dùng từ token
+		int idNguoiDung = jwtsevice2.getIdFromToken(token);
 
-	        // Gắn giỏ hàng vào chi tiết giỏ hàng
-	        chiTietGioHang.setGioHang(gioHang);
+		// Kiểm tra xem người dùng đã có giỏ hàng chưa
+		GioHang gioHang = gioHangReponsitory.findByIdNguoiDung(idNguoiDung);
 
-	        // Lưu chi tiết giỏ hàng
-	        ChiTietGioHang savedChiTiet = chiTietGioHangService.createChiTietGioHang(chiTietGioHang);
+		Optional<TaiKhoanEntity> taikhoan = taikhoansevice.findById(idNguoiDung);
+		
+		TaiKhoanEntity taiKhoanEntity = taikhoan.get();
+		
+		
+		// Nếu chưa có giỏ hàng, tạo giỏ hàng mới
+		if (gioHang == null) {
+			gioHang = new GioHang();
+			gioHang.setIdNguoiDung(taiKhoanEntity);
+			gioHang.setTongTien(0.0);
+			// Lưu giỏ hàng mới
+			gioHang = gioHangReponsitory.save(gioHang);
+		}
 
-	        return ResponseEntity.ok(savedChiTiet);
+		// Gắn giỏ hàng vào chi tiết giỏ hàng
+		chiTietGioHang.setGioHang(gioHang);
+
+		// Lưu chi tiết giỏ hàng
+		ChiTietGioHang savedChiTiet = chiTietGioHangService.createChiTietGioHang(chiTietGioHang);
+
+		return ResponseEntity.ok(savedChiTiet);
 
 	}
-
 
 }

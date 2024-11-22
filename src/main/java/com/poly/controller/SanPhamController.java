@@ -18,152 +18,204 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.poly.entity.DanhMucEntity;
 import com.poly.entity.HinhAnhEntity;
 import com.poly.entity.SanPhamEntity;
+import com.poly.entity.ShopEntity;
 import com.poly.entity.SkuEntity;
+import com.poly.repository.GioHangReponsitory;
 import com.poly.repository.HinhAnhJPA;
+import com.poly.repository.ShopRepository;
 import com.poly.repository.SkuJPA;
 import com.poly.service.FirebaseService;
+import com.poly.service.JwtSevice2;
 import com.poly.service.SanPhamService;
+import com.poly.service.taiKhoanService;
 
-
+import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/sanpham")
 public class SanPhamController {
 
-    @Autowired
-    private SanPhamService sanPhamService;
-    @Autowired
-    private FirebaseService firebaseService;
-  
+	@Autowired
+	private JwtSevice2 jwtsevice2;
+
+	@Autowired
+	private SanPhamService sanPhamService;
+
+	@Autowired
+	private FirebaseService firebaseService;
+
+	@Autowired
+	private taiKhoanService taikhoansevice;
 	@Autowired
 	private HinhAnhJPA hinhAnhRepository;
 	@Autowired
 	private SkuJPA skuRepository;
-	
-    @GetMapping
-    public List<SanPhamEntity> getAllSanPhams() {
-        return sanPhamService.getAllSanPhams();
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<SanPhamEntity> getSanPhamById(@PathVariable int id) {
-        Optional<SanPhamEntity> optionalSanPham = sanPhamService.getSanPhamById(id);
 
-        if (optionalSanPham.isPresent()) {
-            return ResponseEntity.ok(optionalSanPham.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	@Autowired
+	private GioHangReponsitory gioHangReponsitory;
 
-    @PutMapping("/updatetrangthai/{id}")
-    public ResponseEntity<SanPhamEntity> updateTrangThaiSanPham(@PathVariable int id) {
-        Optional<SanPhamEntity> optionalSanPham = sanPhamService.getSanPhamById(id);
+	@Autowired
+	private ShopRepository shopRepository;
 
-        if (optionalSanPham.isPresent()) {
-            SanPhamEntity sanPhamTimThay = optionalSanPham.get();
-            sanPhamTimThay.setTrangThai(false);
-            sanPhamService.saveSanPham(sanPhamTimThay);
-            return ResponseEntity.ok(sanPhamTimThay);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	@GetMapping
+	public List<SanPhamEntity> getAllSanPhams() {
+		return sanPhamService.getAllSanPhams();
+	}
 
-    
-    @PostMapping
-    public SanPhamEntity createSanPham(@RequestBody SanPhamEntity sanPham) {
-        return sanPhamService.saveSanPham(sanPham);
-    }
-    @PostMapping("/upload/{idSku}")
-    public ResponseEntity<?> createAnh(@PathVariable int idSku, @RequestParam("file") MultipartFile[] files) throws IOException {
-        Optional<SkuEntity> optionalSku = skuRepository.findById(idSku);
-        
-        if (optionalSku.isPresent()) {
-            SkuEntity savedSku = optionalSku.get();
-            
-            if (files != null && files.length > 0) {
-                for (MultipartFile file : files) {
-                    String imageUrl = firebaseService.uploadFile(file);
+	@GetMapping("/{id}")
+	public ResponseEntity<SanPhamEntity> getSanPhamById(@PathVariable int id) {
+		Optional<SanPhamEntity> optionalSanPham = sanPhamService.getSanPhamById(id);
 
-                    // Tạo đối tượng HinhAnhEntity và lưu URL vào cơ sở dữ liệu
-                    HinhAnhEntity hinhAnh = new HinhAnhEntity();
-                    hinhAnh.setSku(savedSku);
-                    hinhAnh.setTenAnh(imageUrl); // URL từ Firebase
-                    hinhAnhRepository.save(hinhAnh);
-                }
-                return ResponseEntity.ok("Upload ảnh thành công");
-            } else {
-                return ResponseEntity.badRequest().body("File không được bỏ trống");
-            }
-        } else {
-            return ResponseEntity.status(404).body("Không tìm thấy SKU với ID: " + idSku);
-        }
-    }
-    @PutMapping("/update/{idSku}/{idAnh}")
-    public ResponseEntity<?> updateAnh(@PathVariable int idSku, @RequestParam("file") MultipartFile[] files, @PathVariable int idAnh) throws IOException {
-        Optional<SkuEntity> optionalSku = skuRepository.findById(idSku);
-        
-        if (optionalSku.isPresent()) {
-            SkuEntity savedSku = optionalSku.get();
-            
-            if (files != null && files.length > 0) {
-                Optional<HinhAnhEntity> optionalHinhAnh = hinhAnhRepository.findById(idAnh);
-                if (optionalHinhAnh.isPresent()) {
-                    HinhAnhEntity updateHinhAnh = optionalHinhAnh.get();
+		if (optionalSanPham.isPresent()) {
+			return ResponseEntity.ok(optionalSanPham.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
-                    // Chỉ cập nhật ảnh đầu tiên nếu có nhiều file
-                    MultipartFile file = files[0];
-                    String imageUrl = firebaseService.uploadFile(file);
+	@PutMapping("/updatetrangthai/{id}")
+	public ResponseEntity<SanPhamEntity> updateTrangThaiSanPham(@PathVariable int id) {
+		Optional<SanPhamEntity> optionalSanPham = sanPhamService.getSanPhamById(id);
 
-                    // Cập nhật URL mới cho ảnh
-                    updateHinhAnh.setTenAnh(imageUrl);
-                    hinhAnhRepository.save(updateHinhAnh);
+		if (optionalSanPham.isPresent()) {
+			SanPhamEntity sanPhamTimThay = optionalSanPham.get();
+			sanPhamTimThay.setTrangThai(false);
+			sanPhamService.saveSanPham(sanPhamTimThay);
+			return ResponseEntity.ok(sanPhamTimThay);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
-                    return ResponseEntity.ok("Cập nhật ảnh thành công");
-                } else {
-                    return ResponseEntity.status(404).body("Không tìm thấy ảnh với ID: " + idAnh);
-                }
-            } else {
-                return ResponseEntity.badRequest().body("File không được bỏ trống");
-            }
-        } else {
-            return ResponseEntity.status(404).body("Không tìm thấy SKU với ID: " + idSku);
-        }
-    }
+	@PostMapping
+	public SanPhamEntity createSanPham(@RequestBody SanPhamEntity sanPham, HttpServletRequest request) {
+		String token = request.getHeader("Authorization");
 
+		// Trích xuất ID người dùng từ token
+		int idNguoiDung = jwtsevice2.getIdFromToken(token);
 
- 
-    
-    @PutMapping("/{id}")
-    public ResponseEntity<SanPhamEntity> updateSanPham(@PathVariable int id, @RequestBody SanPhamEntity sanPhamDetails) {
-        SanPhamEntity updatedSanPham = sanPhamService.updateSanPham(id, sanPhamDetails);
+//		// Kiểm tra xem người dùng đã có giỏ hàng chưa
+		ShopEntity shop = shopRepository.findShopByNguoiDungId(idNguoiDung);
 
-        if (updatedSanPham != null) {
-            return ResponseEntity.ok(updatedSanPham);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+		sanPham.setShop(shop);
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSanPham(@PathVariable int id) {
-        sanPhamService.deleteSanPhamById(id);
-        return ResponseEntity.noContent().build();
-    }
-    
-    @GetMapping("/danhmuc/{idDanhMuc}")
-    public ResponseEntity<List<SanPhamEntity>> getSanPhamByDanhMuc(@PathVariable int idDanhMuc) {
-        List<SanPhamEntity> sanPhams = sanPhamService.getSanPhamByDanhMuc(idDanhMuc);
-        return ResponseEntity.ok(sanPhams);
-    }
-    @GetMapping("/timkiem")
-    public ResponseEntity<List<SanPhamEntity>> timKiemSanPhamTheoTen(@RequestParam("ten") String ten) {
-        List<SanPhamEntity> sanPhams = sanPhamService.timKiemSanPhamTheoTen(ten);
-        return ResponseEntity.ok(sanPhams);
-    }
+		return sanPhamService.saveSanPham(sanPham);
+	}
 
+	@PostMapping("/upload/{idSku}")
+	public ResponseEntity<?> createAnh(@PathVariable int idSku, @RequestParam("file") MultipartFile[] files)
+			throws IOException {
+		Optional<SkuEntity> optionalSku = skuRepository.findById(idSku);
+
+		if (optionalSku.isPresent()) {
+			SkuEntity savedSku = optionalSku.get();
+
+			if (files != null && files.length > 0) {
+				for (MultipartFile file : files) {
+					String imageUrl = firebaseService.uploadFile(file);
+
+					// Tạo đối tượng HinhAnhEntity và lưu URL vào cơ sở dữ liệu
+					HinhAnhEntity hinhAnh = new HinhAnhEntity();
+					hinhAnh.setSku(savedSku);
+					hinhAnh.setTenAnh(imageUrl); // URL từ Firebase
+					hinhAnhRepository.save(hinhAnh);
+				}
+				return ResponseEntity.ok("Upload ảnh thành công");
+			} else {
+				return ResponseEntity.badRequest().body("File không được bỏ trống");
+			}
+		} else {
+			return ResponseEntity.status(404).body("Không tìm thấy SKU với ID: " + idSku);
+		}
+	}
+
+	@PutMapping("/update/{idSku}/{idAnh}")
+	public ResponseEntity<?> updateAnh(@PathVariable int idSku, @RequestParam("file") MultipartFile[] files,
+			@PathVariable int idAnh) throws IOException {
+		Optional<SkuEntity> optionalSku = skuRepository.findById(idSku);
+
+		if (optionalSku.isPresent()) {
+			SkuEntity savedSku = optionalSku.get();
+
+			if (files != null && files.length > 0) {
+				Optional<HinhAnhEntity> optionalHinhAnh = hinhAnhRepository.findById(idAnh);
+				if (optionalHinhAnh.isPresent()) {
+					HinhAnhEntity updateHinhAnh = optionalHinhAnh.get();
+
+					// Chỉ cập nhật ảnh đầu tiên nếu có nhiều file
+					MultipartFile file = files[0];
+					String imageUrl = firebaseService.uploadFile(file);
+
+					// Cập nhật URL mới cho ảnh
+					updateHinhAnh.setTenAnh(imageUrl);
+					hinhAnhRepository.save(updateHinhAnh);
+
+					return ResponseEntity.ok("Cập nhật ảnh thành công");
+				} else {
+					return ResponseEntity.status(404).body("Không tìm thấy ảnh với ID: " + idAnh);
+				}
+			} else {
+				return ResponseEntity.badRequest().body("File không được bỏ trống");
+			}
+		} else {
+			return ResponseEntity.status(404).body("Không tìm thấy SKU với ID: " + idSku);
+		}
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<SanPhamEntity> updateSanPham(@PathVariable int id,
+			@RequestBody SanPhamEntity sanPhamDetails) {
+		SanPhamEntity updatedSanPham = sanPhamService.updateSanPham(id, sanPhamDetails);
+
+		if (updatedSanPham != null) {
+			return ResponseEntity.ok(updatedSanPham);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteSanPham(@PathVariable int id) {
+		sanPhamService.deleteSanPhamById(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/danhmuc/{idDanhMuc}")
+	public ResponseEntity<List<SanPhamEntity>> getSanPhamByDanhMuc(@PathVariable int idDanhMuc) {
+		List<SanPhamEntity> sanPhams = sanPhamService.getSanPhamByDanhMuc(idDanhMuc);
+		return ResponseEntity.ok(sanPhams);
+	}
+
+	@GetMapping("/timkiem")
+	public ResponseEntity<List<SanPhamEntity>> timKiemSanPhamTheoTen(@RequestParam("ten") String ten) {
+		List<SanPhamEntity> sanPhams = sanPhamService.timKiemSanPhamTheoTen(ten);
+		return ResponseEntity.ok(sanPhams);
+	}
+
+	@GetMapping("/shop/{id}")
+	public ResponseEntity<List<SanPhamEntity>> getSanPhamByShop(@PathVariable int id) {
+		List<SanPhamEntity> sanPhams = sanPhamService.getSanPhamByShop(id);
+		return ResponseEntity.ok(sanPhams);
+	}
+
+	@GetMapping("/shop/{idShop}/danhmuc/{idDanhMuc}")
+	public ResponseEntity<List<SanPhamEntity>> getSanPhamByShopAndDanhMuc(@PathVariable int idShop,
+			@PathVariable int idDanhMuc) {
+
+		List<SanPhamEntity> sanPhamList = sanPhamService.getSanPhamByShopAndDanhMuc(idShop, idDanhMuc);
+
+		if (sanPhamList.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(sanPhamList);
+	}
+	 @GetMapping("/shop/{idShop}/danhmuc")
+	    public ResponseEntity<List<DanhMucEntity>> getCategoriesByShopId(@PathVariable int idShop) {
+	        List<DanhMucEntity> categories = sanPhamService.findCategoriesByShopId(idShop);
+	        return ResponseEntity.ok(categories);
+	    }
 }

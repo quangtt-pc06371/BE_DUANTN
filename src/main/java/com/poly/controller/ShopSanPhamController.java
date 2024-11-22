@@ -46,11 +46,7 @@ public class ShopSanPhamController {
 		return shopService.saveShop(shop);
 	}
 
-	@GetMapping("/shop/{id}")
-	public ResponseEntity<List<SanPhamEntity>> getSanPhamByShop(@PathVariable int id) {
-		List<SanPhamEntity> sanPhams = shopService.getSanPhamByShop(id);
-		return ResponseEntity.ok(sanPhams);
-	}
+
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteShop(@PathVariable int id) {

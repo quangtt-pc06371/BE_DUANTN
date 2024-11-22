@@ -2,11 +2,13 @@ package com.poly.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.poly.entity.DanhMucEntity;
 import com.poly.entity.HinhAnhEntity;
 import com.poly.entity.SanPhamEntity;
 import com.poly.entity.SkuEntity;
@@ -18,8 +20,6 @@ import com.poly.repository.SkuJPA;
 import com.poly.repository.ThuocTinhJPA;
 import com.poly.repository.TuyChonThuocTinhJPA;
 import com.poly.repository.TuyChonThuocTinhSkuJPA;
-
-
 
 @Service
 public class SanPhamService {
@@ -41,7 +41,7 @@ public class SanPhamService {
 
 	@Autowired
 	private TuyChonThuocTinhSkuJPA tuyChonThuocTinhSkuRepository;
-	 
+
 //	@Autowired
 //	private PhieuNhapJPA phieuNhapRepository;
 
@@ -54,7 +54,7 @@ public class SanPhamService {
 	}
 
 	@Transactional
-	public SanPhamEntity saveSanPham(SanPhamEntity sanPham)  {
+	public SanPhamEntity saveSanPham(SanPhamEntity sanPham) {
 		SanPhamEntity savedSanPham = sanPhamRepository.save(sanPham);
 
 		if (sanPham.getSkus() != null) {
@@ -87,7 +87,7 @@ public class SanPhamService {
 						hinhAnhRepository.save(hinhAnh);
 					}
 				}
-				
+
 //				if (files != null && !files.isEmpty()) {
 //					for (MultipartFile file : files) {
 //						String imageUrl = firebaseService.uploadFile(file);
@@ -207,8 +207,25 @@ public class SanPhamService {
 	public List<SanPhamEntity> getSanPhamByDanhMuc(int idDanhMuc) {
 		return sanPhamRepository.findByDanhMuc_IdDanhMuc(idDanhMuc);
 	}
+
 	public List<SanPhamEntity> timKiemSanPhamTheoTen(String ten) {
-	    return sanPhamRepository.findByTenSanPhamContaining(ten);
+		return sanPhamRepository.findByTenSanPhamContaining(ten);
 	}
 
+	public List<SanPhamEntity> getSanPhamByShop(int id) {
+		return sanPhamRepository.findByShop_id(id);
+	}
+
+	public List<SanPhamEntity> getSanPhamByShopAndDanhMuc(int idShop, int idDanhMuc) {
+		return sanPhamRepository.findByShopIdAndDanhMuc_IdDanhMuc(idShop, idDanhMuc);
+	}
+	public List<DanhMucEntity> findCategoriesByShopId(int idShop) {
+        List<SanPhamEntity> products = sanPhamRepository.findByShopId(idShop);
+
+        // Lọc ra các danh mục không trùng lặp
+        return products.stream()
+                .map(SanPhamEntity::getDanhMuc)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }

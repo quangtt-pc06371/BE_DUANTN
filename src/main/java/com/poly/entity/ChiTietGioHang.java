@@ -1,6 +1,8 @@
 package com.poly.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,7 +41,7 @@ public class ChiTietGioHang {
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_CART", referencedColumnName = "ID_CART", nullable = false)
-	@JsonBackReference
+	@JsonIgnoreProperties(value= "chiTietGioHangList")
 	private GioHang gioHang;
 	
 	@ManyToOne

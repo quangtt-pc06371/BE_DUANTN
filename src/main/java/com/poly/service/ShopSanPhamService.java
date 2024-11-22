@@ -36,9 +36,7 @@ public class ShopSanPhamService {
 	    public void deleteShopById(int id) {
 	        shopRepository.deleteById(id);
 	    }
-	    public List<SanPhamEntity> getSanPhamByShop(int id) {
-			return sanPhamJPA.findByShop_id(id);
-		}
+	  
 	    public ShopEntity getShopByNguoiDungId(Integer idNguoiDung) {
 	        return shopRepository.findShopByNguoiDungId(idNguoiDung);
 	    }

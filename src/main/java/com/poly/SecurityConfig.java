@@ -62,12 +62,16 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
 //                .requestMatchers(HttpMethod.POST, "/api/taikhoan/upload/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/danhmuc/**").permitAll()
-               
                 .requestMatchers(HttpMethod.POST, "/api/shops/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/taikhoan/upload/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/shop**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/sanpham**").permitAll()
 //                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 // Restrict POST requests to /api/taikhoan/** to users with ROLE_Create
                 .requestMatchers(HttpMethod.POST, "/api/taikhoan/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/sanpham").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/taikhoan/**").permitAll()
                 // Allow all requests to /api/auth/**
                 .requestMatchers("/api/auth/**").permitAll()

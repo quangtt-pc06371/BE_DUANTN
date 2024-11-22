@@ -16,16 +16,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.entity.KhuyenMaiEntity;
+import com.poly.entity.ShopEntity;
+import com.poly.repository.ShopRepository;
+import com.poly.service.JwtSevice2;
 import com.poly.service.KhuyenMaiService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/khuyenmai")
 public class KhuyenMaiController {
-
+	@Autowired
+	private JwtSevice2 jwtsevice2;
     @Autowired
     private KhuyenMaiService khuyenMaiService;
 
+	@Autowired
+	private ShopRepository shopRepository;
     @GetMapping
     public List<KhuyenMaiEntity> getAllKhuyenMai() {
         return khuyenMaiService.getAllKhuyenMai();
@@ -43,7 +51,16 @@ public class KhuyenMaiController {
     }
 
     @PostMapping
-    public KhuyenMaiEntity createKhuyenMai(@RequestBody KhuyenMaiEntity khuyenMai) {
+    public KhuyenMaiEntity createKhuyenMai(@RequestBody KhuyenMaiEntity khuyenMai,HttpServletRequest request) {
+		String token = request.getHeader("Authorization");
+
+		// Trích xuất ID người dùng từ token
+		int idNguoiDung = jwtsevice2.getIdFromToken(token);
+
+//		// Kiểm tra xem người dùng đã có giỏ hàng chưa
+		ShopEntity shop = shopRepository.findShopByNguoiDungId(idNguoiDung);
+		
+		khuyenMai.setShop(shop);
         return khuyenMaiService.saveKhuyenMai(khuyenMai);
     }
 
