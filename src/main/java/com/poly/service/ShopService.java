@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,14 +11,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
-import com.google.firebase.cloud.StorageClient;
-import com.poly.DtoEntity.ShopDTO;
 import com.poly.DtoEntity.Shopcuaquang;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
@@ -131,8 +122,21 @@ public class ShopService {
     }
 
 
-    public void deleteShopById(int id) {
-        shopRepository.deleteById(id);
+//    public void deactivateShopById(int id) {
+//        Optional<ShopEntity> optionalShop = shopRepository.findById(id);
+//        if (optionalShop.isPresent()) {
+//            ShopEntity shop = optionalShop.get();
+//            shop.setIsActive(false);
+//            shopRepository.save(shop);
+//        } else {
+//            throw new RuntimeException("Cửa hàng không tồn tại");
+//        }
+//    }
+    public ShopEntity toggleShopStatus(int id) {
+        ShopEntity shop = shopRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Shop không tồn tại"));
+        shop.setIsActive(!shop.getIsActive());
+        return shopRepository.save(shop);
     }
 
     // Duyệt shop và gửi mail

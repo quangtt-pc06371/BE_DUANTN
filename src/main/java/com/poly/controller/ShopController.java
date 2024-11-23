@@ -86,13 +86,22 @@ public class ShopController {
 //        return updatedShop != null ? ResponseEntity.ok(updatedShop) : ResponseEntity.notFound().build();
 //    }
 
-    // Xóa shop
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteShop(@PathVariable int id) {
-        shopService.deleteShopById(id);
-        return ResponseEntity.noContent().build();
+//    // Xóa shop
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> deactivateShop(@PathVariable int id) {
+//        try {
+//            shopService.deactivateShopById(id);
+//            return ResponseEntity.noContent().build();
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//    }
+    @PutMapping("/{id}/toggle")
+    public ResponseEntity<ShopEntity> toggleShopStatus(@PathVariable int id) {
+        ShopEntity shop = shopService.toggleShopStatus(id);
+        return shop != null ? ResponseEntity.ok(shop) : ResponseEntity.notFound().build();
     }
-
+    
     // Lấy danh sách shop chưa duyệt
     @GetMapping("/unapproved")
     public ResponseEntity<List<ShopEntity>> getUnapprovedShops() {
