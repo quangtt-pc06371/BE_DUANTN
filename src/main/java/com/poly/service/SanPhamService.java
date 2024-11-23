@@ -81,24 +81,11 @@ public class SanPhamService {
 					}
 				}
 
-				if (sku.getHinhanhs() != null) {
-					for (HinhAnhEntity hinhAnh : sku.getHinhanhs()) {
-						hinhAnh.setSku(savedSku);
-						hinhAnhRepository.save(hinhAnh);
-					}
-				}
-
-//				if (files != null && !files.isEmpty()) {
-//					for (MultipartFile file : files) {
-//						String imageUrl = firebaseService.uploadFile(file);
-//
-//						// Tạo đối tượng HinhAnhEntity và lưu URL vào cơ sở dữ liệu
-//						HinhAnhEntity hinhAnh = new HinhAnhEntity();
-//						hinhAnh.setSku(savedSku);
-//						hinhAnh.setTenAnh(imageUrl); // URL từ Firebase
-//						hinhAnhRepository.save(hinhAnh);
-//					}
-//				}
+				if (sku.getHinhanh() != null) {
+	                HinhAnhEntity hinhAnh = sku.getHinhanh();
+	                hinhAnh.setSku(savedSku);  // Liên kết hình ảnh với SKU
+	                hinhAnhRepository.save(hinhAnh);
+	            }
 			}
 		}
 
@@ -147,20 +134,21 @@ public class SanPhamService {
 					}
 
 					// Cập nhật hoặc thêm mới các hình ảnh của SKU
-					if (newSku.getHinhanhs() != null) {
-						for (HinhAnhEntity newHinhAnh : newSku.getHinhanhs()) {
-							HinhAnhEntity existingHinhAnh = hinhAnhRepository.findById(newHinhAnh.getIdHinhAnh())
-									.orElse(null);
-							if (existingHinhAnh != null) {
-								existingHinhAnh.setTenAnh(newHinhAnh.getTenAnh());
-								hinhAnhRepository.save(existingHinhAnh);
-							}
-//							else {
-//								newHinhAnh.setSku(existingSku);
-//								hinhAnhRepository.save(newHinhAnh);
-//							}
-						}
-					}
+					 if (newSku.getHinhanh() != null) {
+		                    HinhAnhEntity newHinhAnh = newSku.getHinhanh(); // Vì chỉ có 1 hình ảnh
+		                    if (newHinhAnh != null) {
+		                        HinhAnhEntity existingHinhAnh = hinhAnhRepository.findById(newHinhAnh.getIdHinhAnh())
+		                                .orElse(null);
+
+		                        if (existingHinhAnh != null) {
+		                            existingHinhAnh.setTenAnh(newHinhAnh.getTenAnh());
+		                            hinhAnhRepository.save(existingHinhAnh);
+		                        } else {
+		                            newHinhAnh.setSku(existingSku); // Liên kết với SKU
+		                            hinhAnhRepository.save(newHinhAnh);
+		                        }
+		                    }
+		                }
 
 					skuRepository.save(existingSku);
 				} else {
@@ -195,7 +183,7 @@ public class SanPhamService {
 				tuyChonThuocTinhSkuRepository.deleteAll(sku.getTuyChonThuocTinhSkus());
 
 				// Xóa tất cả hình ảnh liên quan đến SKU
-				hinhAnhRepository.deleteAll(sku.getHinhanhs());
+//				hinhAnhRepository.deleteAll(sku.getHinhanhs());
 			}
 			// Xóa tất cả các SKU của sản phẩm
 			skuRepository.deleteAll(existingSanPham.getSkus());
@@ -219,13 +207,11 @@ public class SanPhamService {
 	public List<SanPhamEntity> getSanPhamByShopAndDanhMuc(int idShop, int idDanhMuc) {
 		return sanPhamRepository.findByShopIdAndDanhMuc_IdDanhMuc(idShop, idDanhMuc);
 	}
-	public List<DanhMucEntity> findCategoriesByShopId(int idShop) {
-        List<SanPhamEntity> products = sanPhamRepository.findByShopId(idShop);
 
-        // Lọc ra các danh mục không trùng lặp
-        return products.stream()
-                .map(SanPhamEntity::getDanhMuc)
-                .distinct()
-                .collect(Collectors.toList());
-    }
+	public List<DanhMucEntity> findCategoriesByShopId(int idShop) {
+		List<SanPhamEntity> products = sanPhamRepository.findByShopId(idShop);
+
+		// Lọc ra các danh mục không trùng lặp
+		return products.stream().map(SanPhamEntity::getDanhMuc).distinct().collect(Collectors.toList());
+	}
 }

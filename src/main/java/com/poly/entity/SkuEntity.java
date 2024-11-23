@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,9 +48,9 @@ public class SkuEntity implements Serializable {
     @JsonManagedReference
     private List<TuyChonThuocTinhSkuEntity> tuyChonThuocTinhSkus;
 
-    @OneToMany(mappedBy = "sku")
+    @OneToOne(mappedBy = "sku") // Liên kết One-to-One với HinhAnhEntity
     @JsonManagedReference
-    private List<HinhAnhEntity> hinhanhs;
+    private HinhAnhEntity hinhanh;
     
 //    @OneToMany(mappedBy = "sku")
 //    @JsonBackReference

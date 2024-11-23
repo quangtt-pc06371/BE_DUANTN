@@ -27,8 +27,8 @@ public class HinhAnhEntity implements Serializable {
     @Column(name = "TENANH")
     private String tenAnh;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_SKU")
+    @OneToOne
+    @JoinColumn(name = "ID_SKU", unique = true) // Đảm bảo mỗi SKU chỉ có một ảnh
     @JsonBackReference
     private SkuEntity sku;
 }

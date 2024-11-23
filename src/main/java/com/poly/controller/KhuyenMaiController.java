@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.entity.KhuyenMaiEntity;
+import com.poly.entity.SanPhamEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.repository.ShopRepository;
 import com.poly.service.JwtSevice2;
@@ -80,4 +81,11 @@ public class KhuyenMaiController {
         khuyenMaiService.deleteKhuyenMaiById(id);
         return ResponseEntity.noContent().build();
     }
+    
+	@GetMapping("/shop/{id}")
+	public ResponseEntity<List<KhuyenMaiEntity>> getKhuyenMaiByShop(@PathVariable int id) {
+		List<KhuyenMaiEntity> khuyenmais = khuyenMaiService.getKhuyenMaiByShop(id);
+		return ResponseEntity.ok(khuyenmais);
+	}
+
 }

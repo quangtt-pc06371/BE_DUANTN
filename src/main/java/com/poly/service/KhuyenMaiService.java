@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.poly.entity.KhuyenMaiEntity;
+import com.poly.entity.SanPhamEntity;
 import com.poly.repository.KhuyenMaiJPA;
 
 import java.util.List;
@@ -50,4 +51,8 @@ public class KhuyenMaiService {
             return null; 
         }
     }
+    
+	public List<KhuyenMaiEntity> getKhuyenMaiByShop(int id) {
+		return khuyenMaiRepository.findByShopId(id);
+	}
 }

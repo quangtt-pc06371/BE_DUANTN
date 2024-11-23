@@ -93,6 +93,7 @@ public class SanPhamController {
 
 	@PostMapping
 	public SanPhamEntity createSanPham(@RequestBody SanPhamEntity sanPham, HttpServletRequest request) {
+		
 		String token = request.getHeader("Authorization");
 
 		// Trích xuất ID người dùng từ token
@@ -107,64 +108,55 @@ public class SanPhamController {
 	}
 
 	@PostMapping("/upload/{idSku}")
-	public ResponseEntity<?> createAnh(@PathVariable int idSku, @RequestParam("file") MultipartFile[] files)
-			throws IOException {
-		Optional<SkuEntity> optionalSku = skuRepository.findById(idSku);
+	public ResponseEntity<?> createAnh(@PathVariable int idSku, @RequestParam("file") MultipartFile file) 
+	        throws IOException {
+	    // Tìm SKU theo id
+	    Optional<SkuEntity> optionalSku = skuRepository.findById(idSku);
 
-		if (optionalSku.isPresent()) {
-			SkuEntity savedSku = optionalSku.get();
+	    if (optionalSku.isPresent()) {
+	        SkuEntity savedSku = optionalSku.get();
 
-			if (files != null && files.length > 0) {
-				for (MultipartFile file : files) {
-					String imageUrl = firebaseService.uploadFile(file);
+	        // Upload ảnh lên Firebase và lấy URL
+	        String imageUrl = firebaseService.uploadFile(file);
 
-					// Tạo đối tượng HinhAnhEntity và lưu URL vào cơ sở dữ liệu
-					HinhAnhEntity hinhAnh = new HinhAnhEntity();
-					hinhAnh.setSku(savedSku);
-					hinhAnh.setTenAnh(imageUrl); // URL từ Firebase
-					hinhAnhRepository.save(hinhAnh);
-				}
-				return ResponseEntity.ok("Upload ảnh thành công");
-			} else {
-				return ResponseEntity.badRequest().body("File không được bỏ trống");
-			}
-		} else {
-			return ResponseEntity.status(404).body("Không tìm thấy SKU với ID: " + idSku);
-		}
+	        // Tạo hoặc ghi đè ảnh mới
+	        HinhAnhEntity hinhAnh = new HinhAnhEntity();
+	        hinhAnh.setSku(savedSku);
+	        hinhAnh.setTenAnh(imageUrl); // URL từ Firebase
+	        hinhAnhRepository.save(hinhAnh);
+
+	        return ResponseEntity.ok("Upload ảnh thành công");
+	    } else {
+	        return ResponseEntity.status(404).body("Không tìm thấy SKU với ID: " + idSku);
+	    }
 	}
 
-	@PutMapping("/update/{idSku}/{idAnh}")
-	public ResponseEntity<?> updateAnh(@PathVariable int idSku, @RequestParam("file") MultipartFile[] files,
-			@PathVariable int idAnh) throws IOException {
-		Optional<SkuEntity> optionalSku = skuRepository.findById(idSku);
 
-		if (optionalSku.isPresent()) {
-			SkuEntity savedSku = optionalSku.get();
+	@PutMapping("/update/{idSku}")
+	public ResponseEntity<?> updateAnh(@PathVariable int idSku, @RequestParam("file") MultipartFile file) throws IOException {
+	    Optional<SkuEntity> optionalSku = skuRepository.findById(idSku);
 
-			if (files != null && files.length > 0) {
-				Optional<HinhAnhEntity> optionalHinhAnh = hinhAnhRepository.findById(idAnh);
-				if (optionalHinhAnh.isPresent()) {
-					HinhAnhEntity updateHinhAnh = optionalHinhAnh.get();
+	    if (optionalSku.isPresent()) {
+	        SkuEntity savedSku = optionalSku.get();
 
-					// Chỉ cập nhật ảnh đầu tiên nếu có nhiều file
-					MultipartFile file = files[0];
-					String imageUrl = firebaseService.uploadFile(file);
+	        // Upload ảnh lên Firebase và lấy URL
+	        String imageUrl = firebaseService.uploadFile(file);
 
-					// Cập nhật URL mới cho ảnh
-					updateHinhAnh.setTenAnh(imageUrl);
-					hinhAnhRepository.save(updateHinhAnh);
+	        // Tạo hoặc cập nhật ảnh mới
+	        HinhAnhEntity hinhAnh = savedSku.getHinhanh(); // Nếu Sku chỉ có 1 ảnh liên kết
+	        if (hinhAnh == null) {
+	            hinhAnh = new HinhAnhEntity();
+	            hinhAnh.setSku(savedSku); // Liên kết với SKU
+	        }
+	        hinhAnh.setTenAnh(imageUrl); // URL từ Firebase
+	        hinhAnhRepository.save(hinhAnh);
 
-					return ResponseEntity.ok("Cập nhật ảnh thành công");
-				} else {
-					return ResponseEntity.status(404).body("Không tìm thấy ảnh với ID: " + idAnh);
-				}
-			} else {
-				return ResponseEntity.badRequest().body("File không được bỏ trống");
-			}
-		} else {
-			return ResponseEntity.status(404).body("Không tìm thấy SKU với ID: " + idSku);
-		}
+	        return ResponseEntity.ok("Cập nhật ảnh thành công");
+	    } else {
+	        return ResponseEntity.status(404).body("Không tìm thấy SKU với ID: " + idSku);
+	    }
 	}
+
 
 	@PutMapping("/{id}")
 	public ResponseEntity<SanPhamEntity> updateSanPham(@PathVariable int id,
