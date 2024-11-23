@@ -50,6 +50,9 @@ public class ShopEntity {
     @Column(name = "SHOP_IMAGE")
     private String shopImage;
     
+    @Column(name = "IS_ACTIVE", nullable = false)
+    private Boolean isActive = true;
+    
 //    @ManyToOne
 //    @JoinColumn(name = "ID_NGUOIDUNG")
 //    private TaiKhoanEntity nguoiDung;

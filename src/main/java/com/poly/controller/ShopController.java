@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.poly.DtoEntity.ShopDTO;
+
 import com.poly.DtoEntity.Shopcuaquang;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
@@ -80,16 +83,28 @@ public class ShopController {
 //    @PutMapping("/{id}")
 //    public ResponseEntity<ShopEntity> updateShop(
 //            @PathVariable int id, 
-//            @RequestBody ShopEntity shop) {/-strong/-heart:>:o:-((:-h //        ShopEntity updatedShop = shopService.updateShop(id, shop);
+
+//            @RequestBody ShopEntity shop) {
+//        ShopEntity updatedShop = shopService.updateShop(id, shop);
 //        return updatedShop != null ? ResponseEntity.ok(updatedShop) : ResponseEntity.notFound().build();
 //    }
 
-    // Xóa shop
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteShop(@PathVariable int id) {
-        shopService.deleteShopById(id);
-        return ResponseEntity.noContent().build();
+//    // Xóa shop
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> deactivateShop(@PathVariable int id) {
+//        try {
+//            shopService.deactivateShopById(id);
+//            return ResponseEntity.noContent().build();
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//    }
+    @PutMapping("/{id}/toggle")
+    public ResponseEntity<ShopEntity> toggleShopStatus(@PathVariable int id) {
+        ShopEntity shop = shopService.toggleShopStatus(id);
+        return shop != null ? ResponseEntity.ok(shop) : ResponseEntity.notFound().build();
     }
+    
 
     // Lấy danh sách shop chưa duyệt
     @GetMapping("/unapproved")
@@ -147,7 +162,10 @@ public class ShopController {
             return ResponseEntity.ok(shop);
 
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Đã xảy ra lỗi, vui lòng thử lại sau"));
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Đã xảy ra lỗi, vui lòng thử lại sau"));
+
         }
     }
 
@@ -224,8 +242,10 @@ public class ShopController {
 //            }
 
             try {
-                // Chuyển JSON thành đối tượng ShopEntity/-strong/-heart:>:o:-((:-h ShopEntity shop = objectMapper.readValue(shopJson, ShopEntity.class);
-            	ShopEntity shop = objectMapper.readValue(shopJson, ShopEntity.class);
+
+                // Chuyển JSON thành đối tượng ShopEntity
+                ShopEntity shop = objectMapper.readValue(shopJson, ShopEntity.class);
+
                 // Cập nhật thông tin cửa hàng và hình ảnh nếu có
                 ShopEntity updatedShop = shopService.updateShop(id, shop, shopImageFile);
                 return ResponseEntity.ok(updatedShop);
@@ -252,4 +272,6 @@ public class ShopController {
         return ResponseEntity.notFound().build();
     }
 
+
 }
+
