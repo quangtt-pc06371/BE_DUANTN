@@ -373,7 +373,7 @@ public class User {
 	        	 taikhoan.setCmnd("") ;	
 	        	 taikhoan.setMatKhau("") ;	
 	        	 taikhoan.setSdt("");	
-//	        	 taikhoan.setTrangthai(true);
+	        	 taikhoan.setTrangthai(true);
 	        	 taikhoan.getQuyens().add(quyens.get());
 	        	 taikhoan.setVaitro(vaitro);
 	        	 taikhoanjpa.save(taikhoan);
