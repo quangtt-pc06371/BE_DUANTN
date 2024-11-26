@@ -1,9 +1,8 @@
 package com.poly.entity;
 
-import com.example.demo.Model.SanPham;
-import com.example.demo.Model.Shop;
-import com.example.demo.Model.GioHang.GioHang;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,34 +19,30 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "CHITIETGIOHANG")
-@Getter @Setter
-@AllArgsConstructor @NoArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChiTietGioHang {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_DETAIL")
-    private Integer idDetail;
-    
-    @ManyToOne
-    @JoinColumn(name = "ID_CART", referencedColumnName = "ID_CART", nullable = false)
-    @JsonBackReference
-    private GioHang idCart;
-    
-    @ManyToOne
-    @JoinColumn(name = "ID_SHOP", referencedColumnName = "ID_SHOP", nullable = false)
-    private Shop idShop;
-    
-    @ManyToOne
-    @JoinColumn(name = "ID_SANPHAM", referencedColumnName = "ID_SANPHAM", nullable = false)
-    private SanPham idSanPham;
-
-    @Column(name = "SOLUONG", nullable = false)
-    private int soLuong;
-
-    @Column(name = "GIA", nullable = false)
-    private int gia;
-    
-    @Column(name = "TRANGTHAI", nullable = false)
-    private boolean trangThai;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_DETAIL")
+	private Integer idDetail;
+	
+	@Column(name = "SOLUONG", nullable = false)
+	private int soLuongMua;
+	
+	@Column(name = "TRANGTHAI")
+	private boolean trangThai;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_CART", referencedColumnName = "ID_CART", nullable = false)
+	@JsonBackReference("Detail-Cart")
+	private GioHang gioHang;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_SKU", referencedColumnName = "ID_SKU", nullable = false)
+	@JsonManagedReference("Detail-Sku")
+	private SkuEntity skuEntity;
+	
 }

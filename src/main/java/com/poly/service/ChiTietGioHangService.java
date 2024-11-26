@@ -15,77 +15,163 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.DTO.CTGioHangDTO;
+import com.example.demo.Mapper.ChiTietGioHangMapper;
+import com.example.demo.Mapper.SkuMapper;
 import com.example.demo.Model.SanPham;
 import com.example.demo.Model.Shop;
+import com.example.demo.Model.SkuEntity;
 import com.example.demo.Model.GioHang.ChiTietGioHang;
 import com.example.demo.Model.GioHang.GioHang;
 import com.example.demo.Respository.ChiTietGioHangReponsitory;
 import com.example.demo.Respository.GioHangReponsitory;
+import com.example.demo.Respository.SkuReponsitory;
+import com.example.demo.Service.GioHangService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 @Service
-public class ChiTietGioHangService {
+public class ChiTietGiohangService {
 	@Autowired
 	ChiTietGioHangReponsitory chiTietGioHangReponsitory;
+	@Autowired
+	GioHangReponsitory gioHangReponsitory;
+	@Autowired
+	ChiTietGioHangMapper chiTietGioHangMapper;
+	@Autowired
+	SkuMapper skuMapper;
+	@Autowired
+	SkuReponsitory skuReponsitory;
+	@Autowired
+	GioHangService gioHangService;
 
-	public CTGioHangDTO convertToDTO(ChiTietGioHang chiTietGioHang) {
-        CTGioHangDTO dto = new CTGioHangDTO();
-        dto.setIdDetail(chiTietGioHang.getIdDetail());
-        dto.setIdShop(chiTietGioHang.getIdShop().getIdShop());  // Lấy id từ đối tượng Shop
-        dto.setIdSanPham(chiTietGioHang.getIdSanPham().getIdSanPham());  // Lấy id từ đối tượng SanPham
-        dto.setSoLuong(chiTietGioHang.getSoLuong());
-        dto.setGia(chiTietGioHang.getGia());
-        dto.setTrangThai(chiTietGioHang.isTrangThai());
-        return dto;
-    }
-    
-	public ChiTietGioHang convertToEntity(CTGioHangDTO dto, GioHang gioHang) {
-	    ChiTietGioHang chiTietGioHang = new ChiTietGioHang();
-	    chiTietGioHang.setIdDetail(dto.getIdDetail());
-	    
-	    // Gán đối tượng GioHang đã được lưu từ bên ngoài
-	    chiTietGioHang.setIdCart(gioHang);
-	    
-	    // Gán idShop và idSanPham bằng cách tạo đối tượng Shop và SanPham
-	    Shop shop = new Shop();
-	    shop.setIdShop(dto.getIdShop());
-	    chiTietGioHang.setIdShop(shop);
+	@Transactional
+	public void addDetailToCart(CTGioHangDTO ctGioHangDTO, int idGioHang) {
+	    // Bước 1: Lấy giỏ hàng dựa vào idGioHang
+	    GioHang gioHang = gioHangReponsitory.findById(idGioHang)
+	            .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại"));
 
-	    SanPham sanPham = new SanPham();
-	    sanPham.setIdSanPham(dto.getIdSanPham());
-	    chiTietGioHang.setIdSanPham(sanPham);
-	    
-	    chiTietGioHang.setSoLuong(dto.getSoLuong());
-	    chiTietGioHang.setGia(dto.getGia());
-	    chiTietGioHang.setTrangThai(dto.isTrangThai());
-	    return chiTietGioHang;
+	    // Bước 2: Chuyển đổi DTO sang Entity bằng MapStruct
+	    ChiTietGioHang chiTietGioHang = chiTietGioHangMapper.toEntity(ctGioHangDTO);
+
+	    // Bước 3: Liên kết ChiTietGioHang với Giỏ hàng
+	    chiTietGioHang.setGioHang(gioHang);
+
+	    // Bước 4: Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+	    Optional<ChiTietGioHang> existingDetail = chiTietGioHangReponsitory.findByGioHangAndSkuEntity(
+	            gioHang, 
+	            chiTietGioHang.getSkuEntity()
+	    );
+
+	    if (existingDetail.isPresent()) {
+	        // Nếu đã tồn tại, tăng số lượng sản phẩm
+	        ChiTietGioHang detail = existingDetail.get();
+	        detail.setSoLuongMua(detail.getSoLuongMua() + chiTietGioHang.getSoLuongMua());
+	        chiTietGioHangReponsitory.save(detail);
+	    } else {
+	        // Nếu chưa tồn tại, thêm chi tiết mới
+	        chiTietGioHangReponsitory.save(chiTietGioHang);
+	    }
 	}
 
- // Lưu chi tiết giỏ hàng
-    public ChiTietGioHang saveChiTietGioHang(ChiTietGioHang chiTietGioHang) {
-        return chiTietGioHangReponsitory.save(chiTietGioHang);
-    }
 
-	public Optional<ChiTietGioHang> removeFromCart(Integer idDetail) {
-		Optional<ChiTietGioHang> chiTietGioHang = chiTietGioHangReponsitory.findById(idDetail);
-		chiTietGioHang.ifPresent(chiTietGioHangReponsitory::delete);
-		return chiTietGioHang;
-	}
 
-	public Optional<ChiTietGioHang> updateCart(Integer idDetail, ChiTietGioHang updatedChiTietGioHang) {
-		Optional<ChiTietGioHang> existingChiTietGioHang = chiTietGioHangReponsitory.findById(idDetail);
+	@Transactional
+	public void deleteDetailToCart(Integer idDetail, int idNguoiDung) {
 
-		if (existingChiTietGioHang.isPresent()) {
-			ChiTietGioHang chiTietGioHang = existingChiTietGioHang.get();
-
-			// Cập nhật các trường từ `updatedChiTietGioHang` sang `chiTietGioHang`
-			chiTietGioHang.setSoLuong(updatedChiTietGioHang.getSoLuong());
-			chiTietGioHang.setIdSanPham(updatedChiTietGioHang.getIdSanPham());
-
-			return Optional.of(chiTietGioHangReponsitory.save(chiTietGioHang));
-		} else {
-			return Optional.empty();
+		GioHang gioHang = gioHangReponsitory.findByIdNguoiDung(idNguoiDung);
+		if (gioHang == null) {
+			throw new RuntimeException("Giỏ hàng không tồn tại cho người dùng này.");
 		}
+
+		ChiTietGioHang chiTietGioHang = chiTietGioHangReponsitory.findById(idDetail)
+				.orElseThrow(() -> new RuntimeException("Chi tiết giỏ hàng không tồn tại"));
+
+		// Kiểm tra quyền sở hữu nếu cần (ví dụ: chi tiết giỏ hàng phải thuộc về người
+		// dùng này)
+		if (chiTietGioHang.getGioHang().getIdNguoiDung().getId() != idNguoiDung) {
+			throw new RuntimeException("Chi tiết giỏ hàng không thuộc về người dùng này.");
+		}
+
+		chiTietGioHangReponsitory.deleteById(idDetail);
+
+	}
+
+	@Transactional
+	public void updateDetailToCart(CTGioHangDTO ctGioHangDTO, int idNguoiDung) {
+		// Tìm giỏ hàng của người dùng
+		GioHang gioHang = gioHangReponsitory.findByIdNguoiDung(idNguoiDung);
+		if (gioHang == null) {
+			throw new RuntimeException("Giỏ hàng không tồn tại cho người dùng này.");
+		}
+		
+		int idDetail = ctGioHangDTO.getIdDetail();
+
+		// Tìm chi tiết giỏ hàng cần cập nhật
+		Optional<ChiTietGioHang> optionalChiTietGioHang = chiTietGioHangReponsitory.findById(idDetail);
+		if (!optionalChiTietGioHang.isPresent()) {
+			throw new RuntimeException("Chi tiết giỏ hàng không tồn tại.");
+		}
+
+		// Lấy chi tiết giỏ hàng và cập nhật
+		ChiTietGioHang chiTietGioHang = optionalChiTietGioHang.get();
+
+		// Kiểm tra xem chi tiết giỏ hàng có thuộc về giỏ hàng của người dùng này không
+		if (chiTietGioHang.getGioHang().getIdNguoiDung().getId() != idNguoiDung) {
+			throw new RuntimeException("Chi tiết giỏ hàng không thuộc về người dùng này.");
+		}
+
+		// Cập nhật số lượng mua
+		chiTietGioHang.setSoLuongMua(ctGioHangDTO.getSoLuongMua());
+		// Cập nhật SKU (nếu cần)
+		if (ctGioHangDTO.getSkuDTO() != null) {
+			// Sử dụng SkuMapper để ánh xạ từ SkuDTO sang SkuEntity
+			SkuEntity skuEntity = skuMapper.toSkuEntity(ctGioHangDTO.getSkuDTO());
+
+			// Gán lại SKU đã cập nhật vào ChiTietGioHang
+			chiTietGioHang.setSkuEntity(skuEntity);
+			
+			Double totalAmount = gioHangService.calculateTotalAmount(gioHang);
+		    
+		    gioHang.setTongTien(totalAmount);
+		}
+
+		// Lưu lại chi tiết giỏ hàng đã được cập nhật
+		chiTietGioHangReponsitory.save(chiTietGioHang);
+	}
+
+	private void validateQuantity(SkuEntity sku, Integer requestedQuantity) {
+		if (requestedQuantity <= 0) {
+			throw new IllegalArgumentException("Số lượng phải lớn hơn 0");
+		}
+		if (sku.getSoLuong() < requestedQuantity) {
+			throw new IllegalArgumentException(String.format("Số lượng yêu cầu (%d) vượt quá số lượng có sẵn (%d)",
+					requestedQuantity, sku.getSoLuong()));
+		}
+	}
+
+//	private CTGioHangDTO updateExistingCartItem(ChiTietGioHang existingItem, Integer additionalQuantity) {
+//		Integer newQuantity = existingItem.getSoLuongMua() + additionalQuantity;
+//		validateQuantity(existingItem.getSkuEntity(), newQuantity);
+//
+//		existingItem.setSoLuongMua(newQuantity);
+//		ChiTietGioHang updatedItem = chiTietGioHangReponsitory.save(existingItem);
+//
+//		return chiTietGioHangMapper.toDTO(updatedItem);
+//	}
+
+	public boolean updateCartItemStatus(List<Integer> cartItemIds, boolean newStatus) {
+		List<ChiTietGioHang> cartItems = chiTietGioHangReponsitory.findAllById(cartItemIds);
+
+		if (cartItems.isEmpty()) {
+			return false;
+		}
+
+		for (ChiTietGioHang cartItem : cartItems) {
+			cartItem.setTrangThai(newStatus); // Cập nhật trạng thái
+		}
+
+		chiTietGioHangReponsitory.saveAll(cartItems); // Lưu lại các thay đổi
+		return true;
 	}
 }

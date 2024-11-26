@@ -20,7 +20,8 @@ public interface GioHangReponsitory extends JpaRepository<GioHang, Integer> {
 	boolean existsByIdNguoiDung(TaiKhoanEntity idNguoiDung);
 
 	// Tìm Chi Tiết Giỏ Hàng theo ID Giỏ Hàng
-	@Query("SELECT acc FROM ChiTietGioHang acc WHERE acc.gioHang.id = ?1")
-	List<ChiTietGioHang> findAllByIdDetail(GioHang gioHang);
+//	@Query("SELECT acc FROM ChiTietGioHang acc WHERE acc.gioHang.id = ?1")
+//	List<ChiTietGioHang> findAllByIdDetail(GioHang gioHang);
 
 }
+

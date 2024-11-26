@@ -1,24 +1,24 @@
 package com.poly.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import com.example.demo.DTO.CTGioHangDTO;
-import com.example.demo.Model.TaiKhoanEntity;
-import com.example.demo.Model.GioHang.ChiTietGioHang;
-import com.example.demo.Model.GioHang.GioHang;
-import com.example.demo.Respository.*;
-import com.example.demo.Service.ChiTietGiohangService;
-import com.example.demo.Service.GioHangService;
-import com.example.demo.Service.JwtSevice2;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.poly.entity.GioHang;
+import com.poly.repository.taikhoanJPA;
+import com.poly.service.ChiTietGiohangService;
+import com.poly.service.GioHangService;
+import com.poly.service.JwtSevice2;
+
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 
 @CrossOrigin("*")
 @RestController

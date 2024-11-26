@@ -52,6 +52,19 @@
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>1.5.3.Final</version> <!-- Chọn phiên bản mới nhất -->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>1.5.3.Final</version> <!-- Chọn phiên bản mới nhất -->
+			<scope>provided</scope>
+		</dependency>
 
 		<!--
 		https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper -->
