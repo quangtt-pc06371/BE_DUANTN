@@ -29,7 +29,15 @@ public class SanPhamKhuyenMaiEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_SANPHAMKM")
     private int idSanPhamKM;
+    
+    @Column(name = "TRANGTHAI")
+    private boolean trangThai;
 
+    @ManyToOne
+    @JoinColumn(name = "ID_SHOP")
+    @JsonIgnoreProperties(value = "sanPhamKhuyenMai")
+    private ShopEntity shop;
+    
     @ManyToOne
     @JoinColumn(name = "ID_SANPHAM")
     @JsonIgnoreProperties(value = "sanPhamKhuyenMai")

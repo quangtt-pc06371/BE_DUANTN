@@ -15,14 +15,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.poly.entity.KhuyenMaiEntity;
 import com.poly.entity.SanPhamKhuyenMaiEntity;
+import com.poly.entity.ShopEntity;
+import com.poly.repository.SanPhamKhuyenMaiJPA;
+import com.poly.repository.ShopRepository;
+import com.poly.service.JwtSevice2;
 import com.poly.service.SanPhamKhuyenMaiService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/sanphamkhuyenmai")
 public class SanPhamKhuyenMaiController {
 
+	@Autowired
+	private JwtSevice2 jwtsevice2;
+	
+	@Autowired
+	private ShopRepository shopRepository;
+	
+	
+	@Autowired
+	private SanPhamKhuyenMaiJPA sanPhamKhuyenMaiJPA;
+	
     @Autowired
     private SanPhamKhuyenMaiService sanPhamKhuyenMaiService;
 
@@ -42,7 +59,16 @@ public class SanPhamKhuyenMaiController {
     }
 
     @PostMapping
-    public SanPhamKhuyenMaiEntity createSanPhamKhuyenMai(@RequestBody SanPhamKhuyenMaiEntity sanPhamKhuyenMai) {
+    public SanPhamKhuyenMaiEntity createSanPhamKhuyenMai(@RequestBody SanPhamKhuyenMaiEntity sanPhamKhuyenMai,HttpServletRequest request) {
+    	String token = request.getHeader("Authorization");
+
+		// Trích xuất ID người dùng từ token
+		int idNguoiDung = jwtsevice2.getIdFromToken(token);
+
+
+		ShopEntity shop = shopRepository.findShopByNguoiDungId(idNguoiDung);
+		
+		sanPhamKhuyenMai.setShop(shop);
         return sanPhamKhuyenMaiService.saveSanPhamKhuyenMai(sanPhamKhuyenMai);
     }
 
@@ -55,10 +81,30 @@ public class SanPhamKhuyenMaiController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+	@PutMapping("/updatetrangthai/{id}")
+	public ResponseEntity<SanPhamKhuyenMaiEntity> updateTrangThaiSanPhamKhuyenMai(@PathVariable int id) {
+		Optional<SanPhamKhuyenMaiEntity> optionalSanPhamKhuyenMai = sanPhamKhuyenMaiService.getSanPhamKhuyenMaiById(id);
+
+		if (optionalSanPhamKhuyenMai.isPresent()) {
+		SanPhamKhuyenMaiEntity sanPhamKhuyenMaiTimThay = optionalSanPhamKhuyenMai.get();
+			sanPhamKhuyenMaiTimThay.setTrangThai(false);
+			sanPhamKhuyenMaiService.saveSanPhamKhuyenMai(sanPhamKhuyenMaiTimThay);
+			return ResponseEntity.ok(sanPhamKhuyenMaiTimThay);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSanPhamKhuyenMai(@PathVariable int id) {
         sanPhamKhuyenMaiService.deleteSanPhamKhuyenMaiById(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/shop/{id}")
+	public ResponseEntity<List<SanPhamKhuyenMaiEntity>> getKhuyenMaiByShop(@PathVariable int id) {
+		List<SanPhamKhuyenMaiEntity> sanPhamKhuyenMaiEntities = sanPhamKhuyenMaiJPA.findByShopId(id);
+		return ResponseEntity.ok(sanPhamKhuyenMaiEntities);
+	}
 }

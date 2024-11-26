@@ -42,16 +42,7 @@ public class SanPhamEntity implements Serializable {
     
     @Column(name = "WEIGHT")
     private int weight; // Cân nặng
-
-    @Column(name = "LENGTH")
-    private int length; // Chiều dài
-
-    @Column(name = "WIDTH")
-    private int width; // Chiều rộng
-
-    @Column(name = "HEIGHT")
-    private int height; // Chiều cao
-    
+ 
     @Column(name = "TRANGTHAI")
     private boolean trangThai;
     

@@ -57,9 +57,16 @@ public class ShopEntity {
 //    @JoinColumn(name = "ID_NGUOIDUNG")
 //    private TaiKhoanEntity nguoiDung;
 //    
+    
+//    @OneToMany(mappedBy = "shop")
+//    @JsonBackReference
+//    private List<SanPhamKhuyenMaiEntity> sanPhamKhuyenMai;
+    
     @OneToMany(mappedBy = "shop")
     @JsonBackReference
     private List<SanPhamEntity> sanPham;
+    
+    
 
     @OneToMany(mappedBy = "shop")
     @JsonBackReference(value = "khuyenMai")

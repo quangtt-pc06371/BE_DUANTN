@@ -39,7 +39,6 @@ public class KhuyenMaiService {
         if (optionalKhuyenMai.isPresent()) {
             KhuyenMaiEntity existingKhuyenMai = optionalKhuyenMai.get();
             existingKhuyenMai.setTenKhuyenMai(khuyenMaiDetails.getTenKhuyenMai());
-            existingKhuyenMai.setSoLuongKhuyenMai(khuyenMaiDetails.getSoLuongKhuyenMai());
             existingKhuyenMai.setGiaTriKhuyenMai(khuyenMaiDetails.getGiaTriKhuyenMai());
             existingKhuyenMai.setNgayBatDau(khuyenMaiDetails.getNgayBatDau());
             existingKhuyenMai.setNgayKetThuc(khuyenMaiDetails.getNgayKetThuc());

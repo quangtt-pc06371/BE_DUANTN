@@ -40,6 +40,20 @@ public class KhuyenMaiController {
         return khuyenMaiService.getAllKhuyenMai();
     }
 
+	@PutMapping("/updatetrangthai/{id}")
+	public ResponseEntity<KhuyenMaiEntity> updateTrangThaiKhuyenMai(@PathVariable int id) {
+		Optional<KhuyenMaiEntity> optionalKhuyenMai = khuyenMaiService.getKhuyenMaiById(id);
+
+		if (optionalKhuyenMai.isPresent()) {
+		KhuyenMaiEntity khuyenMaiTimThay = optionalKhuyenMai.get();
+			khuyenMaiTimThay.setActive(false);
+			khuyenMaiService.saveKhuyenMai(khuyenMaiTimThay);
+			return ResponseEntity.ok(khuyenMaiTimThay);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+    
     @GetMapping("/{id}")
     public ResponseEntity<KhuyenMaiEntity> getKhuyenMaiById(@PathVariable int id) {
         Optional<KhuyenMaiEntity> optionalKhuyenMai = khuyenMaiService.getKhuyenMaiById(id);

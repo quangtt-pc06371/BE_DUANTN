@@ -38,9 +38,6 @@ public class KhuyenMaiEntity implements Serializable {
     @Column(name = "TENKHUYENMAI")
     private String tenKhuyenMai;
     
-    @Column(name = "SOLUONGKHUYENMAI")
-    private int soLuongKhuyenMai;
-
     @Column(name = "GIATRIKHUYENMAI")
     private int giaTriKhuyenMai;
 

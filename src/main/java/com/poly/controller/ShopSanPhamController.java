@@ -16,7 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.entity.SanPhamEntity;
 import com.poly.entity.ShopEntity;
+import com.poly.repository.ShopRepository;
+import com.poly.service.JwtSevice2;
 import com.poly.service.ShopSanPhamService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -25,6 +29,12 @@ public class ShopSanPhamController {
 	@Autowired
 	private ShopSanPhamService shopService;
 
+	@Autowired
+	private JwtSevice2 jwtsevice2;
+	
+	@Autowired
+	private ShopRepository shopRepository;
+	
 	@GetMapping
 	public List<ShopEntity> getAllShop() {
 		return shopService.getAllShop();
@@ -54,9 +64,25 @@ public class ShopSanPhamController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/nguoidung/{idNguoiDung}")
-	public ResponseEntity<ShopEntity> getShopByNguoiDung(@PathVariable Integer idNguoiDung) {
-		ShopEntity shop = shopService.getShopByNguoiDungId(idNguoiDung);
+//	@GetMapping("/nguoidung/{idNguoiDung}")
+//	public ResponseEntity<ShopEntity> getShopByNguoiDung(@PathVariable Integer idNguoiDung) {
+//		ShopEntity shop = shopService.getShopByNguoiDungId(idNguoiDung);
+//		return ResponseEntity.ok(shop);
+//	}
+	
+	@GetMapping("/nguoidung")
+	public ResponseEntity<ShopEntity> getShopByNguoiDungId(HttpServletRequest request) {
+		
+		String token = request.getHeader("Authorization");
+
+		// Trích xuất ID người dùng từ token
+		int idNguoiDung = jwtsevice2.getIdFromToken(token);
+
+
+		ShopEntity shop = shopRepository.findShopByNguoiDungId(idNguoiDung);
+		
 		return ResponseEntity.ok(shop);
 	}
+	
+	
 }
