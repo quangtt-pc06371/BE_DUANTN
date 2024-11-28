@@ -60,6 +60,7 @@ public class SecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                 // Allow all GET requests to /api/**
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/taikhoan/**").permitAll()
 //                .requestMatchers(HttpMethod.POST, "/api/taikhoan/upload/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/danhmuc/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/shops/**").permitAll()
@@ -72,6 +73,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/sanpham/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/taikhoan/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/taikhoan/nhanvien/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/taikhoan/**").permitAll()
                 // Allow all requests to /api/auth/**
                 .requestMatchers("/api/auth/**").permitAll()

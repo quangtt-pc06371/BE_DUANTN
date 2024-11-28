@@ -114,8 +114,30 @@ public class User {
 //		 TaiKhoanEntity taikhoane   =  taikhoan.get();
 		 return ResponseEntity.ok(taikhoan);
 	 }
+	@GetMapping("/{email}")
+	public ResponseEntity<?> getTaiKhoanByEmail(HttpServletRequest request, @PathVariable String email) {
+	    try {
+	        TaiKhoanEntity taikhoan = taikhoansevice.findByGmail(email);
 
-	 @GetMapping("/{maTK}")
+	        // Kiểm tra nếu không tìm thấy tài khoản
+	        if (taikhoan == null) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại.");
+	        }
+	        if (!"user".equals(taikhoan.getVaitro().getName())) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy tài khoản với vai trò 'user'.");
+	        }
+
+	        // Trả về thông tin tài khoản
+	        return ResponseEntity.ok(taikhoan);
+	    } catch (Exception e) {
+	        // Log lỗi và trả về phản hồi lỗi
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .body("Đã xảy ra lỗi khi xử lý yêu cầu.");
+	    }
+	}
+
+
+	 @GetMapping("/user/{maTK}")
 	 public ResponseEntity<TaiKhoanEntity> getTaiKhoanById(@PathVariable int maTK) {
 	     Optional<TaiKhoanEntity> taiKhoanEntity = taikhoansevice.getTaiKhoanById(maTK);
 	     return taiKhoanEntity.map(ResponseEntity::ok)
@@ -176,13 +198,24 @@ public class User {
 	        }
 	    }
 	    
-	 
+	 @PostMapping("/nhanvien/{maTK}")
+	 public ResponseEntity<TaiKhoanEntity> createnhanvien(@PathVariable int maTK) {
+	     Optional<TaiKhoanEntity> TaiKhoan = taikhoansevice.findById(maTK);
+	   TaiKhoanEntity nv = TaiKhoan.get();
+	   Optional<Vaitro>  roles = vaitro.findById(4);
+         Vaitro vaitro= roles.get();
+       Optional<Quyen>  quyens = quyenjpa.findById(4);
+            nv.getQuyens().add(quyens.get());
+	         nv.setVaitro(vaitro);
+	         taikhoanjpa.save(nv);
+	     return ResponseEntity.status(HttpStatus.CREATED).body(nv);
+	 }
 	 @PostMapping("/nhanvien")
 	 public ResponseEntity<TaiKhoanEntity> createTaiKhoannv(@RequestBody TaiKhoanEntity taiKhoanEntity) {
 	     TaiKhoanEntity createdTaiKhoan = taikhoansevice.createTaiKhoannv(taiKhoanEntity);
 	     return ResponseEntity.status(HttpStatus.CREATED).body(createdTaiKhoan);
 	 }
-
+//	 @PreAuthorize("hasAuthority('ROLE_Create')")
 	 @PutMapping("/update")
 	 public ResponseEntity<?> updateTaiKhoan(@Valid @RequestBody TaiKhoanEntity taiKhoanEntity,HttpServletRequest request,BindingResult result) {
 		 if (result.getFieldError("email") != null) {

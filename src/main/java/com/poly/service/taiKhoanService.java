@@ -44,6 +44,9 @@ public class taiKhoanService  {
     public Optional<TaiKhoanEntity> findById(Integer id) {
         return taikhoanjpa.findById(id);     
     }
+    public TaiKhoanEntity findByGmail(String gmail) {
+        return taikhoanjpa.FindbyEmail(gmail);     
+    }
     public Optional<TaiKhoanEntity> getTaiKhoanById(Integer maTK) {
         return taikhoanjpa.findById(maTK);
     }
@@ -71,7 +74,6 @@ public class taiKhoanService  {
     	taiEntity.setMatKhau(pas.encode(taiKhoanEntity.getMatKhau()));
     	taiEntity.setSdt(taiKhoanEntity.getSdt());
     	taiEntity.setVaitro(roles); 	
-//    	taiEntity.setDiachi(taiKhoanEntity.getDiachi());   	
     	taiEntity.setCmnd(taiKhoanEntity.getCmnd());
     	taiEntity.setTrangthai(true);
     	taiEntity.getQuyens().add(quyen.get());
@@ -88,7 +90,6 @@ public class taiKhoanService  {
     	taiEntity.setMatKhau(pas.encode(taiKhoanEntity.getMatKhau()));
     	taiEntity.setSdt(taiKhoanEntity.getSdt());
     	taiEntity.setVaitro(roles);
-//    	taiEntity.setDiachi(taiKhoanEntity.getDiachi());
     	taiEntity.setCmnd(taiKhoanEntity.getCmnd());
     	taiEntity.getQuyens().add(quyen.get());
         return taikhoanjpa.save(taiEntity);
