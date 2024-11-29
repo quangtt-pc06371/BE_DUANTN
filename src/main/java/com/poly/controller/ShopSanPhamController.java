@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.poly.entity.SanPhamEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.repository.ShopRepository;
 import com.poly.service.JwtSevice2;

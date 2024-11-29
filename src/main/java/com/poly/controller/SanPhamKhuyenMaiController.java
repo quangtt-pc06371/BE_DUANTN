@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.poly.entity.KhuyenMaiEntity;
 import com.poly.entity.SanPhamKhuyenMaiEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.repository.SanPhamKhuyenMaiJPA;

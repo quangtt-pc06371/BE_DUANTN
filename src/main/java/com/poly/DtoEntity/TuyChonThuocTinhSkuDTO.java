@@ -1,7 +1,5 @@
 package com.poly.DtoEntity;
-import java.util.List;
-
-import lombok.*;
+import lombok.Data;
 
 @Data
 public class TuyChonThuocTinhSkuDTO {
