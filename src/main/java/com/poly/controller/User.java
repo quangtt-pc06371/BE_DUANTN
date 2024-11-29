@@ -37,11 +37,13 @@ import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import com.poly.loginggconifg;
 import com.poly.entity.Quyen;
+import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.entity.TokenRequest;
 import com.poly.entity.Vaitro;
 import com.poly.repository.QuyenJPA;
 import com.poly.repository.RoleRepository;
+import com.poly.repository.ShopRepository;
 import com.poly.repository.taikhoanJPA;
 import com.poly.service.CustomUserDetailsService;
 import com.poly.service.FirebaseService;
@@ -82,6 +84,9 @@ public class User {
 		 private RoleRepository vaitro;
 	  @Autowired
 		 private QuyenJPA quyenjpa;
+	  @Autowired
+	    private ShopRepository shopRepository;
+	  
 	  
 	@GetMapping
 	 public ResponseEntity<List<TaiKhoanEntity>> getalltaikhoan(){
@@ -124,7 +129,7 @@ public class User {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại.");
 	        }
 	        if (!"user".equals(taikhoan.getVaitro().getName())) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy tài khoản với vai trò 'user'.");
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy tài khoản.");
 	        }
 
 	        // Trả về thông tin tài khoản
@@ -198,18 +203,41 @@ public class User {
 	        }
 	    }
 	    
-	 @PostMapping("/nhanvien/{maTK}")
-	 public ResponseEntity<TaiKhoanEntity> createnhanvien(@PathVariable int maTK) {
-	     Optional<TaiKhoanEntity> TaiKhoan = taikhoansevice.findById(maTK);
-	   TaiKhoanEntity nv = TaiKhoan.get();
-	   Optional<Vaitro>  roles = vaitro.findById(4);
-         Vaitro vaitro= roles.get();
-       Optional<Quyen>  quyens = quyenjpa.findById(4);
-            nv.getQuyens().add(quyens.get());
-	         nv.setVaitro(vaitro);
-	         taikhoanjpa.save(nv);
+	 @PostMapping("/nhanvien/{maTK}/{maTKshop}")
+	 public ResponseEntity<?> createnhanvien(@PathVariable int maTK,@PathVariable int maTKshop) {
+	     Optional<TaiKhoanEntity> optionalTaiKhoan = taikhoansevice.findById(maTK);
+	     if (!optionalTaiKhoan.isPresent()) {
+	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại.");
+	     }
+
+	     TaiKhoanEntity nv = optionalTaiKhoan.get();
+	     Optional<Vaitro> optionalVaitro = vaitro.findById(4);
+	     if (!optionalVaitro.isPresent()) {
+	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vai trò không tồn tại.");
+	     }
+
+	     Optional<TaiKhoanEntity> optionalTaiKhoanshop = taikhoansevice.findById(maTKshop);
+	     TaiKhoanEntity tkshop = optionalTaiKhoanshop.get();
+	     if (!optionalTaiKhoanshop.isPresent()) {
+	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản Shop không tồn tại.");
+	     }
+
+	     Optional<Quyen> optionalQuyen = quyenjpa.findById(4);
+	     if (!optionalQuyen.isPresent()) {
+	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Quyền không tồn tại.");
+	     }
+
+	     // Gán vai trò, quyền và shop
+	     nv.getQuyens().add(optionalQuyen.get());
+	     nv.setVaitro(optionalVaitro.get());
+	     nv.setShop(tkshop.getShop());
+	     
+	     // Lưu vào database
+	     taikhoanjpa.save(nv);
+
 	     return ResponseEntity.status(HttpStatus.CREATED).body(nv);
 	 }
+
 	 @PostMapping("/nhanvien")
 	 public ResponseEntity<TaiKhoanEntity> createTaiKhoannv(@RequestBody TaiKhoanEntity taiKhoanEntity) {
 	     TaiKhoanEntity createdTaiKhoan = taikhoansevice.createTaiKhoannv(taiKhoanEntity);
