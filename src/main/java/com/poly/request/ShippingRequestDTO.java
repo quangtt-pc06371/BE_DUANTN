@@ -10,10 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShippingRequestDTO {
-	private String pick_province;
-	private String pick_district;
-	private String province;
-	private String district;
-	private int weight;
-	private String deliver_option;
+	private Integer orderId;
+	private double shippingFee;
 }

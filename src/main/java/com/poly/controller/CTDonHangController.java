@@ -6,15 +6,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.poly.DtoEntity.DonHangDTO;
 import com.poly.entity.DonHang;
-import com.poly.mapper.DonHangMapper;
+import com.poly.Mapper.DonHangMapper;
 import com.poly.repository.ChiTietGioHangReponsitory;
 import com.poly.repository.GioHangReponsitory;
+import com.poly.request.ShippingRequestDTO;
 import com.poly.service.CTDonHangService;
 import com.poly.service.DonHangService;
 import com.poly.service.JwtSevice2;
@@ -69,36 +72,16 @@ public class CTDonHangController {
 	    }
 	}
     
-    //Endpoint cập nhật và áp dụng VoucherBill vào Đơn Hàng
-    @PutMapping("/apply-voucher")
-    public ResponseEntity<?> applyVoucherToOrder(@RequestParam int donHangId, @RequestParam int voucherId) {
+ // Endpoint để cập nhật phí vận chuyển vào đơn hàng
+    @PostMapping("/update-shipping-fee")
+    public ResponseEntity<?> updateShippingFee(@RequestBody ShippingRequestDTO shippingFeeRequest) {
         try {
-            // Thực hiện áp dụng voucher vào đơn hàng
-            DonHang donHang = ctDonHangService.applyVoucherToOrder(donHangId, voucherId);
-            
-            // Chuyển đổi đơn hàng sang DTO
-            DonHangDTO donHangDTO = donHangMapper.toDTO(donHang);
-            
-            // Trả về phản hồi thành công
-            return ResponseEntity.ok(donHangDTO);
-            
-        } catch (RuntimeException e) {
-            // Nếu có lỗi xảy ra, trả về thông báo lỗi chi tiết cùng mã lỗi
-            String errorMessage = e.getMessage();
-            
-            if (errorMessage.contains("Đơn hàng không tồn tại")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Đơn hàng với ID " + donHangId + " không tồn tại.");
-                
-            } else if (errorMessage.contains("Voucher không tồn tại")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Voucher với ID " + voucherId + " không tồn tại.");
-                
-            } else if (errorMessage.contains("Không đủ điều kiện để áp dụng voucher")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
-                
-            } else {
-                // Xử lý lỗi không xác định khác
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.");
-            }
+            // Cập nhật phí vận chuyển vào cơ sở dữ liệu
+            ctDonHangService.updateShippingFee(shippingFeeRequest.getOrderId(), shippingFeeRequest.getShippingFee());
+            return ResponseEntity.ok("Cập nhật phí vận chuyển thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Có lỗi xảy ra khi cập nhật phí vận chuyển");
         }
     }
 

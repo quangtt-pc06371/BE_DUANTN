@@ -2,6 +2,7 @@ package com.poly.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,9 @@ import com.poly.entity.DonHang;
 import com.poly.entity.GioHang;
 import com.poly.entity.VanChuyenGHNEntity;
 import com.poly.entity.VoucherEntity;
-import com.poly.mapper.ChiTietDonHangMapper;
-import com.poly.mapper.ChiTietGioHangMapper;
-import com.poly.mapper.DonHangMapper;
+import com.poly.Mapper.ChiTietDonHangMapper;
+import com.poly.Mapper.ChiTietGioHangMapper;
+import com.poly.Mapper.DonHangMapper;
 import com.poly.repository.CTDonHangRepository;
 import com.poly.repository.ChiTietGioHangReponsitory;
 import com.poly.repository.DonHangRepository;
@@ -189,4 +190,28 @@ public class CTDonHangService {
 		return totalAmount * (voucher.getGiamGia() / 100.0);
 	}
 
+	// Hàm cập nhật phí vận chuyển cho đơn hàng
+		public void updateShippingFee(Integer orderId, double shippingFee) {
+		    Optional<DonHang> orderOpt = donHangRepository.findById(orderId);
+		    if (orderOpt.isPresent()) {
+		        DonHang donHang = orderOpt.get();
+		        
+		        // Lấy danh sách chi tiết đơn hàng
+		        List<ChiTietDonHang> chiTietDonHangList = donHang.getChiTietDonHangs(); // Giả sử getChiTietDonHangs() là phương thức getter
+
+		        if (!chiTietDonHangList.isEmpty()) {
+		            // Duyệt qua tất cả các chi tiết đơn hàng và cập nhật phí vận chuyển
+		            for (ChiTietDonHang chiTietDonHang : chiTietDonHangList) {
+		                chiTietDonHang.setPhiVanChuyen(shippingFee); // Cập nhật phí vận chuyển cho từng chi tiết đơn hàng
+		                ctDonHangRepository.save(chiTietDonHang); // Lưu thay đổi
+		            }
+		        } else {
+		            throw new RuntimeException("Không có chi tiết đơn hàng để cập nhật.");
+		        }
+		    } else {
+		        throw new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId);
+		    }
+		}
+
+	
 }

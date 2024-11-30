@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.GioHang;
 import com.poly.entity.TaiKhoanEntity;
-import com.poly.mapper.ChiTietGioHangMapper;
-import com.poly.mapper.GioHangMapper;
 import com.poly.repository.ChiTietGioHangReponsitory;
 import com.poly.repository.GioHangReponsitory;
 import com.poly.repository.taikhoanJPA;
@@ -27,10 +25,6 @@ public class GioHangService {
 	private ChiTietGioHangReponsitory chiTietGioHangReponsitory;
 	@Autowired
 	private taikhoanJPA userRepository;
-	@Autowired
-	private ChiTietGioHangMapper chiTietGioHangMapper;
-	@Autowired
-	private GioHangMapper gioHangMapper;	
 	
 	//tạo Giỏ Hàng Cho Người Dùng
 	public GioHang createCartForUser(Integer idNguoiDung) {

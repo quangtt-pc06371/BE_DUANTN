@@ -78,7 +78,7 @@ public class VoucherController {
             throw new SecurityException("Bạn không có quyền cập nhật thời gian của Voucher!");
         }
 
-        if (updateTimeRequest.getNgayBatDau().after(updateTimeRequest.getNgayHetHan())) {
+        if (updateTimeRequest.getNgaybatdau().after(updateTimeRequest.getNgayHetHan())) {
             throw new IllegalArgumentException("Ngày bắt đầu phải trước ngày hết hạn.");
         }
 
@@ -87,7 +87,7 @@ public class VoucherController {
             throw new IllegalArgumentException("Voucher không tồn tại.");
         }
 
-        existingVoucher.setNgaybatdau(updateTimeRequest.getNgayBatDau());
+        existingVoucher.setNgaybatdau(updateTimeRequest.getNgaybatdau());
         existingVoucher.setNgayHetHan(updateTimeRequest.getNgayHetHan());
 
         return voucherBillService.updateVoucherEntity(id, existingVoucher);

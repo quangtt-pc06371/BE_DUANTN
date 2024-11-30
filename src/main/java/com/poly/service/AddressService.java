@@ -3,10 +3,10 @@ package com.poly.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Model.DiaChiEntity;
+import com.poly.entity.DiaChiEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
-import com.poly.mapper.GhnMapper;
+import com.poly.Mapper.GhnMapper;
 import com.poly.repository.DiaChiReponsitory;
 import com.poly.repository.ShopRepository;
 import com.poly.repository.taikhoanJPA;
@@ -33,7 +33,7 @@ public class AddressService {
 	            .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
 
 	 // Lấy thông tin shop liên kết với người dùng (nếu có)
-	    ShopEntity shopEntity = taiKhoanEntity.getShopEntity();  // Giả sử có phương thức getShop() trả về đối tượng ShopEntity liên kết với người dùng
+	    ShopEntity shopEntity = taiKhoanEntity.getShop();  // Giả sử có phương thức getShop() trả về đối tượng ShopEntity liên kết với người dùng
 
 	    // Tạo DiaChiEntity cho người dùng
 	    DiaChiEntity diaChiEntityUser = ghnMapper.toDiaChiEntity(addressRequest);

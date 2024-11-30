@@ -1,4 +1,4 @@
-package com.poly.mapper;
+package com.poly.Mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
@@ -29,6 +29,13 @@ public interface SkuMapper {
 	@Mapping(source = "sanPham.shop", target = "sanPhamDTO.shopDTO")
 	@Mapping(source = "soLuong", target = "soLuongKho")
 	SkuDTO toSkuDTO(SkuEntity skuEntity);
+	
+	@Mapping(source = "soLuongKho", target = "soLuong")
+	@Mapping(source = "tuyChonThuocTinhSkus", target = "tuyChonThuocTinhSkus")
+	@Mapping(source = "hinhanhs", target = "hinhanh")
+//	@Mapping(source = "sanPhamDTO.tenSanPham", target = "sanPhamEntity.tenSanPham")
+//	@Mapping(source = "sanPhamDTO.shopDTO", target = "sanPhamEntity.shop")
+	SkuEntity toSkuEntity(SkuDTO skuDTO);
 
 	List<SkuDTO> toSkuDTOList(List<SkuEntity> skuEntities);
 	
