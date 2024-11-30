@@ -363,7 +363,7 @@ public class User {
 	              return ResponseEntity.ok(tokens);
 	          }else {
 	        	 TaiKhoanEntity taikhoan = new TaiKhoanEntity();
-	        	 Optional<Vaitro>  roles = vaitro.findById(3);
+	        	 Optional<Vaitro>  roles = vaitro.findById(2);
   	           Vaitro vaitro= roles.get();
   	         Optional<Quyen>  quyens = quyenjpa.findById(2);
 	         

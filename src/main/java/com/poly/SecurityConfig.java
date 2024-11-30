@@ -65,9 +65,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/shops/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/taikhoan/upload/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/**").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/api/sanpham**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/sanpham/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/shop**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/sanpham/khuyenmai").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/shop/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/shops/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/sanpham**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/sanpham/**").permitAll()
 //                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
@@ -80,10 +82,11 @@ public class SecurityConfig {
                 // All other requests must be authenticated
                 .anyRequest().authenticated()
             )
-            .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Sử dụng JWT, không cần session
-            .and()
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // Thêm filter JWT vào trước
+//            .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Sử dụng JWT, không cần session
+//            .and()
+//            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            ; // Thêm filter JWT vào trước
 
         return http.build();
     }

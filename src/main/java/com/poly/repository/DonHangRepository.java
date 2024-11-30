@@ -9,8 +9,9 @@ import com.poly.entity.DonHang;
 
 
 public interface DonHangRepository extends JpaRepository<DonHang, Integer>{
-	
-	@Query("SELECT dh FROM DonHang dh WHERE dh.taiKhoanEntity.id = ?1")
-	List<DonHang> findByIdUser(Integer taiKhoanEntity);
-	
+//	
+//	@Query("SELECT dh FROM DonHang dh WHERE dh.taiKhoanEntity.id = ?1")
+//	List<DonHang> findByIdUser(Integer taiKhoanEntity);
+	@Query("SELECT dh FROM DonHang dh WHERE dh.trangThaiDonHang = false AND dh.taiKhoanEntity.id = ?1")
+	List<DonHang> findByIdNguoiDung(Integer idNguoiDung);
 }

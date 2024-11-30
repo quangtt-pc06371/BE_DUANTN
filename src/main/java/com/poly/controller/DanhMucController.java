@@ -65,4 +65,11 @@ public class DanhMucController {
         danhMucService.deleteDanhMucById(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/count")
+    public ResponseEntity<Long> countDanhMuc() {
+        long totalDanhMuc = danhMucService.sumDanhMuc();
+        return ResponseEntity.ok(totalDanhMuc);
+    }
+
 }

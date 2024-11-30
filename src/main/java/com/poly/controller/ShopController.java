@@ -196,7 +196,7 @@ public class ShopController {
     @GetMapping("/user")
     public ResponseEntity<ShopEntity> getShopByUserId(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
+        if (token != null && token.startsWith("Bearer")) {
             token = token.substring(7);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
@@ -206,7 +206,8 @@ public class ShopController {
         if (userId == 0) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
-        TaiKhoanEntity taikhoan = taikhoanjpa.Findbyshop(userId);
+        Optional<TaiKhoanEntity> taikhoanop = taikhoanjpa.findById(userId);
+        TaiKhoanEntity taikhoan = taikhoanop.get();
         int a = taikhoan.getShop().getId();
         ShopEntity shop = shopService.getShopById(a).orElse(null);
       

@@ -40,4 +40,7 @@ public class ShopSanPhamService {
 	    public ShopEntity getShopByNguoiDungId(Integer idNguoiDung) {
 	        return shopRepository.findShopByNguoiDungId(idNguoiDung);
 	    }
+	    public int sumShop() {
+	        return shopRepository.tongShop(); // hoặc shopRepository.count() nếu dùng mặc định
+	    }
 }

@@ -17,5 +17,5 @@ public class SkuDTO {
 	private int soLuongKho;
     private SanPhamDTO sanPhamDTO;
     private List<TuyChonThuocTinhSkuDTO> tuyChonThuocTinhSkus;
-    private List<HinhAnhDTO> hinhanhs;
+    private HinhAnhDTO hinhanhs;
 }

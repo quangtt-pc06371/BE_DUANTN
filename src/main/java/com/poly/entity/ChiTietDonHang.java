@@ -37,7 +37,8 @@ public class ChiTietDonHang {
 	
 	@Column(name = "GIA")
 	private double tongTien;
-
+	@Column(name = "PHIVANCHUYEN")
+	private double PhiVanChuyen;
 	@ManyToOne
 	@JoinColumn(name = "ID_DONHANG", nullable = false)
 	@JsonBackReference

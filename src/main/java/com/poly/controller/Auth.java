@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.poly.DtoEntity.LoginDto;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.service.CustomUserDetailsService;
-import com.poly.service.JwtSevice;
+//import com.poly.service.JwtSevice;
 import com.poly.service.JwtSevice2;
 import com.poly.service.taiKhoanService;
 
@@ -50,8 +50,8 @@ public class Auth {
 	    @Autowired
 	    private taiKhoanService taiKhoansevice;
 
-	    @Autowired
-	    private JwtSevice jwtsevice;
+//	    @Autowired
+//	    private JwtSevice jwtsevice;
 
 	    @Autowired
 	    private JwtSevice2 jwtsevice2;

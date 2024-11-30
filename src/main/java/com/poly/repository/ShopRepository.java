@@ -19,4 +19,8 @@ public interface ShopRepository extends JpaRepository<ShopEntity, Integer> {
 	
 	@Query("SELECT s FROM ShopEntity s WHERE s.id = (SELECT t.shop.id FROM TaiKhoanEntity t WHERE t.id = ?1)")
     ShopEntity findShopByNguoiDungId(Integer idNguoiDung);
+	
+	@Query("SELECT COUNT(s) FROM ShopEntity s")
+	int tongShop();
+
 }
