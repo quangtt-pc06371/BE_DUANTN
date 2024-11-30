@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.poly.DtoEntity.SkuDTO;
-import com.poly.Mapper.SkuMapper;
 import com.poly.entity.SkuEntity;
+import com.poly.mapper.SkuMapper;
 import com.poly.repository.SkuRepository;
 
 
