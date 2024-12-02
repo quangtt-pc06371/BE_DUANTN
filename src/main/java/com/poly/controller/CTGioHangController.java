@@ -1,10 +1,15 @@
 package com.poly.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.DtoEntity.CTGioHangDTO;
+import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.GioHang;
+import com.poly.entity.TaiKhoanEntity;
 import com.poly.mapper.ChiTietGioHangMapper;
 import com.poly.repository.GioHangReponsitory;
 import com.poly.request.UpdateCartStatusRequest;
@@ -21,6 +28,7 @@ import com.poly.service.ChiTietGioHangService;
 import com.poly.service.GioHangService;
 import com.poly.service.JwtSevice2;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -38,6 +46,8 @@ public class CTGioHangController {
 	private GioHangService gioHangService;
 	@Autowired
 	private GioHangReponsitory gioHangReponsitory;
+	
+	
 
 	@PostMapping("/addDetail")
 	public ResponseEntity<?> addDetailToCart(@RequestBody CTGioHangDTO ctGioHangDTO, HttpServletRequest request) {

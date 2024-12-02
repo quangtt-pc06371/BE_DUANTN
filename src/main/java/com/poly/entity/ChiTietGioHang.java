@@ -19,7 +19,7 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "CHITIETGIOHANG")
+@Table(name = "chitietgiohang")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -38,12 +38,17 @@ public class ChiTietGioHang {
 	
 	@Column(name = "TRANGTHAI")
 	private boolean trangThai;
+	//cũ
+//	@ManyToOne
+//	@JoinColumn(name = "ID_CART", referencedColumnName = "ID_CART", nullable = false)
+//	@JsonIgnoreProperties(value= "chiTietGioHangList")
+//	private GioHang gioHang;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_CART", referencedColumnName = "ID_CART", nullable = false)
-	@JsonIgnoreProperties(value= "chiTietGioHangList")
+	@JsonBackReference
+//	@JsonIgnoreProperties
 	private GioHang gioHang;
-	
 	@ManyToOne
 	@JoinColumn(name = "ID_SKU", referencedColumnName = "ID_SKU", nullable = false)
 	private SkuEntity skuEntity;

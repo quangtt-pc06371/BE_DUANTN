@@ -1,9 +1,12 @@
 package com.poly.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import com.poly.DtoEntity.DonHangDTO;
+import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.DonHang;
+import com.poly.entity.TaiKhoanEntity;
 import com.poly.mapper.DonHangMapper;
 import com.poly.repository.ChiTietGioHangReponsitory;
 import com.poly.repository.GioHangReponsitory;
 import com.poly.request.ShippingRequestDTO;
 import com.poly.service.CTDonHangService;
+import com.poly.service.ChiTietGioHangService;
 import com.poly.service.DonHangService;
 import com.poly.service.JwtSevice2;
 
@@ -41,7 +47,7 @@ public class CTDonHangController {
     private GioHangReponsitory gioHangRepository;
     @Autowired
     private JwtSevice2 jwtSevice2;
-       
+   
     // Endpoint để lưu chi tiết giỏ hàng vào đơn hàng dựa trên danh sách idDetail
     @PostMapping("/create")
 	public ResponseEntity<?> createDonHang(HttpServletRequest request) {

@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import com.poly.loginggconifg;
+import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.Quyen;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.entity.TokenRequest;
@@ -43,6 +44,7 @@ import com.poly.entity.Vaitro;
 import com.poly.repository.QuyenJPA;
 import com.poly.repository.RoleRepository;
 import com.poly.repository.taikhoanJPA;
+import com.poly.service.ChiTietGioHangService;
 import com.poly.service.CustomUserDetailsService;
 import com.poly.service.FirebaseService;
 import com.poly.service.JwtSevice2;
@@ -82,7 +84,13 @@ public class User {
 		 private RoleRepository vaitro;
 	  @Autowired
 		 private QuyenJPA quyenjpa;
-	  
+	  @Autowired
+	    private ChiTietGioHangService ctgiohangsv;
+	    @GetMapping("/list")
+		 public ResponseEntity<List<ChiTietGioHang>> getallgiohang(){
+			 List<ChiTietGioHang> taikhoan = ctgiohangsv.getAllTaiKhoans();
+			 return ResponseEntity.ok(taikhoan);
+		 }
 	@GetMapping
 	 public ResponseEntity<List<TaiKhoanEntity>> getalltaikhoan(){
 		 List<TaiKhoanEntity> taikhoan = taikhoansevice.getAllTaiKhoans();

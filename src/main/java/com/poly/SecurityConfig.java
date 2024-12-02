@@ -60,6 +60,9 @@ public class SecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                 // Allow all GET requests to /api/**
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/cart/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/order/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/cart/**").permitAll()
 //                .requestMatchers(HttpMethod.POST, "/api/taikhoan/upload/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/danhmuc/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/shops/**").permitAll()
@@ -70,7 +73,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/sanpham/khuyenmai").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/shop/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/shops/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/sanpham**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/sanpham/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/sanpham/**").permitAll()
 //                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 // Restrict POST requests to /api/taikhoan/** to users with ROLE_Create

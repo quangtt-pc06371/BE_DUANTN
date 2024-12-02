@@ -10,6 +10,7 @@ import com.poly.DtoEntity.CTGioHangDTO;
 import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.GioHang;
 import com.poly.entity.SkuEntity;
+import com.poly.entity.TaiKhoanEntity;
 import com.poly.mapper.ChiTietGioHangMapper;
 import com.poly.mapper.SkuMapper;
 import com.poly.repository.ChiTietGioHangReponsitory;
@@ -32,7 +33,11 @@ public class ChiTietGioHangService {
 	SkuRepository skuReponsitory;
 	@Autowired
 	GioHangService gioHangService;
-
+	
+	public List<ChiTietGioHang> getAllTaiKhoans() {
+        return chiTietGioHangReponsitory.findAll();
+    }
+	
 	@Transactional
 	public void addDetailToCart(CTGioHangDTO ctGioHangDTO, int idGioHang) {
 	    // Bước 1: Lấy giỏ hàng dựa vào idGioHang
