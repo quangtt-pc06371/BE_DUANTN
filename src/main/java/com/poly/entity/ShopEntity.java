@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,10 +55,12 @@ public class ShopEntity {
     @Column(name = "IS_ACTIVE", nullable = false)
     private Boolean isActive = true;
     
-//    @ManyToOne
+//    @OneToOne
 //    @JoinColumn(name = "ID_NGUOIDUNG")
 //    private TaiKhoanEntity nguoiDung;
-//    
+//    @OneToOne(mappedBy = "shop")
+//   @JsonBackReference
+//    private List<TaiKhoanEntity> taikhoan;
     
 //    @OneToMany(mappedBy = "shop")
 //    @JsonBackReference

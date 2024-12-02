@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.DtoEntity.DonHangDTO;
 import com.poly.mapper.DonHangMapper;
+import com.poly.repository.DonHangRepository;
 import com.poly.entity.DonHang;
 import com.poly.request.PaymentRequest;
 import com.poly.service.CTDonHangService;
@@ -42,7 +43,8 @@ public class DonHangController {
 	private JwtSevice2 jwtSevice2;
 	@Autowired
 	private VnPayService vnPayService;
-
+	@Autowired
+	private DonHangRepository donHangRepository;
 	@GetMapping("/list")
 	public ResponseEntity<?> getAllDonHang(HttpServletRequest request) {
 	    try {
@@ -55,8 +57,8 @@ public class DonHangController {
 	        int IdNguoiDung = jwtSevice2.getIdFromToken(token);
 
 	        // Lấy tất cả đơn hàng của người dùng
-	        List<DonHang> donHangList = donHangService.getAllDonHang(IdNguoiDung);
-
+	        List<DonHang> donHangList = donHangRepository.findByIdNguoiDung(IdNguoiDung);
+	     
 	        // Kiểm tra xem có đơn hàng nào không
 	        if (donHangList == null || donHangList.isEmpty()) {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không có đơn hàng nào.");

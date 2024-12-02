@@ -15,6 +15,7 @@ import com.poly.mapper.ChiTietGioHangMapper;
 import com.poly.mapper.SkuMapper;
 import com.poly.repository.ChiTietGioHangReponsitory;
 import com.poly.repository.GioHangReponsitory;
+import com.poly.repository.SkuJPA;
 import com.poly.repository.SkuRepository;
 
 import jakarta.transaction.Transactional;
@@ -33,26 +34,31 @@ public class ChiTietGioHangService {
 	SkuRepository skuReponsitory;
 	@Autowired
 	GioHangService gioHangService;
-	
+
+	@Autowired
+	private SkuJPA skujpa;
 	public List<ChiTietGioHang> getAllTaiKhoans() {
         return chiTietGioHangReponsitory.findAll();
     }
 	
 	@Transactional
-	public void addDetailToCart(CTGioHangDTO ctGioHangDTO, int idGioHang) {
+	public void addDetailToCart(CTGioHangDTO ctGioHangDTO, GioHang giohang) {
 	    // Bước 1: Lấy giỏ hàng dựa vào idGioHang
-	    GioHang gioHang = gioHangReponsitory.findById(idGioHang)
-	            .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại"));
+//	    GioHang gioHang = gioHangReponsitory.findById(idGioHang)
+//	            .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại"));
 
 	    // Bước 2: Chuyển đổi DTO sang Entity bằng MapStruct
 	    ChiTietGioHang chiTietGioHang = chiTietGioHangMapper.toEntity(ctGioHangDTO);
+	    Optional<SkuEntity> sku = skujpa.findById(ctGioHangDTO.getSkuDTO().getIdSku()); 
+        SkuEntity sk=    sku.get();
+	    chiTietGioHang.setSkuEntity(sk);
 
 	    // Bước 3: Liên kết ChiTietGioHang với Giỏ hàng
-	    chiTietGioHang.setGioHang(gioHang);
+	    chiTietGioHang.setGioHang(giohang);
 
 	    // Bước 4: Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
 	    Optional<ChiTietGioHang> existingDetail = chiTietGioHangReponsitory.findByGioHangAndSkuEntity(
-	            gioHang, 
+	    		giohang, 
 	            chiTietGioHang.getSkuEntity()
 	    );
 

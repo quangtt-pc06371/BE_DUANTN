@@ -68,6 +68,6 @@ public class DiaChiEntity {
 	@JsonIgnore
 	private ShopEntity shop;
 
-	@Column(name = "type" ,nullable = false)
-	private String type;
+//	@Column(name = "type" ,nullable = false)
+//	private String type;
 }

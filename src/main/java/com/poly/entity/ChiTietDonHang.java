@@ -35,10 +35,12 @@ public class ChiTietDonHang {
 	@Column(name = "SOLUONG")
 	private int soLuong;
 	
+	@Column(name = "PHIVANCHUYEN")
+	private double phiVanChuyen;
+	
 	@Column(name = "GIA")
 	private double tongTien;
-	@Column(name = "PHIVANCHUYEN")
-	private double PhiVanChuyen;
+
 	@ManyToOne
 	@JoinColumn(name = "ID_DONHANG", nullable = false)
 	@JsonBackReference
@@ -49,7 +51,7 @@ public class ChiTietDonHang {
 	@JsonManagedReference
 	private SkuEntity skuEntity;
 	
-	@OneToMany(mappedBy = "chiTietDonHang", cascade = CascadeType.ALL)
-	@JsonManagedReference
-	private	List<VanChuyenGHNEntity> vanChuyenGHNEntities;
+//	@OneToMany(mappedBy = "chiTietDonHang", cascade = CascadeType.ALL)
+//	@JsonManagedReference
+//	private	List<VanChuyenGHNEntity> vanChuyenGHNEntities;
 }

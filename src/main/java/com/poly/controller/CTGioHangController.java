@@ -3,6 +3,7 @@ package com.poly.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.poly.DtoEntity.CTGioHangDTO;
 import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.GioHang;
+import com.poly.entity.SkuEntity;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.mapper.ChiTietGioHangMapper;
 import com.poly.repository.GioHangReponsitory;
+import com.poly.repository.SkuJPA;
 import com.poly.request.UpdateCartStatusRequest;
 import com.poly.service.ChiTietGioHangService;
 import com.poly.service.GioHangService;
@@ -47,7 +50,8 @@ public class CTGioHangController {
 	@Autowired
 	private GioHangReponsitory gioHangReponsitory;
 	
-	
+	@Autowired
+	private SkuJPA skujpa;
 
 	@PostMapping("/addDetail")
 	public ResponseEntity<?> addDetailToCart(@RequestBody CTGioHangDTO ctGioHangDTO, HttpServletRequest request) {
@@ -70,9 +74,11 @@ public class CTGioHangController {
 	                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Không thể tạo giỏ hàng mới.");
 	            }
 	        }
-
+//	              Optional<SkuEntity> sku = skujpa.findById(ctGioHangDTO.getSkuDTO().getIdSku()); 
+//	              SkuEntity sk=    sku.get();
+//	              ctGioHangDTO.setSkuDTO(sk.getIdSku());
 	        // Bước 3: Thêm chi tiết vào giỏ hàng
-	        chiTietGiohangService.addDetailToCart(ctGioHangDTO, gioHang.getIdCart());
+	     chiTietGiohangService.addDetailToCart(ctGioHangDTO, gioHang);
 
 	        // Bước 4: Trả về phản hồi thành công
 	        return ResponseEntity.ok("Thêm sản phẩm vào giỏ hàng thành công!");

@@ -5,8 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.poly.DtoEntity.Shopcuaquang;
 
 import jakarta.persistence.Column;
@@ -32,6 +34,7 @@ import jakarta.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Table(name = "nguoidung")
 public class TaiKhoanEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -69,6 +72,7 @@ public class TaiKhoanEntity implements Serializable {
     private Vaitro vaitro ;
     @OneToOne
     @JoinColumn(name = "SHOP")
+//    @JsonIgnoreProperties
     private ShopEntity shop ;
 //    private Vaitro vaitro = new HashSet<>();
   

@@ -28,6 +28,7 @@ public interface SkuMapper {
 	@Mapping(source = "sanPham.tenSanPham", target = "sanPhamDTO.tenSanPham")
 	@Mapping(source = "sanPham.shop", target = "sanPhamDTO.shopDTO")
 	@Mapping(source = "soLuong", target = "soLuongKho")
+	@Mapping(source = "idSku", target = "idSku")
 	SkuDTO toSkuDTO(SkuEntity skuEntity);
 	
 	@Mapping(source = "soLuongKho", target = "soLuong")

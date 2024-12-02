@@ -1,6 +1,7 @@
 package com.poly.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -34,10 +35,10 @@ public class ChiTietGioHang {
 	private int soLuongMua;
 
 	@Column(name = "GIA", nullable = false)
-	private double giaMua;
+	private double giaMua =0;
 	
 	@Column(name = "TRANGTHAI")
-	private boolean trangThai;
+	private boolean trangThai = false;
 	//cũ
 //	@ManyToOne
 //	@JoinColumn(name = "ID_CART", referencedColumnName = "ID_CART", nullable = false)

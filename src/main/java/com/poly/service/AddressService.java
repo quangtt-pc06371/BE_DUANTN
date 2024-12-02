@@ -40,7 +40,7 @@ public class AddressService {
 	    diaChiEntityUser.setHoTen(diaChiEntityUser.getHoTen() != null ? diaChiEntityUser.getHoTen() : taiKhoanEntity.getHoTen());
 	    diaChiEntityUser.setSoDienThoai(diaChiEntityUser.getSoDienThoai() != null ? diaChiEntityUser.getSoDienThoai() : taiKhoanEntity.getSdt());
 	    diaChiEntityUser.setTaiKhoanEntity(taiKhoanEntity);
-	    diaChiEntityUser.setType("USER");
+//	    diaChiEntityUser.setType("USER");
 
 	    // Lưu địa chỉ với Type = USER
 	    diaChiRepository.save(diaChiEntityUser);
@@ -52,7 +52,7 @@ public class AddressService {
 	        diaChiEntityShop.setSoDienThoai(diaChiEntityShop.getSoDienThoai() != null ? diaChiEntityShop.getSoDienThoai() : taiKhoanEntity.getSdt());
 	        diaChiEntityShop.setTaiKhoanEntity(taiKhoanEntity); // Liên kết với tài khoản
 	        diaChiEntityShop.setShop(shopEntity);              // Liên kết với shop
-	        diaChiEntityShop.setType("SHOP");
+//	        diaChiEntityShop.setType("SHOP");
 
 	        // Lưu địa chỉ với Type = SHOP
 	        diaChiRepository.save(diaChiEntityShop);
