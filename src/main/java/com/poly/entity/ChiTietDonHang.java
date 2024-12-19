@@ -51,7 +51,7 @@ public class ChiTietDonHang {
 	@JsonManagedReference
 	private SkuEntity skuEntity;
 	
-//	@OneToMany(mappedBy = "chiTietDonHang", cascade = CascadeType.ALL)
-//	@JsonManagedReference
-//	private	List<VanChuyenGHNEntity> vanChuyenGHNEntities;
+	@OneToMany(mappedBy = "chiTietDonHang", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private	List<VanChuyenGHNEntity> vanChuyenGHNEntities;
 }

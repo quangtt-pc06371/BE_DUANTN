@@ -17,7 +17,8 @@ import com.poly.service.JwtSevice2;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@CrossOrigin("*")
+
+@CrossOrigin(origins = {"*"})
 @RestController
 @RequestMapping("/api/addresses")
 public class AddressController {
@@ -33,6 +34,17 @@ public class AddressController {
 			String token = request.getHeader("Authorization");
 			int idNguoiDung = jwtSevice2.getIdFromToken(token);
 			addressService.saveAddress(addressRequest, idNguoiDung);
+			return ResponseEntity.ok("Địa chỉ đã được lưu thành công!");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");
+		}
+	}
+	@PostMapping("/saveshop")
+	public ResponseEntity<?> saveAddressshop(@RequestBody AddressRequest addressRequest, HttpServletRequest request) {
+		try {
+			String token = request.getHeader("Authorization");
+			int idNguoiDung = jwtSevice2.getIdFromToken(token);
+			addressService.saveAddressshop(addressRequest, idNguoiDung);
 			return ResponseEntity.ok("Địa chỉ đã được lưu thành công!");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");

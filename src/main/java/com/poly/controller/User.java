@@ -37,10 +37,12 @@ import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import com.poly.loginggconifg;
 import com.poly.entity.ChiTietGioHang;
+import com.poly.entity.DiaChiEntity;
 import com.poly.entity.Quyen;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.entity.TokenRequest;
 import com.poly.entity.Vaitro;
+import com.poly.repository.DiaChiReponsitory;
 import com.poly.repository.QuyenJPA;
 import com.poly.repository.RoleRepository;
 import com.poly.repository.taikhoanJPA;
@@ -86,6 +88,9 @@ public class User {
 		 private QuyenJPA quyenjpa;
 	  @Autowired
 	    private ChiTietGioHangService ctgiohangsv;
+	  @Autowired
+		private DiaChiReponsitory diaChiRepository;  
+	  
 	    @GetMapping("/list")
 		 public ResponseEntity<List<ChiTietGioHang>> getallgiohang(){
 			 List<ChiTietGioHang> taikhoan = ctgiohangsv.getAllTaiKhoans();
@@ -293,14 +298,9 @@ public class User {
 //            String hoTen = jwtsevice.getHoTenFromToken(token);
             String email = jwtsevice2.getEmailFromToken(token);
 //            List<String> role = jwtsevice2.getRolesFromToken(token);
-         
-//            Map<String, String> tokens = new HashMap<>();
-//            tokens.put("id",String.valueOf(id));
-//            tokens.put("hoten",hoTen);
-//            tokens.put("email",email);
-//            tokens.put("role",role);
-//            tokens.put("token",token);
+       
           TaiKhoanEntity tk = taikhoanjpa.FindbyEmail(email);
+          List<DiaChiEntity> diachi = diaChiRepository.FindbyIdUser(tk.getId());
 //           TaiKhoanEntity tk =  taikhoan.get();
            Map<String, Object>token2 = new HashMap<>();
            token2.put("hoten",tk.getHoTen());
@@ -308,7 +308,7 @@ public class User {
            token2.put("anh",tk.getAnh());
            token2.put("cmnd",tk.getCmnd());
            token2.put("sdt",tk.getSdt());
-//           token2.put("vaitro",tk.getVaitro());
+           token2.put("diachi",diachi);
            token2.put("quyen",tk.getQuyens());
            
            
