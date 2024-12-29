@@ -15,7 +15,4 @@ public class SkuDTO {
 	private int idSku;
 	private double giaSanPham;
 	private int soLuongKho;
-    private SanPhamDTO sanPhamDTO;
-    private List<TuyChonThuocTinhSkuDTO> tuyChonThuocTinhSkus;
-    private List<HinhAnhDTO> hinhanhs;
 }

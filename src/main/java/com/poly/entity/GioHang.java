@@ -3,6 +3,7 @@ package com.poly.entity;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,14 +31,11 @@ public class GioHang {
 	@Column(name = "ID_CART") // Tên cột trong bảng
 	private Integer idCart; // ID_CART
 	
-	@Column(name = "TONGTIEN") 
-	private Double tongTien; 
-	
 	@OneToOne
 	@JoinColumn(name = "ID_NGUOIDUNG", nullable = false) // Tên cột tham chiếu
-	private TaiKhoanEntity idNguoiDung; // ID_NGUOIDUNG
+	@JsonIgnore
+	private TaiKhoanEntity taiKhoanEntity; // ID_NGUOIDUNG
 
 	@OneToMany(mappedBy = "gioHang")
-	@JsonBackReference
 	private List<ChiTietGioHang> chiTietGioHangList; // Danh sách chi tiết giỏ hàng
 }

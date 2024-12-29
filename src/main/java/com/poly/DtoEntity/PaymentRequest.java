@@ -7,9 +7,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ShippingRequestDTO {
-	private Integer orderId;
-	private double shippingFee;
+@AllArgsConstructor
+public class PaymentRequest {
+	private int amount;
+	private String orderInfo;
+	
 }

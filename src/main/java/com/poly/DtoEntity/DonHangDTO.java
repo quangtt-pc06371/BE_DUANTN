@@ -18,8 +18,7 @@ public class DonHangDTO {
 	private String trangThaiThanhToan; // TRANGTHAITHANHTOAN
 	private Boolean trangThaiDonHang; // STATUS_DONHANG
 	private Boolean hinhThucThanhToan; // HINHTHUCTHANHTOAN
-	private VoucherDTO voucherDTO; // ID_VOUCHER
-	private List<GhnDTO> vanChuyenList;
+	private Integer idVoucher; // ID_VOUCHER
 	// List chi tiết đơn hàng (có thể không cần nếu bạn không muốn load)
 	private List<CTDonHangDTO> chiTietDonHangs; // Chi tiết đơn hàng
 	

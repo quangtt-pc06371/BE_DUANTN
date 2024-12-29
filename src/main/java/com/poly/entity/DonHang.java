@@ -41,11 +41,6 @@ public class DonHang {
 	private VoucherEntity voucherEntity; 
 	
 	@OneToMany(mappedBy = "donHang", cascade = CascadeType.ALL)
-	@JsonManagedReference
 	private	List<ChiTietDonHang> chiTietDonHangs;
-	
-	@OneToMany(mappedBy = "donHang", cascade = CascadeType.ALL)
-	@JsonManagedReference
-	private	List<VnPayEntity> vnPayEntities;
 	
 }
