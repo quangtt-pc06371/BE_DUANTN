@@ -1,17 +1,23 @@
 package com.poly.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.poly.request.AddressRequest;
+import com.poly.DtoEntity.AddressDTO;
+import com.poly.entity.DiaChiEntity;
 import com.poly.service.AddressService;
 import com.poly.service.JwtSevice2;
 
@@ -28,8 +34,26 @@ public class AddressController {
 	@Autowired
 	private JwtSevice2 jwtSevice2;
 
+	@GetMapping("/list")
+	public ResponseEntity<?> getAddress(HttpServletRequest request) {
+		try {
+			String token = request.getHeader("Authorization");
+			int idNguoiDung = jwtSevice2.getIdFromToken(token);
+			// Kiểm tra token hợp lệ
+			if (idNguoiDung == -1) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // Trả về 401 nếu token không hợp lệ
+			}
+			List<DiaChiEntity> diaChiEntity = addressService.getAddressNguoiDung(idNguoiDung);
+			Map<String, Object> response = new HashMap<>();
+			response.put("diaChi", diaChiEntity);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lấy địa chỉ!");
+		}
+	}
+
 	@PostMapping("/save")
-	public ResponseEntity<?> saveAddress(@RequestBody AddressRequest addressRequest, HttpServletRequest request) {
+	public ResponseEntity<?> saveAddress(@RequestBody AddressDTO addressRequest, HttpServletRequest request) {
 		try {
 			String token = request.getHeader("Authorization");
 			int idNguoiDung = jwtSevice2.getIdFromToken(token);
@@ -39,20 +63,9 @@ public class AddressController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");
 		}
 	}
-	@PostMapping("/saveshop")
-	public ResponseEntity<?> saveAddressshop(@RequestBody AddressRequest addressRequest, HttpServletRequest request) {
-		try {
-			String token = request.getHeader("Authorization");
-			int idNguoiDung = jwtSevice2.getIdFromToken(token);
-			addressService.saveAddressshop(addressRequest, idNguoiDung);
-			return ResponseEntity.ok("Địa chỉ đã được lưu thành công!");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");
-		}
-	}
 
 	@PutMapping("/update")
-	public ResponseEntity<?> updateAddress(@RequestBody AddressRequest addressRequest, HttpServletRequest request) {
+	public ResponseEntity<?> updateAddress(@RequestBody AddressDTO addressRequest, HttpServletRequest request) {
 		try {
 			// Lấy token từ header
 			String token = request.getHeader("Authorization");
@@ -67,7 +80,7 @@ public class AddressController {
 			Integer idDiaChi = addressRequest.getId(); // Đảm bảo có trường idDiaChi trong AddressRequest
 			if (idDiaChi == null)
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID địa chỉ không được để trống!");
-			
+
 			// Gọi service để cập nhật địa chỉ
 			addressService.updateAddress(addressRequest, idNguoiDung, idDiaChi);
 
@@ -86,6 +99,18 @@ public class AddressController {
 			String token = request.getHeader("Authorization");
 			int idNguoiDung = jwtSevice2.getIdFromToken(token);
 			addressService.deleteAddress(idDiaChi, idNguoiDung);
+			return ResponseEntity.ok("Địa chỉ đã được lưu thành công!");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");
+		}
+	}
+	
+	@PutMapping("/updateSelectAddress")
+	public ResponseEntity<?> updateSelectAddress(@RequestBody int idDiaChi, HttpServletRequest request) {
+		try {
+			String token = request.getHeader("Authorization");
+			int idNguoiDung = jwtSevice2.getIdFromToken(token);
+			addressService.updateSelectAddress(idDiaChi, idNguoiDung);
 			return ResponseEntity.ok("Địa chỉ đã được lưu thành công!");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");

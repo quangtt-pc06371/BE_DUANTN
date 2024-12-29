@@ -7,7 +7,6 @@ import com.poly.DtoEntity.AddressDTO;
 import com.poly.DtoEntity.GhnDTO;
 import com.poly.entity.DiaChiEntity;
 import com.poly.entity.VanChuyenGHNEntity;
-import com.poly.request.AddressRequest;
 
 @Mapper(componentModel = "spring")
 public interface GhnMapper {

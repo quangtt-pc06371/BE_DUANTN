@@ -35,8 +35,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/order")
 public class CTDonHangController {
-	@Autowired
-	DonHangMapper donHangMapper;
     @Autowired
     private CTDonHangService ctDonHangService;
     @Autowired

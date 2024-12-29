@@ -300,7 +300,7 @@ public class User {
 //            List<String> role = jwtsevice2.getRolesFromToken(token);
        
           TaiKhoanEntity tk = taikhoanjpa.FindbyEmail(email);
-          List<DiaChiEntity> diachi = diaChiRepository.FindbyIdUser(tk.getId());
+          List<DiaChiEntity> diachi = diaChiRepository.findByTaiKhoanEntity(tk.getId());
 //           TaiKhoanEntity tk =  taikhoan.get();
            Map<String, Object>token2 = new HashMap<>();
            token2.put("hoten",tk.getHoTen());
