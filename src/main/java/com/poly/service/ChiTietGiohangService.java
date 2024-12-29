@@ -1,22 +1,18 @@
 package com.poly.service;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.poly.DtoEntity.CTGioHangDTO;
+import com.poly.DtoEntity.SkuDTO;
 import com.poly.entity.ChiTietGioHang;
 import com.poly.entity.GioHang;
+import com.poly.entity.SanPhamEntity;
 import com.poly.entity.SkuEntity;
-import com.poly.entity.TaiKhoanEntity;
-import com.poly.mapper.ChiTietGioHangMapper;
-import com.poly.mapper.SkuMapper;
 import com.poly.repository.ChiTietGioHangReponsitory;
 import com.poly.repository.GioHangReponsitory;
+import com.poly.repository.SanPhamJPA;
 import com.poly.repository.SkuJPA;
-import com.poly.repository.SkuRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -27,53 +23,44 @@ public class ChiTietGioHangService {
 	@Autowired
 	GioHangReponsitory gioHangReponsitory;
 	@Autowired
-	ChiTietGioHangMapper chiTietGioHangMapper;
+	SkuJPA skuReponsitory;
 	@Autowired
-	SkuMapper skuMapper;
-	@Autowired
-	SkuRepository skuReponsitory;
-	@Autowired
-	GioHangService gioHangService;
+	SanPhamJPA sanPhamJPA;
 
-	@Autowired
-	private SkuJPA skujpa;
-	public List<ChiTietGioHang> getAllTaiKhoans() {
-        return chiTietGioHangReponsitory.findAll();
-    }
-	
 	@Transactional
-	public void addDetailToCart(CTGioHangDTO ctGioHangDTO, GioHang giohang) {
-	    // Bước 1: Lấy giỏ hàng dựa vào idGioHang
-//	    GioHang gioHang = gioHangReponsitory.findById(idGioHang)
-//	            .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại"));
+	public CTGioHangDTO addDetailToCart(int idGioHang, int idSku, int quantity) {
+		// Bước 1: Lấy giỏ hàng dựa vào idGioHang
+		GioHang gioHang = gioHangReponsitory.findById(idGioHang)
+				.orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại"));
 
-	    // Bước 2: Chuyển đổi DTO sang Entity bằng MapStruct
-	    ChiTietGioHang chiTietGioHang = chiTietGioHangMapper.toEntity(ctGioHangDTO);
-	    Optional<SkuEntity> sku = skujpa.findById(ctGioHangDTO.getSkuDTO().getIdSku()); 
-        SkuEntity sk=    sku.get();
-	    chiTietGioHang.setSkuEntity(sk);
+		// Bước 2: Tìm SKU theo ID
+		SkuEntity skuEntity = skuReponsitory.findById(idSku)
+				.orElseThrow(() -> new RuntimeException("SKU không tồn tại với ID: " + idSku));
 
-	    // Bước 3: Liên kết ChiTietGioHang với Giỏ hàng
-	    chiTietGioHang.setGioHang(giohang);
+		// Kiểm tra tồn kho
+		if (skuEntity.getSoLuong() < quantity) {
+			throw new RuntimeException("Số lượng không đủ với SKU ID: " + idSku);
+		}
 
-	    // Bước 4: Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-	    Optional<ChiTietGioHang> existingDetail = chiTietGioHangReponsitory.findByGioHangAndSkuEntity(
-	    		giohang, 
-	            chiTietGioHang.getSkuEntity()
-	    );
+		// Bước 3: Tìm SanPhamEntity liên kết với SKU
+		SanPhamEntity sanPhamEntity = skuEntity.getSanPham();
+		if (sanPhamEntity == null) {
+			throw new RuntimeException("Sản phẩm liên kết với SKU không tồn tại");
+		}
 
-	    if (existingDetail.isPresent()) {
-	        // Nếu đã tồn tại, tăng số lượng sản phẩm
-	        ChiTietGioHang detail = existingDetail.get();
-	        detail.setSoLuongMua(detail.getSoLuongMua() + chiTietGioHang.getSoLuongMua());
-	        chiTietGioHangReponsitory.save(detail);
-	    } else {
-	        // Nếu chưa tồn tại, thêm chi tiết mới
-	        chiTietGioHangReponsitory.save(chiTietGioHang);
-	    }
+		// Bước 4: Liên kết ChiTietGioHang với Giỏ hàng
+		ChiTietGioHang chiTietGioHang = new ChiTietGioHang();
+		chiTietGioHang.setGioHang(gioHang);
+		chiTietGioHang.setSkuEntity(skuEntity);
+		chiTietGioHang.setSanPhamEntity(sanPhamEntity);
+		chiTietGioHang.setSoLuongMua(quantity);
+
+		chiTietGioHang = chiTietGioHangReponsitory.save(chiTietGioHang);
+
+		// Trả về DTO
+		return new CTGioHangDTO(chiTietGioHang.getIdDetail(), chiTietGioHang.getSoLuongMua(),
+				new SkuDTO(skuEntity.getIdSku(), skuEntity.getGiaSanPham(), skuEntity.getSoLuong()));
 	}
-
-
 
 	@Transactional
 	public void deleteDetailToCart(Integer idDetail, int idNguoiDung) {
@@ -88,7 +75,7 @@ public class ChiTietGioHangService {
 
 		// Kiểm tra quyền sở hữu nếu cần (ví dụ: chi tiết giỏ hàng phải thuộc về người
 		// dùng này)
-		if (chiTietGioHang.getGioHang().getIdNguoiDung().getId() != idNguoiDung) {
+		if (chiTietGioHang.getGioHang().getTaiKhoanEntity().getId() != idNguoiDung) {
 			throw new RuntimeException("Chi tiết giỏ hàng không thuộc về người dùng này.");
 		}
 
@@ -97,46 +84,42 @@ public class ChiTietGioHangService {
 	}
 
 	@Transactional
-	public void updateDetailToCart(CTGioHangDTO ctGioHangDTO, int idNguoiDung) {
-		// Tìm giỏ hàng của người dùng
-		GioHang gioHang = gioHangReponsitory.findByIdNguoiDung(idNguoiDung);
-		if (gioHang == null) {
-			throw new RuntimeException("Giỏ hàng không tồn tại cho người dùng này.");
-		}
-		
-		int idDetail = ctGioHangDTO.getIdDetail();
+	public CTGioHangDTO updateCartDetail(Integer detailId, Integer newSkuId, int newQuantity) {
+		// Lấy chi tiết giỏ hàng hiện tại
+		ChiTietGioHang chiTietGioHang = chiTietGioHangReponsitory.findById(detailId)
+				.orElseThrow(() -> new RuntimeException("Cart detail not found with ID: " + detailId));
 
-		// Tìm chi tiết giỏ hàng cần cập nhật
-		Optional<ChiTietGioHang> optionalChiTietGioHang = chiTietGioHangReponsitory.findById(idDetail);
-		if (!optionalChiTietGioHang.isPresent()) {
-			throw new RuntimeException("Chi tiết giỏ hàng không tồn tại.");
-		}
+		// Lấy SKU mới từ cơ sở dữ liệu
+		SkuEntity newSkuEntity = skuReponsitory.findById(newSkuId)
+				.orElseThrow(() -> new RuntimeException("SKU not found with ID: " + newSkuId));
 
-		// Lấy chi tiết giỏ hàng và cập nhật
-		ChiTietGioHang chiTietGioHang = optionalChiTietGioHang.get();
-
-		// Kiểm tra xem chi tiết giỏ hàng có thuộc về giỏ hàng của người dùng này không
-		if (chiTietGioHang.getGioHang().getIdNguoiDung().getId() != idNguoiDung) {
-			throw new RuntimeException("Chi tiết giỏ hàng không thuộc về người dùng này.");
+		// Kiểm tra tồn kho của SKU mới
+		if (newSkuEntity.getSoLuong() < newQuantity) {
+			throw new RuntimeException("Insufficient stock for SKU ID: " + newSkuId);
 		}
 
-		// Cập nhật số lượng mua
-		chiTietGioHang.setSoLuongMua(ctGioHangDTO.getSoLuongMua());
-		// Cập nhật SKU (nếu cần)
-		if (ctGioHangDTO.getSkuDTO() != null) {
-			// Sử dụng SkuMapper để ánh xạ từ SkuDTO sang SkuEntity
-			SkuEntity skuEntity = skuMapper.toSkuEntity(ctGioHangDTO.getSkuDTO());
+		// Cập nhật thông tin SKU và số lượng mua
+		SkuEntity oldSkuEntity = chiTietGioHang.getSkuEntity();
+		int oldQuantity = chiTietGioHang.getSoLuongMua();
 
-			// Gán lại SKU đã cập nhật vào ChiTietGioHang
-			chiTietGioHang.setSkuEntity(skuEntity);
-			
-			Double totalAmount = gioHangService.calculateTotalAmount(gioHang);
-		    
-		    gioHang.setTongTien(totalAmount);
-		}
+		chiTietGioHang.setSkuEntity(newSkuEntity);
+		chiTietGioHang.setSoLuongMua(newQuantity);
 
-		// Lưu lại chi tiết giỏ hàng đã được cập nhật
-		chiTietGioHangReponsitory.save(chiTietGioHang);
+		// Lưu thay đổi vào cơ sở dữ liệu
+		chiTietGioHang = chiTietGioHangReponsitory.save(chiTietGioHang);
+
+		// Cập nhật tồn kho
+		// Hoàn trả tồn kho SKU cũ
+		oldSkuEntity.setSoLuong(oldSkuEntity.getSoLuong() + oldQuantity);
+		skuReponsitory.save(oldSkuEntity);
+
+		// Trừ tồn kho SKU mới
+		newSkuEntity.setSoLuong(newSkuEntity.getSoLuong() - newQuantity);
+		skuReponsitory.save(newSkuEntity);
+
+		// Trả về DTO
+		return new CTGioHangDTO(chiTietGioHang.getIdDetail(), chiTietGioHang.getSoLuongMua(),
+				new SkuDTO(newSkuEntity.getIdSku(), newSkuEntity.getGiaSanPham(), newSkuEntity.getSoLuong()));
 	}
 
 	private void validateQuantity(SkuEntity sku, Integer requestedQuantity) {
@@ -147,30 +130,5 @@ public class ChiTietGioHangService {
 			throw new IllegalArgumentException(String.format("Số lượng yêu cầu (%d) vượt quá số lượng có sẵn (%d)",
 					requestedQuantity, sku.getSoLuong()));
 		}
-	}
-
-//	private CTGioHangDTO updateExistingCartItem(ChiTietGioHang existingItem, Integer additionalQuantity) {
-//		Integer newQuantity = existingItem.getSoLuongMua() + additionalQuantity;
-//		validateQuantity(existingItem.getSkuEntity(), newQuantity);
-//
-//		existingItem.setSoLuongMua(newQuantity);
-//		ChiTietGioHang updatedItem = chiTietGioHangReponsitory.save(existingItem);
-//
-//		return chiTietGioHangMapper.toDTO(updatedItem);
-//	}
-
-	public boolean updateCartItemStatus(List<Integer> cartItemIds, boolean newStatus) {
-		List<ChiTietGioHang> cartItems = chiTietGioHangReponsitory.findAllById(cartItemIds);
-
-		if (cartItems.isEmpty()) {
-			return false;
-		}
-
-		for (ChiTietGioHang cartItem : cartItems) {
-			cartItem.setTrangThai(newStatus); // Cập nhật trạng thái
-		}
-
-		chiTietGioHangReponsitory.saveAll(cartItems); // Lưu lại các thay đổi
-		return true;
 	}
 }

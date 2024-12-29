@@ -91,11 +91,11 @@ public class User {
 	  @Autowired
 		private DiaChiReponsitory diaChiRepository;  
 	  
-	    @GetMapping("/list")
-		 public ResponseEntity<List<ChiTietGioHang>> getallgiohang(){
-			 List<ChiTietGioHang> taikhoan = ctgiohangsv.getAllTaiKhoans();
-			 return ResponseEntity.ok(taikhoan);
-		 }
+//	    @GetMapping("/list")
+//		 public ResponseEntity<List<ChiTietGioHang>> getallgiohang(){
+//			 List<ChiTietGioHang> taikhoan = ctgiohangsv.getAllTaiKhoans();
+//			 return ResponseEntity.ok(taikhoan);
+//		 }
 	@GetMapping
 	 public ResponseEntity<List<TaiKhoanEntity>> getalltaikhoan(){
 		 List<TaiKhoanEntity> taikhoan = taikhoansevice.getAllTaiKhoans();
