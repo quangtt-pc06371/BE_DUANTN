@@ -45,4 +45,9 @@ public class DanhMucService {
             return null; // hoặc ném ra một exception
         }
     }
+    
+    public int sumDanhMuc() {
+        return danhMucRepository.tongDanhMuc();
+    }
+    
 }

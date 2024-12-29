@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.entity.GioHang;
+import com.poly.repository.taikhoanJPA;
+import com.poly.service.ChiTietGioHangService;
 import com.poly.service.GioHangService;
 import com.poly.service.JwtSevice2;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin("*")
@@ -24,34 +27,51 @@ public class GioHangController {
 
 	@Autowired
 	private GioHangService gioHangService;
+
+	@Autowired
+	private ChiTietGioHangService chiTietGiohangService;
+
 	@Autowired
 	private JwtSevice2 jwtSevice2;
 
+	@Autowired
+	private taikhoanJPA taikhoanJPA;
+
 	@GetMapping("/list")
 	public ResponseEntity<?> getCartByUser(HttpServletRequest request) {
-		try {
-			// Lấy token từ header
-			String token = request.getHeader("Authorization");
+	    try {
+	        // Lấy token từ header
+	        String token = request.getHeader("Authorization");
 
-			// Lấy ID người dùng từ token
-			int IdNguoiDung = jwtSevice2.getIdFromToken(token);
+	        // Phân tích claims từ token
+	        Claims claims = jwtSevice2.parseClaims(token);
 
-			GioHang gioHang = gioHangService.getCartByUserId(IdNguoiDung);
+	        // Lấy ID người dùng từ token
+	        int IdNguoiDung = jwtSevice2.getIdFromToken(token);
 
-			// Tạo một Map để trả về dữ liệu
-			Map<String, Object> response = new HashMap<>();
-			response.put("gioHang", gioHang);
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			// Xử lý lỗi và trả về thông báo lỗi
-			return ResponseEntity.badRequest().body("Không thể lấy giỏ hàng: " + e.getMessage());
-		}
+	       GioHang gioHang = gioHangService.getCartByUserId(IdNguoiDung);
+	       
+	      
+	      	        
+	        // Tạo một Map để trả về dữ liệu
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("gioHang", gioHang);
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        // Xử lý lỗi và trả về thông báo lỗi
+	        return ResponseEntity.badRequest().body("Không thể lấy giỏ hàng: " + e.getMessage());
+	    }
 	}
+
+
 
 	@PostMapping("/create")
 	public ResponseEntity<GioHang> createCartForUser(HttpServletRequest request) {
 		try {
 			String token = request.getHeader("Authorization");
+
+			// Phân tích claims từ token
+			Claims claims = jwtSevice2.parseClaims(token);
 
 			// Lấy ID người dùng từ token
 			int IdNguoiDung = jwtSevice2.getIdFromToken(token);

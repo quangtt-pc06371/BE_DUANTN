@@ -36,13 +36,17 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import com.poly.loginggconifg;
+import com.poly.entity.ChiTietGioHang;
+import com.poly.entity.DiaChiEntity;
 import com.poly.entity.Quyen;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.entity.TokenRequest;
 import com.poly.entity.Vaitro;
+import com.poly.repository.DiaChiReponsitory;
 import com.poly.repository.QuyenJPA;
 import com.poly.repository.RoleRepository;
 import com.poly.repository.taikhoanJPA;
+import com.poly.service.ChiTietGioHangService;
 import com.poly.service.CustomUserDetailsService;
 import com.poly.service.FirebaseService;
 import com.poly.service.JwtSevice2;
@@ -82,7 +86,16 @@ public class User {
 		 private RoleRepository vaitro;
 	  @Autowired
 		 private QuyenJPA quyenjpa;
+	  @Autowired
+	    private ChiTietGioHangService ctgiohangsv;
+	  @Autowired
+		private DiaChiReponsitory diaChiRepository;  
 	  
+	    @GetMapping("/list")
+		 public ResponseEntity<List<ChiTietGioHang>> getallgiohang(){
+			 List<ChiTietGioHang> taikhoan = ctgiohangsv.getAllTaiKhoans();
+			 return ResponseEntity.ok(taikhoan);
+		 }
 	@GetMapping
 	 public ResponseEntity<List<TaiKhoanEntity>> getalltaikhoan(){
 		 List<TaiKhoanEntity> taikhoan = taikhoansevice.getAllTaiKhoans();
@@ -285,14 +298,9 @@ public class User {
 //            String hoTen = jwtsevice.getHoTenFromToken(token);
             String email = jwtsevice2.getEmailFromToken(token);
 //            List<String> role = jwtsevice2.getRolesFromToken(token);
-         
-//            Map<String, String> tokens = new HashMap<>();
-//            tokens.put("id",String.valueOf(id));
-//            tokens.put("hoten",hoTen);
-//            tokens.put("email",email);
-//            tokens.put("role",role);
-//            tokens.put("token",token);
+       
           TaiKhoanEntity tk = taikhoanjpa.FindbyEmail(email);
+          List<DiaChiEntity> diachi = diaChiRepository.FindbyIdUser(tk.getId());
 //           TaiKhoanEntity tk =  taikhoan.get();
            Map<String, Object>token2 = new HashMap<>();
            token2.put("hoten",tk.getHoTen());
@@ -300,7 +308,7 @@ public class User {
            token2.put("anh",tk.getAnh());
            token2.put("cmnd",tk.getCmnd());
            token2.put("sdt",tk.getSdt());
-//           token2.put("vaitro",tk.getVaitro());
+           token2.put("diachi",diachi);
            token2.put("quyen",tk.getQuyens());
            
            
@@ -363,7 +371,7 @@ public class User {
 	              return ResponseEntity.ok(tokens);
 	          }else {
 	        	 TaiKhoanEntity taikhoan = new TaiKhoanEntity();
-	        	 Optional<Vaitro>  roles = vaitro.findById(3);
+	        	 Optional<Vaitro>  roles = vaitro.findById(2);
   	           Vaitro vaitro= roles.get();
   	         Optional<Quyen>  quyens = quyenjpa.findById(2);
 	         

@@ -8,33 +8,39 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.poly.entity.TaiKhoanEntity;
 
-
-public interface taikhoanJPA extends JpaRepository<TaiKhoanEntity, Integer > {
+public interface taikhoanJPA extends JpaRepository<TaiKhoanEntity, Integer> {
 
 //		@Query("SELECT acc FROM TaiKhoan acc WHERE acc.MaTK = ?1 AND acc.MatKhau = ?2")
 //		TaiKhoanEntity findByUsernameAndPassword(String maTK, String matKhau);
-	//	
+	//
 //		 @Query("SELECT t FROM TaiKhoanEntity t WHERE t.maTK = :maTK AND t.matKhau = :matKhau")
 //		    TaiKhoanEntity findByMaTKAndMatKhau(@Param("maTK") String maTK, @Param("matKhau") String matKhau);
 //		    
 //		 TaiKhoanEntity findByMaTK(String maTK);
-		 
+
 //		 @Query("SELECT t FROM TaiKhoanEntity t WHERE (t.email = :maTK OR t.sdt = :maTK) AND t.matKhau = :matKhau")
 //		 TaiKhoanEntity findLogin(@Param("maTK") String maTK, @Param("matKhau") String matKhau);
 //		 
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE (t.email = ?1 OR t.sdt = ?1) ")
-	TaiKhoanEntity  FindbyEmail(String email);
+	TaiKhoanEntity FindbyEmail(String email);
+
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE (t.email = ?1 OR t.sdt = ?1) ")
-Optional<TaiKhoanEntity>  FindbyEmailgg(String email);
+	Optional<TaiKhoanEntity> FindbyEmailgg(String email);
+
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE t.vaitro.id = ?1  ")
-	List<TaiKhoanEntity>  Findbyvaitro(int vaitro);
+	List<TaiKhoanEntity> Findbyvaitro(int vaitro);
+
 	@Query("SELECT t FROM TaiKhoanEntity t WHERE t.shop.id = ?1  ")
-	TaiKhoanEntity  Findbyshop(int id);
+	TaiKhoanEntity Findbyshop(int id);
 
-	
-	   boolean existsByEmail(String email);
-	   boolean existsBySdt(String sdt);
-	   boolean existsById(int id);
+	boolean existsByEmail(String email);
+
+	boolean existsBySdt(String sdt);
+
+	boolean existsById(int id);
 //	   boolean existsby(int id);
-		 }
 
+	@Query("SELECT COUNT(t) FROM TaiKhoanEntity t")
+	int tongNguoiDung();
+
+}

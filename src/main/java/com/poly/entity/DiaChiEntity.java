@@ -1,6 +1,10 @@
 package com.poly.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,6 +26,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class DiaChiEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,18 +60,15 @@ public class DiaChiEntity {
 
 	@Column(name = "ward_name")
 	private String nameWard;
-	
-	@Column(name = "is_selected")
-	private boolean isSelected;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_NGUOIDUNG")
-	@JsonIgnore
 	private TaiKhoanEntity taiKhoanEntity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_SHOP")
-	@JsonIgnore
+	@JoinColumn(name = "SHOP")	
 	private ShopEntity shop;
 
+//	@Column(name = "type" ,nullable = false)
+//	private String type;
 }

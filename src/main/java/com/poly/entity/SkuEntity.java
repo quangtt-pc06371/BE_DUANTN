@@ -3,7 +3,10 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +28,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idSku")
 @Table(name = "SKU")
+
 public class SkuEntity implements Serializable {
 
     @Id
@@ -41,11 +46,12 @@ public class SkuEntity implements Serializable {
     
     @ManyToOne
     @JoinColumn(name = "ID_SANPHAM")
-    @JsonBackReference
+//    @JsonIgnoreProperties({"skus"})
+//    @JsonBackReference 
     private SanPhamEntity sanPham;
-
     @OneToMany(mappedBy = "sku")
-    @JsonManagedReference
+    @JsonManagedReference    
+//    @JsonBackReference 
     private List<TuyChonThuocTinhSkuEntity> tuyChonThuocTinhSkus;
 
     @OneToOne(mappedBy = "sku") // Liên kết One-to-One với HinhAnhEntity

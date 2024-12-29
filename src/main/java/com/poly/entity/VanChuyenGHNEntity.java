@@ -28,7 +28,10 @@ public class VanChuyenGHNEntity {
     @JoinColumn(name = "ID_CHITIETDONHANG", nullable = false)
     @JsonBackReference
     private ChiTietDonHang chiTietDonHang;
-
+//	 @ManyToOne
+//   @JoinColumn(name = "ID_DONHANG", nullable = false)
+////   @JsonBackReference
+//  private DonHang donHang;
     @Column(name = "MA_VANCHUYEN_GHN", nullable = false)
     private String maVanChuyenGHN;
 

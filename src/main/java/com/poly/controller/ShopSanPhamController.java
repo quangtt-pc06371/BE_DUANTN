@@ -83,6 +83,11 @@ public class ShopSanPhamController {
 		
 		return ResponseEntity.ok(shop);
 	}
+	@GetMapping("/count")
+    public ResponseEntity<Long> countShops() {
+        long totalShops = shopService.sumShop();
+        return ResponseEntity.ok(totalShops);
+    }
 	
 	
 }

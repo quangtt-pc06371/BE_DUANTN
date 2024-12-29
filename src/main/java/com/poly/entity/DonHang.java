@@ -3,6 +3,7 @@ package com.poly.entity;
 import java.sql.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
@@ -27,7 +28,7 @@ public class DonHang {
 	private String trangThaiThanhToan; // TRANGTHAI
 
 	@Column(name = "STATUS_DONHANG")
-	private Boolean trangThaiDonHang; // TRANGTHAITHANHTOAN
+	private Boolean trangThaiDonHang = false; // TRANGTHAITHANHTOAN
 
 	@Column(name = "HINHTHUCTHANHTOAN")
 	private Boolean hinhThucThanhToan; // HINHTHUCTHANHTOAN
@@ -41,6 +42,12 @@ public class DonHang {
 	private VoucherEntity voucherEntity; 
 	
 	@OneToMany(mappedBy = "donHang", cascade = CascadeType.ALL)
+	@JsonManagedReference
+//	@JsonBackReference
 	private	List<ChiTietDonHang> chiTietDonHangs;
+	
+	@OneToMany(mappedBy = "donHang", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private	List<VnPayEntity> vnPayEntities;
 	
 }

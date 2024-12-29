@@ -45,7 +45,7 @@ public class KhuyenMaiEntity implements Serializable {
     private Date ngayBatDau;
 
     @Column(name = "NGAYKETTHUC")
-    private Date ngayKetThuc;
+    private Date ngayKetThuc ;
 
     @Column(name = "IS_ACTIVE")
     private boolean active;
