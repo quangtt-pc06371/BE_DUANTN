@@ -13,13 +13,6 @@ public interface ChiTietGioHangReponsitory extends JpaRepository<ChiTietGioHang,
 
 	@Query("SELECT ct FROM ChiTietGioHang ct WHERE ct.gioHang = ?1")
 	List<ChiTietGioHang> findByGioHang(GioHang gioHang);
-	
-	
-	@Query("SELECT ct FROM ChiTietGioHang ct WHERE ct.trangThai = false AND ct.gioHang = ?1")
-	List<ChiTietGioHang> findGioHangByTrangThaiIsFalse(GioHang gioHang);
-	
-	List<ChiTietGioHang> findByTrangThai(boolean trangThai);
-
 
 	Optional<ChiTietGioHang> findByGioHangAndSkuEntity(GioHang gioHang, SkuEntity skuEntity);
 }

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.poly.VNPayConfig;
 import com.poly.DtoEntity.DonHangDTO;
 import com.poly.DtoEntity.PaymentRequest;
 import com.poly.entity.DonHang;
@@ -131,8 +132,7 @@ public class DonHangController {
 		}
 	}
 
-	@Value("${vnpay.hashSecret}")
-	private String hashSecret;
+	private String hashSecret = VNPayConfig.vnp_HashSecret;
 
 	@GetMapping("/pay/return")
 	public ResponseEntity<String> handleVnPayReturn(@RequestParam Map<String, String> params, HttpServletRequest request) {
