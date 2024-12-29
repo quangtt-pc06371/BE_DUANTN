@@ -1,6 +1,5 @@
 package com.poly.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -60,15 +59,17 @@ public class DiaChiEntity {
 
 	@Column(name = "ward_name")
 	private String nameWard;
+	
+	@Column(name = "is_selected")
+	private boolean isSelected;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_NGUOIDUNG")
+	@JsonIgnore
 	private TaiKhoanEntity taiKhoanEntity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SHOP")	
+	@JoinColumn(name = "ID_SHOP")
+	@JsonIgnore
 	private ShopEntity shop;
-
-//	@Column(name = "type" ,nullable = false)
-//	private String type;
 }

@@ -10,6 +10,12 @@ import com.poly.entity.DiaChiEntity;
 import com.poly.entity.TaiKhoanEntity;
 
 public interface DiaChiReponsitory extends JpaRepository<DiaChiEntity, Integer>{
-	@Query("SELECT t FROM DiaChiEntity t WHERE t.taiKhoanEntity.id = ?1 ")
-	List<DiaChiEntity> FindbyIdUser(int id);
+	@Query("SELECT acc FROM DiaChiEntity acc WHERE acc.taiKhoanEntity.id = ?1")
+	List<DiaChiEntity> findByTaiKhoanEntity(Integer taiKhoanEntity);
+	
+	@Query("SELECT acc FROM DiaChiEntity acc WHERE acc.shop.id = ?1")
+	List<DiaChiEntity> findByShop(Integer shop);
+	
+	@Query("SELECT acc FROM DiaChiEntity acc WHERE acc.taiKhoanEntity.id = ?1")
+	List<DiaChiEntity> findByTaiKhoanEntityAndSelected(TaiKhoanEntity taiKhoanEntity, boolean selected);
 }
