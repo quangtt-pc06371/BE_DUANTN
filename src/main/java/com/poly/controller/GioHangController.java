@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.entity.GioHang;
 import com.poly.repository.taikhoanJPA;
-import com.poly.service.ChiTietGioHangService;
+import com.poly.service.ChiTietGiohangService;
 import com.poly.service.GioHangService;
 import com.poly.service.JwtSevice2;
 
@@ -29,7 +29,7 @@ public class GioHangController {
 	private GioHangService gioHangService;
 
 	@Autowired
-	private ChiTietGioHangService chiTietGiohangService;
+	private ChiTietGiohangService chiTietGiohangService;
 
 	@Autowired
 	private JwtSevice2 jwtSevice2;

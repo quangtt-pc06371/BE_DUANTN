@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.poly.DtoEntity.CTGioHangDTO;
-import com.poly.service.ChiTietGioHangService;
+import com.poly.service.ChiTietGiohangService;
 import com.poly.service.JwtSevice2;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/api/cart")
 public class CTGioHangController {
 	@Autowired
-	private ChiTietGioHangService chiTietGiohangService;
+	private ChiTietGiohangService chiTietGiohangService;
 	@Autowired
 	private JwtSevice2 jwtSevice2;
 

@@ -17,7 +17,7 @@ import com.poly.repository.SkuRepository;
 import jakarta.transaction.Transactional;
 
 @Service
-public class ChiTietGioHangService {
+public class ChiTietGiohangService {
 	@Autowired
 	ChiTietGioHangReponsitory chiTietGioHangReponsitory;
 	@Autowired

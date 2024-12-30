@@ -46,7 +46,7 @@ import com.poly.repository.DiaChiReponsitory;
 import com.poly.repository.QuyenJPA;
 import com.poly.repository.RoleRepository;
 import com.poly.repository.taikhoanJPA;
-import com.poly.service.ChiTietGioHangService;
+import com.poly.service.ChiTietGiohangService;
 import com.poly.service.CustomUserDetailsService;
 import com.poly.service.FirebaseService;
 import com.poly.service.JwtSevice2;
@@ -87,7 +87,7 @@ public class User {
 	  @Autowired
 		 private QuyenJPA quyenjpa;
 	  @Autowired
-	    private ChiTietGioHangService ctgiohangsv;
+	    private ChiTietGiohangService ctgiohangsv;
 	  @Autowired
 		private DiaChiReponsitory diaChiRepository;  
 	  
