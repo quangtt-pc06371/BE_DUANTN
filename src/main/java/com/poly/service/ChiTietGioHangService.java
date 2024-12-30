@@ -12,7 +12,7 @@ import com.poly.entity.SkuEntity;
 import com.poly.repository.ChiTietGioHangReponsitory;
 import com.poly.repository.GioHangReponsitory;
 import com.poly.repository.SanPhamJPA;
-import com.poly.repository.SkuJPA;
+import com.poly.repository.SkuRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -23,7 +23,7 @@ public class ChiTietGioHangService {
 	@Autowired
 	GioHangReponsitory gioHangReponsitory;
 	@Autowired
-	SkuJPA skuReponsitory;
+	SkuRepository skuReponsitory;
 	@Autowired
 	SanPhamJPA sanPhamJPA;
 
@@ -43,7 +43,7 @@ public class ChiTietGioHangService {
 		}
 
 		// Bước 3: Tìm SanPhamEntity liên kết với SKU
-		SanPhamEntity sanPhamEntity = skuEntity.getSanPham();
+		SanPhamEntity sanPhamEntity = skuEntity.getSanPhamEntity();
 		if (sanPhamEntity == null) {
 			throw new RuntimeException("Sản phẩm liên kết với SKU không tồn tại");
 		}

@@ -39,39 +39,30 @@ public class GioHangController {
 
 	@GetMapping("/list")
 	public ResponseEntity<?> getCartByUser(HttpServletRequest request) {
-	    try {
-	        // Lấy token từ header
-	        String token = request.getHeader("Authorization");
+		try {
+			// Lấy token từ header
+			String token = request.getHeader("Authorization");
 
-	        // Phân tích claims từ token
-	        Claims claims = jwtSevice2.parseClaims(token);
+			// Lấy ID người dùng từ token
+			int IdNguoiDung = jwtSevice2.getIdFromToken(token);
 
-	        // Lấy ID người dùng từ token
-	        int IdNguoiDung = jwtSevice2.getIdFromToken(token);
+			GioHang gioHang = gioHangService.getCartByUserId(IdNguoiDung);
 
-	       GioHang gioHang = gioHangService.getCartByUserId(IdNguoiDung);
-	       
-	      
-	      	        
-	        // Tạo một Map để trả về dữ liệu
-	        Map<String, Object> response = new HashMap<>();
-	        response.put("gioHang", gioHang);
-	        return ResponseEntity.ok(response);
-	    } catch (Exception e) {
-	        // Xử lý lỗi và trả về thông báo lỗi
-	        return ResponseEntity.badRequest().body("Không thể lấy giỏ hàng: " + e.getMessage());
-	    }
+			// Tạo một Map để trả về dữ liệu
+			Map<String, Object> response = new HashMap<>();
+			response.put("gioHang", gioHang);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			// Xử lý lỗi và trả về thông báo lỗi
+			return ResponseEntity.badRequest().body("Không thể lấy giỏ hàng: " + e.getMessage());
+		}
 	}
-
 
 
 	@PostMapping("/create")
 	public ResponseEntity<GioHang> createCartForUser(HttpServletRequest request) {
 		try {
 			String token = request.getHeader("Authorization");
-
-			// Phân tích claims từ token
-			Claims claims = jwtSevice2.parseClaims(token);
 
 			// Lấy ID người dùng từ token
 			int IdNguoiDung = jwtSevice2.getIdFromToken(token);

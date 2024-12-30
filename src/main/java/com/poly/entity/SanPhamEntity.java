@@ -30,7 +30,6 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "SANPHAM")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idSanPham")
 public class SanPhamEntity implements Serializable {
 
     @Id
@@ -50,27 +49,19 @@ public class SanPhamEntity implements Serializable {
     @Column(name = "TRANGTHAI")
     private boolean trangThai;
     
-    
-
     @ManyToOne
     @JoinColumn(name = "ID_SHOP")
-    @JsonIgnoreProperties(value = "sanPham")
     private ShopEntity shop;
     
     @ManyToOne
     @JoinColumn(name = "ID_DANHMUC")
-    @JsonIgnoreProperties(value= "sanPhams")
     private DanhMucEntity danhMuc;
     
-    @OneToMany(mappedBy = "sanPham")
-//    @JsonManagedReference
-    
-    private List<SkuEntity> skus;
+    @OneToMany(mappedBy = "sanPhamEntity")    
+    private List<SkuEntity> skuEntities;
 
     @OneToMany(mappedBy = "sanPham")
-    @JsonBackReference
     private List<SanPhamKhuyenMaiEntity> sanPhamKhuyenMai;
     
-    
-
+   
 }

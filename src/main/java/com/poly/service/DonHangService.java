@@ -19,7 +19,7 @@ import com.poly.entity.VoucherEntity;
 import com.poly.repository.CTDonHangRepository;
 import com.poly.repository.DonHangRepository;
 import com.poly.repository.SanPhamJPA;
-import com.poly.repository.SkuJPA;
+import com.poly.repository.SkuRepository;
 import com.poly.repository.VoucherJPA;
 import com.poly.repository.taikhoanJPA;
 
@@ -36,7 +36,7 @@ public class DonHangService {
 	@Autowired
 	private VoucherJPA voucherJPA;
 	@Autowired
-	SkuJPA skuReponsitory;
+	SkuRepository skuReponsitory;
 	@Autowired
 	SanPhamJPA sanPhamJPA;
 
@@ -108,7 +108,7 @@ public class DonHangService {
 		}
 
 		// Bước 3: Tìm SanPhamEntity liên kết với SKU
-		SanPhamEntity sanPhamEntity = skuEntity.getSanPham();
+		SanPhamEntity sanPhamEntity = skuEntity.getSanPhamEntity();
 		if (sanPhamEntity == null) {
 			throw new RuntimeException("Sản phẩm liên kết với SKU không tồn tại");
 		}

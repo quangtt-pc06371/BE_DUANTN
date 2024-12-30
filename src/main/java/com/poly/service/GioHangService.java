@@ -30,36 +30,36 @@ public class GioHangService {
 	SanPhamJPA sanPhamJPA;
 	
 	//tạo Giỏ Hàng Cho Người Dùng
-	public GioHang createCartForUser(Integer idNguoiDung) {
-		// Tìm tài khoản người dùng theo idNguoiDung
-		Optional<TaiKhoanEntity> userOptional = userRepository.findById(idNguoiDung);
-		if (userOptional.isEmpty()) {
-			throw new IllegalArgumentException("Người dùng không tồn tại với id: " + idNguoiDung);
+		public GioHang createCartForUser(Integer idNguoiDung) {
+			// Tìm tài khoản người dùng theo idNguoiDung
+			Optional<TaiKhoanEntity> userOptional = userRepository.findById(idNguoiDung);
+			if (userOptional.isEmpty()) {
+				throw new IllegalArgumentException("Người dùng không tồn tại với id: " + idNguoiDung);
+			}
+			// Tạo mới giỏ hàng và gắn idNguoiDung
+			GioHang gioHang = new GioHang();
+			gioHang.setTaiKhoanEntity(userOptional.get());
+
+			// Lưu giỏ hàng mới vào cơ sở dữ liệu
+			return gioHangRepository.save(gioHang);
 		}
-		// Tạo mới giỏ hàng và gắn idNguoiDung
-		GioHang gioHang = new GioHang();
-		gioHang.setTaiKhoanEntity(userOptional.get());
+		
+		//Lấy Giỏ Hàng Bằng IdNguoiDung
+		public GioHang getCartByUserId(Integer idNguoiDung) {
+		    // Tìm giỏ hàng của người dùng
+		    GioHang gioHang = gioHangRepository.findByIdNguoiDung(idNguoiDung);
+		    
+		    // Kiểm tra nếu không tìm thấy giỏ hàng của người dùng
+		    if (gioHang == null) {
+		        throw new EntityNotFoundException("Giỏ hàng không tồn tại cho người dùng có id: " + idNguoiDung);
+		    }
+		    
+		    List<ChiTietGioHang> chiTietGioHangList = chiTietGioHangReponsitory.findByGioHang(gioHang);
 
-		// Lưu giỏ hàng mới vào cơ sở dữ liệu
-		return gioHangRepository.save(gioHang);
-	}
-	
-	//Lấy Giỏ Hàng Bằng IdNguoiDung
-	public GioHang getCartByUserId(Integer idNguoiDung) {
-	    // Tìm giỏ hàng của người dùng
-	    GioHang gioHang = gioHangRepository.findByIdNguoiDung(idNguoiDung);
-	    
-	    // Kiểm tra nếu không tìm thấy giỏ hàng của người dùng
-	    if (gioHang == null) {
-	        throw new EntityNotFoundException("Giỏ hàng không tồn tại cho người dùng có id: " + idNguoiDung);
-	    }
-	    
-	    List<ChiTietGioHang> chiTietGioHangList = chiTietGioHangReponsitory.findByGioHang(gioHang);
-
-	    // Gán chi tiết giỏ hàng vào giỏ hàng (nếu cần)
-	    gioHang.setChiTietGioHangList(chiTietGioHangList);
-	    
-	    // Trả về giỏ hàng cùng với chi tiết giỏ hàng đã lọc
-	    return gioHang;
-	}
+		    // Gán chi tiết giỏ hàng vào giỏ hàng (nếu cần)
+		    gioHang.setChiTietGioHangList(chiTietGioHangList);
+		    
+		    // Trả về giỏ hàng cùng với chi tiết giỏ hàng đã lọc
+		    return gioHang;
+		}
 }

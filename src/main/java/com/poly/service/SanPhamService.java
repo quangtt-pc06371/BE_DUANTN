@@ -16,7 +16,7 @@ import com.poly.entity.TuyChonThuocTinhEntity;
 import com.poly.entity.TuyChonThuocTinhSkuEntity;
 import com.poly.repository.HinhAnhJPA;
 import com.poly.repository.SanPhamJPA;
-import com.poly.repository.SkuJPA;
+import com.poly.repository.SkuRepository;
 import com.poly.repository.ThuocTinhJPA;
 import com.poly.repository.TuyChonThuocTinhJPA;
 import com.poly.repository.TuyChonThuocTinhSkuJPA;
@@ -28,7 +28,7 @@ public class SanPhamService {
 	private SanPhamJPA sanPhamRepository;
 
 	@Autowired
-	private SkuJPA skuRepository;
+	private SkuRepository skuRepository;
 
 	@Autowired
 	private HinhAnhJPA hinhAnhRepository;
@@ -57,16 +57,16 @@ public class SanPhamService {
 	public SanPhamEntity saveSanPham(SanPhamEntity sanPham) {
 		SanPhamEntity savedSanPham = sanPhamRepository.save(sanPham);
 
-		if (sanPham.getSkus() != null) {
+		if (sanPham.getSkuEntities() != null) {
 
-			for (SkuEntity sku : sanPham.getSkus()) {
+			for (SkuEntity sku : sanPham.getSkuEntities()) {
 
-				sku.setSanPham(savedSanPham);
+				sku.setSanPhamEntity(sanPham);
 
 				SkuEntity savedSku = skuRepository.save(sku);
 
-				if (sku.getTuyChonThuocTinhSkus() != null) {
-					for (TuyChonThuocTinhSkuEntity tuyChon : sku.getTuyChonThuocTinhSkus()) {
+				if (sku.getTuyChonThuocTinhSku() != null) {
+					for (TuyChonThuocTinhSkuEntity tuyChon : sku.getTuyChonThuocTinhSku()) {
 
 						if (tuyChon.getTuyChonThuocTinh() != null) {
 							TuyChonThuocTinhEntity tuyChonThuocTinh = tuyChon.getTuyChonThuocTinh();
@@ -81,8 +81,8 @@ public class SanPhamService {
 					}
 				}
 
-				if (sku.getHinhanh() != null) {
-	                HinhAnhEntity hinhAnh = sku.getHinhanh();
+				if (sku.getHinhAnh() != null) {
+	                HinhAnhEntity hinhAnh = sku.getHinhAnh();
 	                hinhAnh.setSku(savedSku);  // Liên kết hình ảnh với SKU
 	                hinhAnhRepository.save(hinhAnh);
 	            }
@@ -110,16 +110,16 @@ public class SanPhamService {
 		existingSanPham.setDanhMuc(sanPhamDetails.getDanhMuc());
 
 		// Cập nhật hoặc thêm mới các SKU
-		if (sanPhamDetails.getSkus() != null) {
-			for (SkuEntity newSku : sanPhamDetails.getSkus()) {
+		if (sanPhamDetails.getSkuEntities() != null) {
+			for (SkuEntity newSku : sanPhamDetails.getSkuEntities()) {
 				SkuEntity existingSku = skuRepository.findById(newSku.getIdSku()).orElse(null);
 				if (existingSku != null) {
 					// Cập nhật SKU hiện có
 					existingSku.setGiaSanPham(newSku.getGiaSanPham());
 					existingSku.setSoLuong(newSku.getSoLuong());
 					// Cập nhật hoặc thêm mới các tùy chọn thuộc tính của SKU
-					if (newSku.getTuyChonThuocTinhSkus() != null) {
-						for (TuyChonThuocTinhSkuEntity newOption : newSku.getTuyChonThuocTinhSkus()) {
+					if (newSku.getTuyChonThuocTinhSku() != null) {
+						for (TuyChonThuocTinhSkuEntity newOption : newSku.getTuyChonThuocTinhSku()) {
 							TuyChonThuocTinhSkuEntity existingOption = tuyChonThuocTinhSkuRepository
 									.findById(newOption.getIdTuyChonTtSku()).orElse(null);
 							if (existingOption != null) {
@@ -134,8 +134,8 @@ public class SanPhamService {
 					}
 
 					// Cập nhật hoặc thêm mới các hình ảnh của SKU
-					 if (newSku.getHinhanh() != null) {
-		                    HinhAnhEntity newHinhAnh = newSku.getHinhanh(); // Vì chỉ có 1 hình ảnh
+					 if (newSku.getHinhAnh() != null) {
+		                    HinhAnhEntity newHinhAnh = newSku.getHinhAnh(); // Vì chỉ có 1 hình ảnh
 		                    if (newHinhAnh != null) {
 		                        HinhAnhEntity existingHinhAnh = hinhAnhRepository.findById(newHinhAnh.getIdHinhAnh())
 		                                .orElse(null);
@@ -153,7 +153,7 @@ public class SanPhamService {
 					skuRepository.save(existingSku);
 				} else {
 
-					newSku.setSanPham(existingSanPham);
+					newSku.setSanPhamEntity(existingSanPham);
 					skuRepository.save(newSku);
 				}
 			}
@@ -177,16 +177,16 @@ public class SanPhamService {
 		SanPhamEntity existingSanPham = optionalSanPham.get();
 
 		// Xóa tất cả các SKU hiện tại của sản phẩm, bao gồm thuộc tính và hình ảnh
-		if (existingSanPham.getSkus() != null) {
-			for (SkuEntity sku : existingSanPham.getSkus()) {
+		if (existingSanPham.getSkuEntities() != null) {
+			for (SkuEntity sku : existingSanPham.getSkuEntities()) {
 				// Xóa tất cả các thuộc tính của SKU
-				tuyChonThuocTinhSkuRepository.deleteAll(sku.getTuyChonThuocTinhSkus());
+				tuyChonThuocTinhSkuRepository.deleteAll(sku.getTuyChonThuocTinhSku());
 
 				// Xóa tất cả hình ảnh liên quan đến SKU
 //				hinhAnhRepository.deleteAll(sku.getHinhanhs());
 			}
 			// Xóa tất cả các SKU của sản phẩm
-			skuRepository.deleteAll(existingSanPham.getSkus());
+			skuRepository.deleteAll(existingSanPham.getSkuEntities());
 		}
 
 		sanPhamRepository.deleteById(id);

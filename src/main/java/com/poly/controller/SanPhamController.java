@@ -26,7 +26,7 @@ import com.poly.entity.SkuEntity;
 import com.poly.repository.GioHangReponsitory;
 import com.poly.repository.HinhAnhJPA;
 import com.poly.repository.ShopRepository;
-import com.poly.repository.SkuJPA;
+import com.poly.repository.SkuRepository;
 import com.poly.service.FirebaseService;
 import com.poly.service.JwtSevice2;
 import com.poly.service.SanPhamService;
@@ -53,7 +53,7 @@ public class SanPhamController {
 	@Autowired
 	private HinhAnhJPA hinhAnhRepository;
 	@Autowired
-	private SkuJPA skuRepository;
+	private SkuRepository skuRepository;
 
 	@Autowired
 	private GioHangReponsitory gioHangReponsitory;
@@ -143,7 +143,7 @@ public class SanPhamController {
 	        String imageUrl = firebaseService.uploadFile(file);
 
 	        // Tạo hoặc cập nhật ảnh mới
-	        HinhAnhEntity hinhAnh = savedSku.getHinhanh(); // Nếu Sku chỉ có 1 ảnh liên kết
+	        HinhAnhEntity hinhAnh = savedSku.getHinhAnh(); // Nếu Sku chỉ có 1 ảnh liên kết
 	        if (hinhAnh == null) {
 	            hinhAnh = new HinhAnhEntity();
 	            hinhAnh.setSku(savedSku); // Liên kết với SKU

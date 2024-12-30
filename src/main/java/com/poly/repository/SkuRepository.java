@@ -8,6 +8,6 @@ import com.poly.entity.SkuEntity;
 
 
 public interface SkuRepository extends JpaRepository<SkuEntity, Integer> {
-	@Query("SELECT t FROM SkuEntity t WHERE t.sanPham = ?1 ")
+	@Query("SELECT t FROM SkuEntity t WHERE t.sanPhamEntity = ?1 ")
 	List<SkuEntity> findBySanPhamEntityIdSanPham(int idSanPham);
 }
