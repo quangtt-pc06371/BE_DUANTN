@@ -43,24 +43,25 @@ public class SanPhamEntity implements Serializable {
     @Column(name = "MOTA")
     private String moTa;
     
-    @Column(name = "WEIGHT")
-    private int weight; // Cân nặng
- 
     @Column(name = "TRANGTHAI")
     private boolean trangThai;
-    
+
     @ManyToOne
     @JoinColumn(name = "ID_SHOP")
+    @JsonIgnoreProperties(value = "sanPham")
     private ShopEntity shop;
     
     @ManyToOne
     @JoinColumn(name = "ID_DANHMUC")
+    @JsonIgnoreProperties(value= "sanPhams")
     private DanhMucEntity danhMuc;
     
-    @OneToMany(mappedBy = "sanPhamEntity")    
-    private List<SkuEntity> skuEntities;
+    @OneToMany(mappedBy = "sanPham")
+    @JsonManagedReference
+    private List<SkuEntity> skus;
 
     @OneToMany(mappedBy = "sanPham")
+    @JsonBackReference
     private List<SanPhamKhuyenMaiEntity> sanPhamKhuyenMai;
     
    
