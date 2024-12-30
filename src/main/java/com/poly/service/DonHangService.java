@@ -108,7 +108,7 @@ public class DonHangService {
 		}
 
 		// Bước 3: Tìm SanPhamEntity liên kết với SKU
-		SanPhamEntity sanPhamEntity = skuEntity.getSanPhamEntity();
+		SanPhamEntity sanPhamEntity = skuEntity.getSanPham();
 		if (sanPhamEntity == null) {
 			throw new RuntimeException("Sản phẩm liên kết với SKU không tồn tại");
 		}
