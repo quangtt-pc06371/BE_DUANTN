@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.poly.DtoEntity.AddressDTO;
-import com.poly.Mapper.GhnMapper;
+import com.poly.mapper.GhnMapper;
 import com.poly.entity.DiaChiEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
