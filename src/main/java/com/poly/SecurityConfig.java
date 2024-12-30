@@ -60,6 +60,7 @@ public class SecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                 // Allow all GET requests to /api/**
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE,"/api/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/cart/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/order/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/danhmuc/**").permitAll()
