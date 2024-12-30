@@ -132,8 +132,10 @@ public class DonHangController {
 		}
 	}
 
-	private String hashSecret = VNPayConfig.vnp_HashSecret;
+	@Value("${vnpay.hashSecret}")
+	private String hashSecret;
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/pay/return")
 	public ResponseEntity<String> handleVnPayReturn(@RequestParam Map<String, String> params, HttpServletRequest request) {
 	    try {
@@ -163,12 +165,16 @@ public class DonHangController {
 
 	            if ("00".equals(vnp_TransactionStatus)) {
 	                // Thanh toán thành công
-	                return ResponseEntity.ok("Thanh toán thành công cho đơn hàng " + vnp_TxnRef);
+	                return ResponseEntity.status(HttpStatus.FOUND)
+	                                     .header("Location", "http://localhost:3000/transaction-result?status=success")
+	                                     .build();
 	            } else {
 	                // Thanh toán thất bại
-	                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	                        .body("Thanh toán thất bại cho đơn hàng " + vnp_TxnRef);
+	                return ResponseEntity.status(HttpStatus.FOUND)
+	                                     .header("Location", "http://localhost:3000/transaction-result?status=failure")
+	                                     .build();
 	            }
+
 
 	        } else {
 	            // Nếu hash không hợp lệ
@@ -184,7 +190,6 @@ public class DonHangController {
 	                .body("Lỗi trong quá trình xử lý thông tin từ VNPay.");
 	    }
 	}
-
 
 	private String buildQueryUrl(Map<String, String> params) throws UnsupportedEncodingException {
 		List<String> fieldNames = new ArrayList<>(params.keySet());

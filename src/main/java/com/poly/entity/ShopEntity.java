@@ -70,6 +70,8 @@ public class ShopEntity {
     @JsonBackReference
     private List<SanPhamEntity> sanPham;
     
+    @OneToMany(mappedBy = "shop")
+    private List<DiaChiEntity> diaChiEntities;
     
 
     @OneToMany(mappedBy = "shop")
