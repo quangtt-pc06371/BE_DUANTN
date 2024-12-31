@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.poly.DtoEntity.AddressDTO;
-import com.poly.Mapper.GhnMapper;
+import com.poly.mapper.GhnMapper;
 import com.poly.entity.DiaChiEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
@@ -47,9 +47,26 @@ public class AddressService {
 	    saveDiaChi(addressRequest, taiKhoanEntity, null);
 
 	    // Nếu shop tồn tại, lưu địa chỉ cho shop
-	    if (shopEntity != null) {
-	        saveDiaChi(addressRequest, taiKhoanEntity, shopEntity);
-	    }
+//	    if (shopEntity != null) {
+//	        saveDiaChi(addressRequest, taiKhoanEntity, shopEntity);
+//	    }
+	}
+	
+	public void saveAddressshop(AddressDTO addressRequest, int idNguoiDung) {
+	    // Lấy thông tin người dùng
+	    TaiKhoanEntity taiKhoanEntity = taiKhoanRepository.findById(idNguoiDung)
+	            .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+
+	    // Lấy thông tin shop liên kết với người dùng (nếu có)
+	    ShopEntity shopEntity = taiKhoanEntity.getShop();
+
+	    // Lưu địa chỉ cho người dùng
+	    saveDiaChi(addressRequest, taiKhoanEntity, shopEntity);
+
+	    // Nếu shop tồn tại, lưu địa chỉ cho shop
+//	    if (shopEntity != null) {
+//	        saveDiaChi(addressRequest, taiKhoanEntity, shopEntity);
+//	    }
 	}
 
 	private void saveDiaChi(AddressDTO addressRequest, TaiKhoanEntity taiKhoanEntity, ShopEntity shopEntity) {

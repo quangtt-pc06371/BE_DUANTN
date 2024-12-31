@@ -63,7 +63,17 @@ public class AddressController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");
 		}
 	}
-
+	@PostMapping("/saveshop")
+	public ResponseEntity<?> saveAddressshop(@RequestBody AddressDTO addressRequest, HttpServletRequest request) {
+		try {
+			String token = request.getHeader("Authorization");
+			int idNguoiDung = jwtSevice2.getIdFromToken(token);
+			addressService.saveAddressshop(addressRequest, idNguoiDung);
+			return ResponseEntity.ok("Địa chỉ đã được lưu thành công!");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");
+		}
+	}
 	@PutMapping("/update")
 	public ResponseEntity<?> updateAddress(@RequestBody AddressDTO addressRequest, HttpServletRequest request) {
 		try {
