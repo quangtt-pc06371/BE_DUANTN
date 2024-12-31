@@ -62,4 +62,11 @@ public class GioHangService {
 		    // Trả về giỏ hàng cùng với chi tiết giỏ hàng đã lọc
 		    return gioHang;
 		}
+		public Integer getIdCartByUserId(int idNguoiDung) {
+	        Integer idCart = gioHangRepository.findIdCartByIdNguoiDung(idNguoiDung);
+	        if (idCart == null) {
+	            throw new RuntimeException("Giỏ hàng không tồn tại cho người dùng với ID: " + idNguoiDung);
+	        }
+	        return idCart;
+	    }
 }

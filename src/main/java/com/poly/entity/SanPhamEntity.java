@@ -43,6 +43,9 @@ public class SanPhamEntity implements Serializable {
     @Column(name = "MOTA")
     private String moTa;
     
+    @Column(name = "WEIGHT")  // Thêm trường WEIGHT cho CÂN NẶNG
+    private Integer weight;
+    
     @Column(name = "TRANGTHAI")
     private boolean trangThai;
 
