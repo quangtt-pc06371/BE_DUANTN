@@ -129,16 +129,14 @@ public class ShopService {
 
 
 
-//    public void deactivateShopById(int id) {
-//        Optional<ShopEntity> optionalShop = shopRepository.findById(id);
-//        if (optionalShop.isPresent()) {
-//            ShopEntity shop = optionalShop.get();
-//            shop.setIsActive(false);
-//            shopRepository.save(shop);
-//        } else {
-//            throw new RuntimeException("Cửa hàng không tồn tại");
-//        }
-//    }
+    public void deactivateShopById(int id) {
+        // Ngắt liên kết giữa shop và người dùng
+        taiKhoanJPA.clearShopReference(id);
+        
+        // Sau khi ngắt liên kết, xóa shop
+        shopRepository.deleteById(id);
+    }
+    
     public ShopEntity toggleShopStatus(int id) {
         ShopEntity shop = shopRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Shop không tồn tại"));
