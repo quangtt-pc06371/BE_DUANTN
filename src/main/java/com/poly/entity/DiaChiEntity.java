@@ -2,6 +2,8 @@ package com.poly.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
@@ -70,6 +72,6 @@ public class DiaChiEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_SHOP")
-	@JsonIgnore
+	@JsonIgnoreProperties(value = "diaChiEntities")
 	private ShopEntity shop;
 }
