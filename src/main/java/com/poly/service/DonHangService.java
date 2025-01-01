@@ -69,7 +69,13 @@ public class DonHangService {
 			donHang.setTrangThaiThanhToan(donHangDTO.getTrangThaiThanhToan());
 			donHang.setTrangThaiDonHang(donHangDTO.getTrangThaiDonHang());
 			donHang.setHinhThucThanhToan(donHangDTO.getHinhThucThanhToan());
-			donHang.setVoucherEntity(voucherOptional.get());
+			
+			 // Nếu không tìm thấy voucher, đặt giá trị null
+	        if (voucherOptional.isPresent()) {
+	            donHang.setVoucherEntity(voucherOptional.get());
+	        } else {
+	            donHang.setVoucherEntity(null);
+	        }
 
 			// Lưu đơn hàng vào cơ sở dữ liệu
 			DonHang savedDonHang = donHangRepository.save(donHang);

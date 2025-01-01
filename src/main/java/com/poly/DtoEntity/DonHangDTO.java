@@ -16,7 +16,7 @@ public class DonHangDTO {
 	private Integer idDonHang; // ID_DONHANG
 	private Double tongSoTien; // TONGSOTIEN
 	private String trangThaiThanhToan; // TRANGTHAITHANHTOAN
-	private Boolean trangThaiDonHang; // STATUS_DONHANG
+	private int trangThaiDonHang; // STATUS_DONHANG
 	private Boolean hinhThucThanhToan; // HINHTHUCTHANHTOAN
 	private Integer idVoucher; // ID_VOUCHER
 	// List chi tiết đơn hàng (có thể không cần nếu bạn không muốn load)

@@ -28,7 +28,7 @@ public class DonHang {
 	private String trangThaiThanhToan; // TRANGTHAI
 
 	@Column(name = "STATUS_DONHANG")
-	private Boolean trangThaiDonHang = false; // TRANGTHAITHANHTOAN
+	private int trangThaiDonHang; // TRANGTHAITHANHTOAN
 
 	@Column(name = "HINHTHUCTHANHTOAN")
 	private Boolean hinhThucThanhToan; // HINHTHUCTHANHTOAN
