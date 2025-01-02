@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -105,12 +106,18 @@ public class AddressController {
 		}
 	}
 	
-	@PutMapping("/updateSelectAddress")
-	public ResponseEntity<?> updateSelectAddress(@RequestBody int idDiaChi, HttpServletRequest request) {
+	@PutMapping("/updateSelectAddress/{idDiaChi}")
+	public ResponseEntity<?> updateSelectAddress(@PathVariable int idDiaChi, HttpServletRequest request) {
 		try {
 			String token = request.getHeader("Authorization");
-			int idNguoiDung = jwtSevice2.getIdFromToken(token);
-			addressService.updateSelectAddress(idDiaChi, idNguoiDung);
+//			if (token == null || !token.startsWith("Bearer ")) {
+//			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
+//			}
+//			token = token.substring(7).trim();
+			// Xử lý token, lấy id từ JWT
+
+             int id = jwtSevice2.getIdFromToken(token);
+			addressService.updateSelectAddress(idDiaChi, id);
 			return ResponseEntity.ok("Địa chỉ đã được lưu thành công!");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");
@@ -124,6 +131,7 @@ public class AddressController {
 			addressService.saveAddressshop(addressRequest, idNguoiDung);
 			return ResponseEntity.ok("Địa chỉ đã được lưu thành công!");
 		} catch (Exception e) {
+			  e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu địa chỉ!");
 		}
 	}

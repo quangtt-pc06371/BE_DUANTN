@@ -148,16 +148,18 @@ public class AddressService {
 	    diaChiEntity.setSelected(true);
 
 	    // Tìm và cập nhật địa chỉ đang được chọn (set false)
-	    List<DiaChiEntity> otherSelectedAddresses = diaChiRepository.findByTaiKhoanEntityAndSelected(taiKhoanEntity, true);
-	    for (DiaChiEntity selectedAddress : otherSelectedAddresses) {
-	        if (selectedAddress.getId() != idDiaChi) {
-	            selectedAddress.setSelected(false);
-	            diaChiRepository.save(selectedAddress);
-	        }
-	    }
+//	    List<DiaChiEntity> otherSelectedAddresses = diaChiRepository.findByTaiKhoanEntityAndSelected(taiKhoanEntity, true);
+//	    for (DiaChiEntity selectedAddress : otherSelectedAddresses) {
+//	        if (selectedAddress.getId() != idDiaChi) {
+//	            selectedAddress.setSelected(false);
+//	            diaChiRepository.save(selectedAddress);
+//	        }
+//	    }
 
 	    // Lưu lại địa chỉ được chọn
-	    diaChiRepository.save(diaChiEntity);
+	    diaChiRepository.updateAllAddressesToFalse();
+	    diaChiRepository.updateAddressToTrue(idDiaChi);
+//	    diaChiRepository.save(diaChiEntity);
 	}
 	@Transactional
 	public void saveAddressshop(AddressDTO addressRequest, int idNguoiDung) {

@@ -63,7 +63,7 @@ public class DiaChiEntity {
 	private String nameWard;
 	
 	@Column(name = "is_selected")
-	private boolean isSelected;
+	private boolean isSelected ;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_NGUOIDUNG")

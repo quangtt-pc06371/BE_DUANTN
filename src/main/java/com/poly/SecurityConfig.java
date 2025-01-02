@@ -80,7 +80,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/taikhoan/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/cart/update-status").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/sanpham/**").permitAll()
-               
+                .requestMatchers(HttpMethod.PUT, "/api/addresses/updateSelectAddress/**").permitAll()
+//                .requestMatchers(HttpMethod.PUT, "/api/addresses/**").permitAll()
 //                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 // Restrict POST requests to /api/taikhoan/** to users with ROLE_Create
                 .requestMatchers(HttpMethod.POST, "/api/taikhoan/**").permitAll()
