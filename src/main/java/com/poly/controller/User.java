@@ -3,6 +3,7 @@ package com.poly.controller;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -155,39 +156,50 @@ public class User {
 	    }
 //	 @PreAuthorize("hasAuthority('ROLE_Create')")
 	 @PostMapping("/user")
-	 public ResponseEntity<?> createTaiKhoan(@Valid @RequestBody TaiKhoanEntity taiKhoanEntity ,BindingResult result) throws IOException {
-		 if (result.getFieldError("email") != null) {
-		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError("email").getDefaultMessage());
-		    }
-		 else if (result.getFieldError("sdt") != null) {	        
-		            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError("sdt").getDefaultMessage());
-		        }
-//	 
-		 boolean existsgmail = taikhoansevice.kiemTraEmailTonTai(taiKhoanEntity.getEmail());
-		 boolean existssdt = taikhoansevice.kiemTraSdtTonTai(taiKhoanEntity.getSdt());
-		
-	        if (existsgmail) {
-	        	
-	        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email đã tồn tại");
-	           
-	        } 
-	        else if(result.getFieldError("email") == null ) {
-	        	
-	        	 TaiKhoanEntity createdTaiKhoan = taikhoansevice.createTaiKhoan(taiKhoanEntity); 	        	
-	    	     return ResponseEntity.status(HttpStatus.CREATED).body(createdTaiKhoan);
-	           
-	        }
-	        else if(existssdt ) {
-	        	
-	        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại đã tồn tại");
-	           
-	        }
-	        else {
-//	        	  String imageUrl = taikhoansevice.uploadImage(taiKhoanEntity.getAnh().);
-	        	 TaiKhoanEntity createdTaiKhoan = taikhoansevice.createTaiKhoan(taiKhoanEntity); 	        	
-	    	     return ResponseEntity.status(HttpStatus.CREATED).body(createdTaiKhoan);
-	        }
-	    }
+	 public ResponseEntity<?> createTaiKhoan(@Valid @RequestBody TaiKhoanEntity taiKhoanEntity, BindingResult result) throws IOException {
+	     // Kiểm tra lỗi từ BindingResult
+	     if (result.hasErrors()) {
+	         String errorMessage = result.getFieldErrors().stream()
+	             .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+	             .findFirst()
+	             .orElse("Dữ liệu không hợp lệ.");
+	         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+	     }
+
+	     // Kiểm tra tên người dùng (không chứa ký tự đặc biệt và từ không phù hợp)
+	     String hoTen = taiKhoanEntity.getHoTen();
+	     String regex = "^[\\p{L} .'-]+$"; // Chỉ cho phép ký tự chữ cái, khoảng trắng, dấu nháy đơn, dấu gạch ngang
+	     if (!hoTen.matches(regex)) {
+	         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên không được chứa ký tự đặc biệt.");
+	     }
+
+	     // Danh sách từ cấm
+	     List<String> forbiddenWords = Arrays.asList("bậy", "bậy bạ", "xấu");
+	     for (String word : forbiddenWords) {
+	         if (hoTen.toLowerCase().contains(word)) {
+	             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên chứa từ không phù hợp.");
+	         }
+	     }
+
+	     // Kiểm tra email và số điện thoại đã tồn tại
+	     boolean existsEmail = taikhoansevice.kiemTraEmailTonTai(taiKhoanEntity.getEmail());
+	     boolean existsSdt = taikhoansevice.kiemTraSdtTonTai(taiKhoanEntity.getSdt());
+
+	     if (existsEmail) {
+	         return ResponseEntity.status(HttpStatus.CONFLICT).body("Email đã tồn tại.");
+	     }
+
+	     if (existsSdt) {
+	         return ResponseEntity.status(HttpStatus.CONFLICT).body("Số điện thoại đã tồn tại.");
+	     }
+
+	     // Tạo tài khoản mới
+	     TaiKhoanEntity createdTaiKhoan = taikhoansevice.createTaiKhoan(taiKhoanEntity);
+
+	     // Trả về tài khoản được tạo với trạng thái 201 (Created)
+	     return ResponseEntity.status(HttpStatus.CREATED).body(createdTaiKhoan);
+	 }
+
 	    
 	 
 	 @PostMapping("/nhanvien")
@@ -197,38 +209,61 @@ public class User {
 	 }
 
 	 @PutMapping("/update")
-	 public ResponseEntity<?> updateTaiKhoan(@Valid @RequestBody TaiKhoanEntity taiKhoanEntity,HttpServletRequest request,BindingResult result) {
-		 if (result.getFieldError("email") != null) {
-		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError("email").getDefaultMessage());
-		    }
-//		 else if (result.getFieldError("sdt") != null) {	        
-//		            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError("sdt").getDefaultMessage());
-//		        }
-//	 
-		 boolean existsgmail = taikhoansevice.kiemTraEmailTonTai(taiKhoanEntity.getEmail());
-//		 boolean existssdt = taikhoansevice.kiemTraSdtTonTai(taiKhoanEntity.getSdt());
-	        if (existsgmail) {
-	        	
-	        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email đã tồn tại");
-	           
-	        } 
-//	        else if(existssdt) {
-//	        	
-//	        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại đã tồn tại");
-//	           
-//	        }
-	        else {
-	        	 String token  = request.getHeader("Authorization"); 
-	             int id = jwtsevice2.getIdFromToken(token);
-//	        	 int id = 1;
-	    	     TaiKhoanEntity updatedTaiKhoan = taikhoansevice.updateTaiKhoan(id, taiKhoanEntity);
-	    	     return updatedTaiKhoan != null ? ResponseEntity.ok(updatedTaiKhoan) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-	        }
-		
-	    
-	     
-	   
+	 public ResponseEntity<?> updateTaiKhoan(
+	         @Valid @RequestBody TaiKhoanEntity taiKhoanEntity,
+	         HttpServletRequest request,
+	         BindingResult result) {
+	     // Lấy token từ Header
+	     String token = request.getHeader("Authorization");
+	     int id = jwtsevice2.getIdFromToken(token);
+
+	     // Lấy thông tin tài khoản từ cơ sở dữ liệu
+	     Optional<TaiKhoanEntity> taikhoanOptional = taikhoanjpa.findById(id);
+	     if (taikhoanOptional.isEmpty()) {
+	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại");
+	     }
+
+	     TaiKhoanEntity existingTaiKhoan = taikhoanOptional.get();
+	     // Kiểm tra tên người dùng (không chứa ký tự đặc biệt và từ không phù hợp)
+	     String hoTen = taiKhoanEntity.getHoTen();
+	     String regex = "^[\\p{L} .'-]+$"; // Chỉ cho phép ký tự chữ cái, khoảng trắng, dấu nháy đơn, dấu gạch ngang
+	     if (!hoTen.matches(regex)) {
+	         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên không được chứa ký tự đặc biệt.");
+	     }
+
+	     // Danh sách từ cấm
+	     List<String> forbiddenWords = Arrays.asList("bậy", "bậy bạ", "xấu");
+	     for (String word : forbiddenWords) {
+	         if (hoTen.toLowerCase().contains(word)) {
+	             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên chứa từ không phù hợp.");
+	         }
+	     }
+
+	     // Kiểm tra lỗi từ BindingResult
+	     if (result.hasErrors()) {
+	         String errorMessage = result.getFieldError() != null ? result.getFieldError().getDefaultMessage() : "Dữ liệu không hợp lệ";
+	         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+	     }
+
+	     // Kiểm tra email đã tồn tại
+	     boolean existsEmail = taikhoansevice.kiemTraEmailTonTai(taiKhoanEntity.getEmail());
+	     if (existsEmail && !existingTaiKhoan.getEmail().equals(taiKhoanEntity.getEmail())) {
+	         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email đã tồn tại");
+	     }
+
+	     // Kiểm tra số điện thoại đã tồn tại
+	     boolean existsSdt = taikhoansevice.kiemTraSdtTonTai(taiKhoanEntity.getSdt());
+	     if (existsSdt && !existingTaiKhoan.getSdt().equals(taiKhoanEntity.getSdt())) {
+	         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại đã tồn tại");
+	     }
+
+	     // Cập nhật thông tin tài khoản
+	     TaiKhoanEntity updatedTaiKhoan = taikhoansevice.updateTaiKhoan(id, taiKhoanEntity);
+	     return updatedTaiKhoan != null
+	             ? ResponseEntity.ok(updatedTaiKhoan)
+	             : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cập nhật tài khoản thất bại");
 	 }
+
 
 	 @DeleteMapping("/{maTK}")
 	 public ResponseEntity<String> deleteTaiKhoan(@PathVariable int maTK) {

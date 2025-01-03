@@ -55,7 +55,7 @@ public class TaiKhoanEntity implements Serializable {
     @Column(name = "EMAIL")
     private String email;
     
-//    @Pattern(regexp = "^(0|\\+84)[3|5|7|8|9][0-9]{8}$", message = "Số điện thoại không đúng định dạng")
+    @Pattern(regexp = "^(0|\\+84)[3|5|7|8|9][0-9]{8}$", message = "Số điện thoại không đúng định dạng")
     @Column(name = "SDT")
     private String sdt;
 //  
