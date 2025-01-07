@@ -32,6 +32,9 @@ public class DonHang {
 
 	@Column(name = "HINHTHUCTHANHTOAN")
 	private Boolean hinhThucThanhToan; // HINHTHUCTHANHTOAN
+	
+	@Column(name = "LYDO")
+	private String lyDo;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_NGUOIDUNG", nullable = false)

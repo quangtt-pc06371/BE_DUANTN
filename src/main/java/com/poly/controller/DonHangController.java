@@ -19,14 +19,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.poly.VNPayConfig;
 import com.poly.DtoEntity.DonHangDTO;
 import com.poly.DtoEntity.PaymentRequest;
+import com.poly.DtoEntity.UpdateOrderStatusDTO;
 import com.poly.entity.DonHang;
 import com.poly.service.CTDonHangService;
 import com.poly.service.DonHangService;
@@ -72,6 +73,37 @@ public class DonHangController {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body("Không thể lấy đơn hàng: " + e.getMessage());
 		}
+	}
+	
+	@PutMapping("/updateStatusOrder")
+	public ResponseEntity<?> updateOrderStatus(
+	        HttpServletRequest request,
+	        @RequestBody UpdateOrderStatusDTO updateOrderRequest) {
+	    try {
+	        // Lấy token từ header
+	        String token = request.getHeader("Authorization");
+	        if (token == null || token.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ.");
+	        }
+
+	        // Lấy ID người dùng từ token
+	        int idNguoiDung = jwtSevice2.getIdFromToken(token);
+	        if (idNguoiDung == -1) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Không xác thực được người dùng.");
+	        }
+
+	        // Gọi service để cập nhật trạng thái đơn hàng
+	        donHangService.updateOrderStatus(
+	                updateOrderRequest.getIdDonHang(),
+	                updateOrderRequest.getStatus(),
+	                updateOrderRequest.getLyDo()
+	        );
+
+	        return ResponseEntity.ok("Cập nhật trạng thái thành công");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi trong quá trình xử lý.");
+	    }
 	}
 
 	@PostMapping("/create")
