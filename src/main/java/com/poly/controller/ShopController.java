@@ -25,8 +25,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poly.DtoEntity.ShopDTO;
 
 import com.poly.DtoEntity.Shopcuaquang;
+import com.poly.entity.DiaChiEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
+import com.poly.repository.DiaChiReponsitory;
 import com.poly.repository.ErrorResponse;
 import com.poly.repository.ShopRepository;
 import com.poly.repository.taikhoanJPA;
@@ -53,7 +55,9 @@ public class ShopController {
     
     @Autowired
     private FirebaseService firebaseService;
-    
+    @Autowired
+	private DiaChiReponsitory diaChiRepository;
+	
     private final ObjectMapper objectMapper = new ObjectMapper();
     
 
@@ -92,7 +96,12 @@ public class ShopController {
     // Xóa shop
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivateShop(@PathVariable int id) {
+    	
         try {
+        	
+        Optional<DiaChiEntity> diachiop=	diaChiRepository.findByShop(id);
+        DiaChiEntity diachi =diachiop.get();
+        diaChiRepository.deleteById(diachi.getId());
             shopService.deactivateShopById(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
@@ -272,7 +281,10 @@ public class ShopController {
         }
         return ResponseEntity.notFound().build();
     }
-
+    @GetMapping("/total-amount/{shopId}")
+    public Double getTotalAmountByShop(@PathVariable("shopId") Integer shopId) {
+        return shopService.calculateTotalAmountByShop(shopId);
+    }
 
 }
 

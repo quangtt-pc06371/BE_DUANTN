@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.poly.DtoEntity.Shopcuaquang;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
+import com.poly.repository.CTDonHangRepository;
 import com.poly.repository.ShopRepository;
 import com.poly.repository.taikhoanJPA;
 
@@ -38,7 +39,8 @@ public class ShopService {
     
     @Autowired
     private FirebaseService firebaseService;
-
+	@Autowired
+	CTDonHangRepository ctDonHangRepository;
 //    private final String bucketName = "duantotnghiep-940ce.appspot.com"; // Tên bucket Firebase Storage
 
     public List<ShopEntity> getAllShop() {
@@ -178,6 +180,8 @@ public class ShopService {
             throw new RuntimeException("Không thể gửi email");
         }
     }
-
+    public Double calculateTotalAmountByShop(Integer shopId) {
+        return ctDonHangRepository.calculateTotalAmountByShop(shopId);
+    }
 }
 

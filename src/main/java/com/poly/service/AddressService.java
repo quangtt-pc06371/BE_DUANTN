@@ -1,6 +1,7 @@
 package com.poly.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class AddressService {
 	}
 
 	@Transactional
-	public List<DiaChiEntity> getAddressShop(int idShop) {
+	public Optional<DiaChiEntity> getAddressShop(int idShop) {
 		return diaChiRepository.findByShop(idShop);
 	}
 

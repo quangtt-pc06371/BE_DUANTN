@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.poly.entity.ChiTietDonHang;
 import com.poly.entity.DonHang;
@@ -24,4 +25,11 @@ public interface CTDonHangRepository extends JpaRepository<ChiTietDonHang, Integ
                    "FROM CHITIETGIOHANG ct " +
                    "WHERE ct.ID_CART = ?2 AND ct.ID_DETAIL IN ?3", nativeQuery = true)
     void transferCartToOrder(int idDonHang, int idCart, List<Integer> idDetails);
+    @Query("SELECT SUM(ct.soLuong *ct.tongTien) " +
+    	       "FROM ChiTietDonHang ct " +
+    	       "JOIN ct.donHang dh " +
+    	       "JOIN ct.sanPhamEntity sp " +
+    	       "WHERE sp.shop.id = :shopId")
+    	Double calculateTotalAmountByShop(@Param("shopId") Integer shopId);
+
 }

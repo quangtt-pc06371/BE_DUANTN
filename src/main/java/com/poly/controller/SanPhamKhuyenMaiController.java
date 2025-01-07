@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.poly.entity.KhuyenMaiEntity;
+import com.poly.DtoEntity.SanPhamKhuyenMaiRequest;
 import com.poly.entity.SanPhamKhuyenMaiEntity;
-import com.poly.entity.ShopEntity;
 import com.poly.repository.SanPhamKhuyenMaiJPA;
 import com.poly.repository.ShopRepository;
 import com.poly.service.JwtSevice2;
@@ -58,18 +58,38 @@ public class SanPhamKhuyenMaiController {
         }
     }
 
+//    @PostMapping
+//    public SanPhamKhuyenMaiEntity createSanPhamKhuyenMai(@RequestBody SanPhamKhuyenMaiEntity sanPhamKhuyenMai,HttpServletRequest request) {
+//    	String token = request.getHeader("Authorization");
+//
+//		// Trích xuất ID người dùng từ token
+//		int idNguoiDung = jwtsevice2.getIdFromToken(token);
+//
+//
+//		ShopEntity shop = shopRepository.findShopByNguoiDungId(idNguoiDung);
+//		
+//		sanPhamKhuyenMai.setShop(shop);
+//        return sanPhamKhuyenMaiService.saveSanPhamKhuyenMai(sanPhamKhuyenMai);
+//    }
     @PostMapping
-    public SanPhamKhuyenMaiEntity createSanPhamKhuyenMai(@RequestBody SanPhamKhuyenMaiEntity sanPhamKhuyenMai,HttpServletRequest request) {
-    	String token = request.getHeader("Authorization");
+    public ResponseEntity<?> createSanPhamKhuyenMai(
+        @RequestBody SanPhamKhuyenMaiRequest sanPhamKhuyenMaiRequest, HttpServletRequest request) {
+        
+        String token = request.getHeader("Authorization");
 
-		// Trích xuất ID người dùng từ token
-		int idNguoiDung = jwtsevice2.getIdFromToken(token);
+        // Lấy ID người dùng từ token
+        int idNguoiDung = jwtsevice2.getIdFromToken(token);
 
-
-		ShopEntity shop = shopRepository.findShopByNguoiDungId(idNguoiDung);
-		
-		sanPhamKhuyenMai.setShop(shop);
-        return sanPhamKhuyenMaiService.saveSanPhamKhuyenMai(sanPhamKhuyenMai);
+        try {
+            List<SanPhamKhuyenMaiEntity> result = sanPhamKhuyenMaiService.saveAllSanPhamKhuyenMai(
+                sanPhamKhuyenMaiRequest.getSanPhams(), 
+                sanPhamKhuyenMaiRequest.getIdKhuyenMai(), 
+                idNguoiDung
+            );
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi khi thêm sản phẩm khuyến mãi: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
@@ -82,19 +102,7 @@ public class SanPhamKhuyenMaiController {
         }
     }
     
-	@PutMapping("/updatetrangthai/{id}")
-	public ResponseEntity<SanPhamKhuyenMaiEntity> updateTrangThaiSanPhamKhuyenMai(@PathVariable int id) {
-		Optional<SanPhamKhuyenMaiEntity> optionalSanPhamKhuyenMai = sanPhamKhuyenMaiService.getSanPhamKhuyenMaiById(id);
 
-		if (optionalSanPhamKhuyenMai.isPresent()) {
-		SanPhamKhuyenMaiEntity sanPhamKhuyenMaiTimThay = optionalSanPhamKhuyenMai.get();
-			sanPhamKhuyenMaiTimThay.setTrangThai(false);
-			sanPhamKhuyenMaiService.saveSanPhamKhuyenMai(sanPhamKhuyenMaiTimThay);
-			return ResponseEntity.ok(sanPhamKhuyenMaiTimThay);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSanPhamKhuyenMai(@PathVariable int id) {

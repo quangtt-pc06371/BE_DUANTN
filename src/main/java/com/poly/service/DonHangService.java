@@ -159,5 +159,8 @@ public class DonHangService {
 		order.setHinhThucThanhToan(status);
 		donHangRepository.save(order);
 	}
+//	   public Double getTotalAmountByShop(Integer shopId) {
+//	        return donHangRepository.calculateTotalAmountByShop(shopId);
+//	    }
 
 }
