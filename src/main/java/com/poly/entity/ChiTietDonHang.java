@@ -48,4 +48,8 @@ public class ChiTietDonHang {
 	@ManyToOne
 	@JoinColumn(name = "ID_SANPHAM", referencedColumnName = "ID_SANPHAM", nullable = false)
 	private SanPhamEntity sanPhamEntity;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_VOUCHER")
+	private VoucherEntity voucherEntity; 
 }
