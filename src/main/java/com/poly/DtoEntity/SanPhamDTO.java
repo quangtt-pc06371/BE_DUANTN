@@ -7,6 +7,7 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class SanPhamDTO {
-	private String tenSanPham; // TENSANPHAM
-	private ShopDTO shopDTO;
+	private String tenSanPham;
+    private int canNang;  
+	private int idShop;
 }

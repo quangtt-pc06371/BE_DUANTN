@@ -15,5 +15,7 @@ public class CTDonHangDTO {
 	private int soLuong;
 	private double phiVanChuyen;
 	private double tongTien;
-	private SkuDTO skuDTO;
+	private int idVoucher; // ID_VOUCHER
+	private int idSku;
+	private SanPhamDTO sanPhamDTO;
 }
