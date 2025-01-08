@@ -120,7 +120,7 @@ public class DonHangController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Thông tin đơn hàng không hợp lệ.");
 			}
 
-			DonHangDTO savedOrder = donHangService.saveOrder(donHangDTO, idNguoiDung);
+			List<DonHangDTO> savedOrder = donHangService.saveOrder(donHangDTO, idNguoiDung);
 			return ResponseEntity.ok(savedOrder);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
