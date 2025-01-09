@@ -13,7 +13,6 @@ import lombok.Setter;
 public class CTDonHangDTO {
 	private int idChiTietDonHang;
 	private int soLuong;
-	private double phiVanChuyen;
 	private double tongTien;
 	private int idVoucher; // ID_VOUCHER
 	private int idSku;

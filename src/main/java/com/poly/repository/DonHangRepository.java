@@ -12,9 +12,8 @@ import com.poly.entity.DonHang;
 public interface DonHangRepository extends JpaRepository<DonHang, Integer>{
 	@Query("SELECT dh FROM DonHang dh WHERE dh.taiKhoanEntity.id = ?1")
 	List<DonHang> findByIdNguoiDung(Integer idNguoiDung);
-//	
 	
-//	@Query("SELECT SUM(c.amount) FROM CTDonHang c JOIN c.sanPham s WHERE s.shop.id = :shopId")
-//	Double calculateTotalAmountByShop(@Param("shopId") Integer shopId);
+	@Query("SELECT DISTINCT dh FROM DonHang dh JOIN dh.chiTietDonHangs ctdh JOIN ctdh.sanPhamEntity sp WHERE sp.shop.id = :shopId")
+	List<DonHang> findAllByShopId(@Param("shopId") int shopId);
 
 }

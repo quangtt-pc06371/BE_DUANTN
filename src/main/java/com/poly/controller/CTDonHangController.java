@@ -31,17 +31,17 @@ public class CTDonHangController {
 	@Autowired
 	private JwtSevice2 jwtSevice2;
 
-	// Endpoint để cập nhật phí vận chuyển vào đơn hàng
-	@PostMapping("/update-shipping-fee")
-	public ResponseEntity<?> updateShippingFee(@RequestBody ShippingRequestDTO shippingFeeRequest) {
-		try {
-			// Cập nhật phí vận chuyển vào cơ sở dữ liệu
-			ctDonHangService.updateShippingFee(shippingFeeRequest.getOrderId(), shippingFeeRequest.getShippingFee());
-			return ResponseEntity.ok("Cập nhật phí vận chuyển thành công");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Có lỗi xảy ra khi cập nhật phí vận chuyển");
-		}
-	}
+//	// Endpoint để cập nhật phí vận chuyển vào đơn hàng
+//	@PostMapping("/update-shipping-fee")
+//	public ResponseEntity<?> updateShippingFee(@RequestBody ShippingRequestDTO shippingFeeRequest) {
+//		try {
+//			// Cập nhật phí vận chuyển vào cơ sở dữ liệu
+//			ctDonHangService.updateShippingFee(shippingFeeRequest.getOrderId(), shippingFeeRequest.getShippingFee());
+//			return ResponseEntity.ok("Cập nhật phí vận chuyển thành công");
+//		} catch (Exception e) {
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//					.body("Có lỗi xảy ra khi cập nhật phí vận chuyển");
+//		}
+//	}
 
 }

@@ -30,9 +30,6 @@ public class ChiTietDonHang {
 	@Column(name = "SOLUONG")
 	private int soLuong;
 	
-	@Column(name = "PHIVANCHUYEN")
-	private double phiVanChuyen;
-	
 	@Column(name = "GIA")
 	private double tongTien;
 

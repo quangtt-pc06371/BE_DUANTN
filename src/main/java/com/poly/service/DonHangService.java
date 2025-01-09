@@ -15,11 +15,13 @@ import com.poly.DtoEntity.SanPhamDTO;
 import com.poly.entity.ChiTietDonHang;
 import com.poly.entity.DonHang;
 import com.poly.entity.SanPhamEntity;
+import com.poly.entity.ShopEntity;
 import com.poly.entity.SkuEntity;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.repository.CTDonHangRepository;
 import com.poly.repository.DonHangRepository;
 import com.poly.repository.SanPhamJPA;
+import com.poly.repository.ShopRepository;
 import com.poly.repository.SkuRepository;
 import com.poly.repository.VoucherJPA;
 import com.poly.repository.taikhoanJPA;
@@ -40,6 +42,8 @@ public class DonHangService {
 	SkuRepository skuReponsitory;
 	@Autowired
 	SanPhamJPA sanPhamJPA;
+	@Autowired
+	ShopRepository shopRepository;
 
 	// Lấy danh sách đơn hàng theo người dùng và có trang thái là false
 	public List<DonHang> getAllDonHang(Integer idNguoiDung) {
@@ -50,6 +54,14 @@ public class DonHangService {
 	// Lấy Chi Tiết Giỏ Hàng theo ID Giỏ Hàng
 	public List<ChiTietDonHang> getChiTietGioHang(List<DonHang> donHang) {
 		return ctDonHangRepository.findAll();
+	}
+	
+	public ShopEntity getShopByNguoiDungId(int idNguoiDung) {
+	    return shopRepository.findShopByNguoiDungId(idNguoiDung);
+	}
+
+	public List<DonHang> getAllDonHangByShopId(int shopId) {
+	    return donHangRepository.findAllByShopId(shopId);
 	}
 
 	@Transactional
@@ -156,7 +168,6 @@ public class DonHangService {
 		return new CTDonHangDTO(
 		    chiTietDonHang.getIdChiTietDonHang(),
 		    chiTietDonHang.getSoLuong(), 
-		    chiTietDonHang.getPhiVanChuyen(),
 		    chiTietDonHang.getTongTien(),  
 		    chiTietDonHang.getSanPhamEntity().getIdSanPham(),  
 		    chiTietDonHang.getSkuEntity().getIdSku(),

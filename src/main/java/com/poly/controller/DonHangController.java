@@ -29,6 +29,7 @@ import com.poly.DtoEntity.DonHangDTO;
 import com.poly.DtoEntity.PaymentRequest;
 import com.poly.DtoEntity.UpdateOrderStatusDTO;
 import com.poly.entity.DonHang;
+import com.poly.entity.ShopEntity;
 import com.poly.service.CTDonHangService;
 import com.poly.service.DonHangService;
 import com.poly.service.JwtSevice2;
@@ -73,6 +74,44 @@ public class DonHangController {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body("Không thể lấy đơn hàng: " + e.getMessage());
 		}
+	}
+	
+	@GetMapping("/list/shop")
+	public ResponseEntity<?> getAllDonHangByShop(HttpServletRequest request) {
+	    try {
+	        // Lấy token từ header
+	        String token = request.getHeader("Authorization");
+
+	        // Lấy ID người dùng từ token
+	        int idNguoiDung = jwtSevice2.getIdFromToken(token);
+
+	        if (idNguoiDung == -1) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Không xác thực được người dùng.");
+	        }
+
+	        // Lấy thông tin shop liên kết với người dùng
+	        ShopEntity shop = donHangService.getShopByNguoiDungId(idNguoiDung);
+
+	        if (shop == null) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng không liên kết với bất kỳ shop nào.");
+	        }
+
+	        // Lấy danh sách đơn hàng dựa trên shop
+	        List<DonHang> donHangList = donHangService.getAllDonHangByShopId(shop.getId());
+
+	        if (donHangList.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không có đơn hàng nào cho shop này.");
+	        }
+
+	        // Chuẩn bị dữ liệu phản hồi
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("shop", shop); // Thông tin shop
+	        response.put("donHang", donHangList); // Danh sách đơn hàng
+
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body("Không thể lấy đơn hàng: " + e.getMessage());
+	    }
 	}
 	
 	@PutMapping("/updateStatusOrder")
