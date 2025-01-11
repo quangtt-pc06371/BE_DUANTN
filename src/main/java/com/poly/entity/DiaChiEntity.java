@@ -27,7 +27,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class DiaChiEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

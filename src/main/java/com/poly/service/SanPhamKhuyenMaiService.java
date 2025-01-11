@@ -66,7 +66,7 @@ public class SanPhamKhuyenMaiService {
             KhuyenMaiEntity khuyenMaiGet = optionalKhuyenMai.get();
             SanPhamKhuyenMaiEntity sanPhamKhuyenMai = new SanPhamKhuyenMaiEntity();
             sanPhamKhuyenMai.setShop(shop);
-            sanPhamKhuyenMai.setTrangThai(true);
+            
             sanPhamKhuyenMai.setSanPham(sanPhamGet);
             sanPhamKhuyenMai.setKhuyenMai(khuyenMaiGet);
 

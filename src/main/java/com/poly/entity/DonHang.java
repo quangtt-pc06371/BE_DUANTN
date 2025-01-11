@@ -1,6 +1,6 @@
 package com.poly.entity;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -43,7 +43,7 @@ public class DonHang {
 	private Boolean hinhThucThanhToan; // HINHTHUCTHANHTOAN
 	
 	@Column(name = "NGAYXUATDON")
-	private LocalDateTime  ngayXuatDon; // NGAYXUATDON
+	private Date ngayXuatDon = new Date(); // NGAYXUATDON
 	
 	@Column(name = "STATUS_DONHANG")
 	private int trangThaiDonHang;

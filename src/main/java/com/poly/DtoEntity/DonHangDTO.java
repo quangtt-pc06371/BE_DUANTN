@@ -1,5 +1,5 @@
 package com.poly.DtoEntity;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +19,7 @@ public class DonHangDTO {
 	private Double tongSoTien; // TONGSOTIEN
 	private String trangThaiThanhToan; // TRANGTHAITHANHTOAN
 	private Boolean hinhThucThanhToan; // HINHTHUCTHANHTOAN
-	private LocalDateTime ngayXuatDon;
+	private Date ngayXuatDon;
 	private int trangThaiDonHang; // STATUS_DONHANG
 	private Map<Integer, Double> phiVanChuyen;
 	private String lyDo;
