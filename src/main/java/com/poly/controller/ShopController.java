@@ -26,10 +26,12 @@ import com.poly.DtoEntity.ShopDTO;
 
 import com.poly.DtoEntity.Shopcuaquang;
 import com.poly.entity.DiaChiEntity;
+import com.poly.entity.Quyen;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
 import com.poly.repository.DiaChiReponsitory;
 import com.poly.repository.ErrorResponse;
+import com.poly.repository.QuyenJPA;
 import com.poly.repository.ShopRepository;
 import com.poly.repository.taikhoanJPA;
 import com.poly.service.FirebaseService;
@@ -57,7 +59,8 @@ public class ShopController {
     private FirebaseService firebaseService;
     @Autowired
 	private DiaChiReponsitory diaChiRepository;
-	
+    @Autowired
+	 private QuyenJPA quyenjpa; 
     private final ObjectMapper objectMapper = new ObjectMapper();
     
 
@@ -184,7 +187,10 @@ public class ShopController {
     public ResponseEntity<ShopEntity> approveShop(@PathVariable int id) {
         ShopEntity shop = shopService.getShopById(id).orElse(null);
       TaiKhoanEntity taikhoan = taikhoanjpa.Findbyshop(id);
-        
+    
+  	Optional<Quyen> quyen = quyenjpa.findById(3);
+    taikhoanjpa.save(taikhoan);
+  	taikhoan.getQuyens().add(quyen.get());
         if (shop == null) {
             return ResponseEntity.notFound().build();
         }

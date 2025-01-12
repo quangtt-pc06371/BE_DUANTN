@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,9 +42,11 @@ public class KhuyenMaiEntity implements Serializable {
     private int giaTriKhuyenMai;
 
     @Column(name = "NGAYBATDAU")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Ho_Chi_Minh")
     private Date ngayBatDau;
 
     @Column(name = "NGAYKETTHUC")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Ho_Chi_Minh")
     private Date ngayKetThuc ;
 
     @Column(name = "IS_ACTIVE")
