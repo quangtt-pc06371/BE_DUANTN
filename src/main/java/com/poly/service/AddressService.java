@@ -10,7 +10,7 @@ import com.poly.DtoEntity.AddressDTO;
 import com.poly.entity.DiaChiEntity;
 import com.poly.entity.ShopEntity;
 import com.poly.entity.TaiKhoanEntity;
-import com.poly.Mapper.GhnMapper;
+import com.poly.mapper.GhnMapper;
 import com.poly.repository.DiaChiReponsitory;
 import com.poly.repository.taikhoanJPA;
 
