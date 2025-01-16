@@ -63,6 +63,10 @@ public class DonHangService {
 	public List<DonHang> getAllDonHangByShopId(int shopId) {
 		return donHangRepository.findAllByShopId(shopId);
 	}
+	
+	public List<DonHang> getAllDonHangByID() {
+		return donHangRepository.findDonHang();
+	}
 
 	@Transactional
 	public List<DonHangDTO> saveOrder(DonHangDTO donHangDTO, Integer idNguoiDung) {
@@ -170,192 +174,186 @@ public class DonHangService {
 	}
 
 	// Cập nhật trạng thái đơn hàng
-		public void updateOrderStatus(int orderId, int newStatus, String reason) {
-			DonHang donHang = donHangRepository.findById(orderId)
-					.orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại"));
+	public void updateOrderStatus(int orderId, int newStatus, String reason) {
+		DonHang donHang = donHangRepository.findById(orderId)
+				.orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại"));
 
-			OrderStatus currentStatus = OrderStatus.fromValue(donHang.getTrangThaiDonHang());
-			OrderStatus nextStatus = OrderStatus.fromValue(newStatus);
+		OrderStatus currentStatus = OrderStatus.fromValue(donHang.getTrangThaiDonHang());
+		OrderStatus nextStatus = OrderStatus.fromValue(newStatus);
 
-			switch (currentStatus) {
-			case CHO_XAC_NHAN:
-				if (nextStatus == OrderStatus.CHO_LAY_HANG) {
-					deductStock(donHang);
+		switch (currentStatus) {
+		case CHO_XAC_NHAN:
+			if (nextStatus == OrderStatus.CHO_LAY_HANG) {
+				deductStock(donHang);
+			}
+			break;
+
+		case CHO_LAY_HANG:
+			if (nextStatus == OrderStatus.YC_HUY_DON) {
+				if (reason == null || reason.isEmpty()) {
+					throw new RuntimeException("Cần cung cấp lý do để hủy đơn hàng.");
 				}
-				break;
+			}
+			break;
+
+		case YC_HUY_DON:
+			break;
+			
+		case YC_TRA_HANG:
+			break;
+
+		case CHO_HOAN_TIEN:
+			if (nextStatus == OrderStatus.DA_HOAN_TIEN) {
+				donHang.setTrangThaiThanhToan("Đã hoàn tiền");
+				restockInventory(donHang);
+			}
+			break;
+
+		case CHO_GIAO_HANG:
+			if (nextStatus == OrderStatus.YC_HUY_DON) {
+				if (reason == null || reason.isEmpty()) {
+					throw new RuntimeException("Cần cung cấp lý do để hủy đơn hàng.");
+				}
+			} else if (nextStatus == OrderStatus.DA_NHAN_HANG) {
+				donHang.setTrangThaiThanhToan("Đã thanh toán");
+			}
+			break;
+
+		case YC_HOAN_TIEN:
+			if (nextStatus == OrderStatus.CHO_HOAN_TIEN) {
+				if (reason == null || reason.isEmpty()) {
+					throw new RuntimeException("Cần cung cấp lý do để hủy đơn hàng.");
+				}
+				restockInventory(donHang);
+			} else if (nextStatus == OrderStatus.DA_NHAN_HANG) {
+				donHang.setTrangThaiThanhToan("Đã thanh toán");
+			}
+			break;
+
+		default:
+			throw new RuntimeException("Không thể thay đổi trạng thái từ trạng thái hiện tại.");
+		}
+
+		// Cập nhật trạng thái đơn hàng
+		donHang.setTrangThaiDonHang(nextStatus.getValue());
+		donHang.setLyDo(reason); // Lưu lý do nếu có
+
+		donHangRepository.save(donHang);
+	}
+
+	public enum OrderStatus {
+		CHO_XAC_NHAN(0), CHO_LAY_HANG(1), CHO_GIAO_HANG(2), DA_NHAN_HANG(3), YC_HUY_DON(4), DA_HUY(5), YC_TRA_HANG(6),
+		XAC_NHAN_TRA_HANG(7), YC_HOAN_TIEN(8), CHO_HOAN_TIEN(9), DA_HOAN_TIEN(10);
+
+		private final int value;
+
+		OrderStatus(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		public static OrderStatus fromValue(int value) {
+			for (OrderStatus status : values()) {
+				if (status.value == value) {
+					return status;
+				}
+			}
+			throw new IllegalArgumentException("Trạng thái không hợp lệ: " + value);
+		}
+
+		public boolean isTransitionValid(OrderStatus nextStatus) {
+			switch (this) {
+			case CHO_XAC_NHAN:
+				return nextStatus == CHO_LAY_HANG || nextStatus == YC_HUY_DON;
 
 			case CHO_LAY_HANG:
-				if (nextStatus == OrderStatus.YC_HUY_DON) {
-					if (reason == null || reason.isEmpty()) {
-						throw new RuntimeException("Cần cung cấp lý do để hủy đơn hàng.");
-					}
-				}
-				break;
-//				
-//			case YC_HUY_DON:
-//				if (donHang.getHinhThucThanhToan().equals(true) && nextStatus == OrderStatus.CHO_HOAN_TIEN) {
-//					
-//				}
-//				else if(nextStatus == OrderStatus.DA_HUY) {
-//					
-//				}
-//								
-//				break;
-				
-			case CHO_HOAN_TIEN:
-				if (nextStatus == OrderStatus.DA_HOAN_TIEN) {
-					donHang.setTrangThaiThanhToan("Đã hoàn tiền");
-					restockInventory(donHang);
-				}
-				break;	
-						
+				return nextStatus == CHO_GIAO_HANG || nextStatus == YC_HUY_DON;
+
 			case CHO_GIAO_HANG:
-				if (nextStatus == OrderStatus.YC_HUY_DON) {
-					if (reason == null || reason.isEmpty()) {
-						throw new RuntimeException("Cần cung cấp lý do để hủy đơn hàng.");
-					}
-				} else if (nextStatus == OrderStatus.DA_NHAN_HANG) {
-					donHang.setTrangThaiThanhToan("Đã thanh toán");
-				}
-				break;
+				return nextStatus == DA_NHAN_HANG || nextStatus == YC_TRA_HANG || nextStatus == YC_HOAN_TIEN;
+
+			case YC_HUY_DON:
+				return nextStatus == DA_HUY || nextStatus == YC_HOAN_TIEN || nextStatus == CHO_HOAN_TIEN;
+
+			case YC_TRA_HANG:
+				return nextStatus == XAC_NHAN_TRA_HANG || nextStatus == YC_HOAN_TIEN || nextStatus == CHO_HOAN_TIEN;
 
 			case YC_HOAN_TIEN:
-				if (nextStatus == OrderStatus.CHO_HOAN_TIEN) {
-					if (reason == null || reason.isEmpty()) {
-						throw new RuntimeException("Cần cung cấp lý do để hủy đơn hàng.");
-					}
-					restockInventory(donHang);
-				} else if (nextStatus == OrderStatus.DA_NHAN_HANG) {
-					donHang.setTrangThaiThanhToan("Đã thanh toán");
-				}
-				break;
+				return nextStatus == CHO_HOAN_TIEN;
 
+			case CHO_HOAN_TIEN:
+				return nextStatus == DA_HOAN_TIEN;
 			default:
-				throw new RuntimeException("Không thể thay đổi trạng thái từ trạng thái hiện tại.");
-			}
-
-			// Cập nhật trạng thái đơn hàng
-			donHang.setTrangThaiDonHang(nextStatus.getValue());
-			donHang.setLyDo(reason); // Lưu lý do nếu có
-
-			donHangRepository.save(donHang);
-		}
-
-		public enum OrderStatus {
-			CHO_XAC_NHAN(0), CHO_LAY_HANG(1), CHO_GIAO_HANG(2), DA_NHAN_HANG(3), YC_HUY_DON(4), DA_HUY(5), YC_TRA_HANG(6),
-			XAC_NHAN_TRA_HANG(7), YC_HOAN_TIEN(8), CHO_HOAN_TIEN(9), DA_HOAN_TIEN(10);
-
-			private final int value;
-
-			OrderStatus(int value) {
-				this.value = value;
-			}
-
-			public int getValue() {
-				return value;
-			}
-
-			public static OrderStatus fromValue(int value) {
-				for (OrderStatus status : values()) {
-					if (status.value == value) {
-						return status;
-					}
-				}
-				throw new IllegalArgumentException("Trạng thái không hợp lệ: " + value);
-			}
-
-			public boolean isTransitionValid(OrderStatus nextStatus) {
-				switch (this) {
-				case CHO_XAC_NHAN:
-					return nextStatus == CHO_LAY_HANG || nextStatus == YC_HUY_DON; // Trong CHO_XAC_NHAN có thể chuyển sang
-																					// CHO_LAY_HANG hoặc YC_HUY_DON
-				case CHO_LAY_HANG:
-					return nextStatus == CHO_GIAO_HANG || nextStatus == YC_HUY_DON; // Trong CHO_LAY_HANG có thể chuyển sang
-																					// CHO_GIAO_HANG hoặc YC_HUY_DON
-				case CHO_GIAO_HANG:
-					return nextStatus == DA_NHAN_HANG || nextStatus == YC_HOAN_TIEN; // Trong CHO_GIAO_HANG có thể chuyển
-																						// sang DA_NHAN_HANG hoặc
-																						// YC_HOAN_TIEN
-				case YC_HUY_DON:
-					return nextStatus == DA_HUY || nextStatus == YC_HOAN_TIEN || nextStatus == CHO_HOAN_TIEN;
-					
-				case YC_TRA_HANG:
-					return nextStatus == DA_HUY || nextStatus == YC_HOAN_TIEN || nextStatus == CHO_HOAN_TIEN;
-						
-					
-				case YC_HOAN_TIEN:
-					return nextStatus == CHO_HOAN_TIEN;
-					
-				case CHO_HOAN_TIEN:
-					return nextStatus == DA_HOAN_TIEN;
-				default:
-					return false;
-				}
+				return false;
 			}
 		}
+	}
 
-		// Hàm trừ số lượng kho
-		private void deductStock(DonHang order) {
+	// Hàm trừ số lượng kho
+	private void deductStock(DonHang order) {
 
-			// Duyệt qua từng chi tiết đơn hàng
-			for (ChiTietDonHang chiTiet : order.getChiTietDonHangs()) {
-				// Tìm SKU liên quan đến chi tiết đơn hàng
-				SkuEntity sku = skuReponsitory.findById(chiTiet.getSkuEntity().getIdSku())
-						.orElseThrow(() -> new RuntimeException("SKU không tồn tại: " + chiTiet.getSkuEntity().getIdSku()));
+		// Duyệt qua từng chi tiết đơn hàng
+		for (ChiTietDonHang chiTiet : order.getChiTietDonHangs()) {
+			// Tìm SKU liên quan đến chi tiết đơn hàng
+			SkuEntity sku = skuReponsitory.findById(chiTiet.getSkuEntity().getIdSku())
+					.orElseThrow(() -> new RuntimeException("SKU không tồn tại: " + chiTiet.getSkuEntity().getIdSku()));
 
-				// Lấy số lượng tồn kho hiện tại và số lượng cần trừ
-				int idSku = sku.getIdSku();
-				int soLuongTonKho = sku.getSoLuong();
-				int soLuongMua = chiTiet.getSoLuong();
-				System.out.println("Xử lý SKU: " + idSku);
-				System.out.println("Số lượng tồn kho: " + soLuongTonKho);
-				System.out.println("Số lượng mua: " + soLuongMua);
+			// Lấy số lượng tồn kho hiện tại và số lượng cần trừ
+			int idSku = sku.getIdSku();
+			int soLuongTonKho = sku.getSoLuong();
+			int soLuongMua = chiTiet.getSoLuong();
+			System.out.println("Xử lý SKU: " + idSku);
+			System.out.println("Số lượng tồn kho: " + soLuongTonKho);
+			System.out.println("Số lượng mua: " + soLuongMua);
 
-				// Kiểm tra số lượng tồn kho có đủ hay không
-				if (soLuongTonKho < soLuongMua) {
-					throw new RuntimeException("Không đủ số lượng kho cho sản phẩm: " + sku.getIdSku()
-							+ ". Tồn kho hiện tại: " + soLuongTonKho + ", Số lượng yêu cầu: " + soLuongMua);
-				}
-
-				// Trừ số lượng kho
-				int newStock = soLuongTonKho - soLuongMua;
-				System.out.println("Số lượng sau khi trừ: " + newStock);
-
-				// Trừ số lượng kho
-				sku.setSoLuong(newStock);
-				skuReponsitory.save(sku);
-
-				System.out.println("Đã cập nhật kho cho SKU: " + idSku + " - Số lượng kho mới: " + newStock);
+			// Kiểm tra số lượng tồn kho có đủ hay không
+			if (soLuongTonKho < soLuongMua) {
+				throw new RuntimeException("Không đủ số lượng kho cho sản phẩm: " + sku.getIdSku()
+						+ ". Tồn kho hiện tại: " + soLuongTonKho + ", Số lượng yêu cầu: " + soLuongMua);
 			}
+
+			// Trừ số lượng kho
+			int newStock = soLuongTonKho - soLuongMua;
+			System.out.println("Số lượng sau khi trừ: " + newStock);
+
+			// Trừ số lượng kho
+			sku.setSoLuong(newStock);
+			skuReponsitory.save(sku);
+
+			System.out.println("Đã cập nhật kho cho SKU: " + idSku + " - Số lượng kho mới: " + newStock);
+		}
+	}
+
+	// Hàm cộng lại số lượng kho
+	private void restockInventory(DonHang order) {
+		if (order.getChiTietDonHangs() == null || order.getChiTietDonHangs().isEmpty()) {
+			throw new RuntimeException("Đơn hàng không có chi tiết để trừ kho.");
 		}
 
-		// Hàm cộng lại số lượng kho
-		private void restockInventory(DonHang order) {
-			if (order.getChiTietDonHangs() == null || order.getChiTietDonHangs().isEmpty()) {
-				throw new RuntimeException("Đơn hàng không có chi tiết để trừ kho.");
-			}
+		// Duyệt qua từng chi tiết đơn hàng
+		for (ChiTietDonHang chiTiet : order.getChiTietDonHangs()) {
+			SkuEntity sku = skuReponsitory.findById(chiTiet.getSkuEntity().getIdSku())
+					.orElseThrow(() -> new RuntimeException("SKU không tồn tại"));
 
-			// Duyệt qua từng chi tiết đơn hàng
-			for (ChiTietDonHang chiTiet : order.getChiTietDonHangs()) {
-				SkuEntity sku = skuReponsitory.findById(chiTiet.getSkuEntity().getIdSku())
-						.orElseThrow(() -> new RuntimeException("SKU không tồn tại"));
+			int idSku = sku.getIdSku();
+			int soLuongTonKho = sku.getSoLuong();
+			int soLuongMua = chiTiet.getSoLuong();
 
-				int idSku = sku.getIdSku();
-				int soLuongTonKho = sku.getSoLuong();
-				int soLuongMua = chiTiet.getSoLuong();
+			System.out.println("Xử lý SKU: " + idSku);
+			System.out.println("Số lượng tồn kho trước khi cộng: " + soLuongTonKho);
+			System.out.println("Số lượng cần cộng lại: " + soLuongMua);
 
-				System.out.println("Xử lý SKU: " + idSku);
-				System.out.println("Số lượng tồn kho trước khi cộng: " + soLuongTonKho);
-				System.out.println("Số lượng cần cộng lại: " + soLuongMua);
+			// Cộng lại số lượng kho
+			int updatedStock = soLuongTonKho + soLuongMua;
+			System.out.println("Số lượng kho sau khi cộng: " + updatedStock);
 
-				// Cộng lại số lượng kho
-				int updatedStock = soLuongTonKho + soLuongMua;
-				System.out.println("Số lượng kho sau khi cộng: " + updatedStock);
+			sku.setSoLuong(updatedStock);
+			skuReponsitory.save(sku);
 
-				sku.setSoLuong(updatedStock);
-				skuReponsitory.save(sku);
-
-				System.out.println("Đã cập nhật kho cho SKU: " + idSku + " - Số lượng kho mới: " + updatedStock);
-			}
+			System.out.println("Đã cập nhật kho cho SKU: " + idSku + " - Số lượng kho mới: " + updatedStock);
 		}
+	}
 }

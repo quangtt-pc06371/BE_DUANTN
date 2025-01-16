@@ -76,6 +76,27 @@ public class DonHangController {
 		}
 	}
 	
+	@GetMapping("/list/admin")
+	public ResponseEntity<?> getAllDonHangAdmin() {
+		try {
+			// Lấy tất cả đơn hàng của người dùng
+			List<DonHang> donHangList = donHangService.getAllDonHangByID();
+
+			// Kiểm tra xem có đơn hàng nào không
+			if (donHangList == null || donHangList.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không có đơn hàng nào.");
+			}
+
+			// Tạo một Map để trả về dữ liệu, bao gồm các chi tiết về đơn hàng
+			Map<String, Object> response = new HashMap<>();
+			response.put("donHang", donHangList); // Trả về danh sách đơn hàng
+
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("Không thể lấy đơn hàng: " + e.getMessage());
+		}
+	}
+	
 	@GetMapping("/list/shop")
 	public ResponseEntity<?> getAllDonHangByShop(HttpServletRequest request) {
 	    try {
