@@ -197,6 +197,9 @@ public class DonHangService {
 			break;
 
 		case YC_HUY_DON:
+			if (nextStatus == OrderStatus.DA_HUY) {
+				restockInventory(donHang);
+			}
 			break;
 			
 		case YC_TRA_HANG:

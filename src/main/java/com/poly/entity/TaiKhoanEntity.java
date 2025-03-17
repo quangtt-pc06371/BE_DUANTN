@@ -34,7 +34,6 @@ import jakarta.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Table(name = "nguoidung")
 public class TaiKhoanEntity implements Serializable {
 	private static final long serialVersionUID = 1L;

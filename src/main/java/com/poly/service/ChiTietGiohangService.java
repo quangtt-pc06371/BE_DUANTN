@@ -98,24 +98,11 @@ public class ChiTietGiohangService {
 			throw new RuntimeException("Insufficient stock for SKU ID: " + newSkuId);
 		}
 
-		// Cập nhật thông tin SKU và số lượng mua
-		SkuEntity oldSkuEntity = chiTietGioHang.getSkuEntity();
-		int oldQuantity = chiTietGioHang.getSoLuongMua();
-
 		chiTietGioHang.setSkuEntity(newSkuEntity);
 		chiTietGioHang.setSoLuongMua(newQuantity);
 
 		// Lưu thay đổi vào cơ sở dữ liệu
 		chiTietGioHang = chiTietGioHangReponsitory.save(chiTietGioHang);
-
-		// Cập nhật tồn kho
-		// Hoàn trả tồn kho SKU cũ
-		oldSkuEntity.setSoLuong(oldSkuEntity.getSoLuong() + oldQuantity);
-		skuReponsitory.save(oldSkuEntity);
-
-		// Trừ tồn kho SKU mới
-		newSkuEntity.setSoLuong(newSkuEntity.getSoLuong() - newQuantity);
-		skuReponsitory.save(newSkuEntity);
 
 		// Trả về DTO
 		return new CTGioHangDTO(chiTietGioHang.getIdDetail(), chiTietGioHang.getSoLuongMua(),
