@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Getter
 @Setter
 @Entity
-@Table(name = "TUYCHONTHUOCTINH")
+@Table(name = "tuychonthuoctinh")
 public class TuyChonThuocTinhEntity implements Serializable {
 
     @Id

@@ -30,7 +30,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "SKU")
+@Table(name = "sku")
 public class SkuEntity implements Serializable {
 
 	@Id

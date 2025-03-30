@@ -18,7 +18,7 @@ import lombok.*;
 @Entity
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@Table(name = "VOUCHERBILL")
+@Table(name = "voucherbill")
 public class VoucherEntity{
 	
 	@Id

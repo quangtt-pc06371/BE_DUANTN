@@ -23,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "SANPHAMKHUYENMAI")
+@Table(name = "sanphamkhuyenmai")
 public class SanPhamKhuyenMaiEntity implements Serializable {
 
     @Id
