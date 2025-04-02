@@ -1,6 +1,5 @@
 package com.poly.controller;
 
-
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,71 +32,15 @@ public class CTGioHangController {
 	private ChiTietGiohangService chiTietGiohangService;
 	@Autowired
 	private JwtSevice2 jwtSevice2;
-	@Autowired
-	private GioHangReponsitory giohangjpa;
-	
+
 	@Autowired
 	private GioHangService gioHangService;
-	
+
 	@Autowired
 	private taiKhoanService taikhoansevice;
-	
+
 	@Autowired
 	private GioHangReponsitory gioHangReponsitory;
-//	@PostMapping("/addDetail")
-//	public ResponseEntity<CTGioHangDTO> addDetailToCart(HttpServletRequest request, @RequestParam int idGioHang,
-//			@RequestParam int idSku, @RequestParam int quantity) {
-//		try {
-//			// Lấy token từ header
-//			String token = request.getHeader("Authorization");
-//
-//			// Giải mã token và lấy ID người dùng
-//			int idNguoiDung = jwtSevice2.getIdFromToken(token);
-//
-//			// Kiểm tra token hợp lệ
-//			if (idNguoiDung == -1) {
-//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // Trả về 401 nếu token không hợp lệ
-//			}
-//
-//			// Gọi Service để thêm sản phẩm vào giỏ hàng
-//			CTGioHangDTO chiTietGioHang = chiTietGiohangService.addDetailToCart(idGioHang, idSku, quantity);
-//
-//			// Trả về response thành công
-//			return ResponseEntity.ok(chiTietGioHang);
-//		} catch (RuntimeException e) {
-//			// Xử lý lỗi và trả về lỗi 400 Bad Request
-//			return ResponseEntity.badRequest().body(null);
-//		}
-//	}
-
-//	@PostMapping("/addDetail")
-//	public ResponseEntity<CTGioHangDTO> addDetailToCart(HttpServletRequest request, @RequestBody int idSku,
-//			@RequestBody int quantity) {
-//		try {
-//			// Lấy token từ header
-//			String token = request.getHeader("Authorization");
-//
-//			// Giải mã token và lấy ID người dùng
-//			int idNguoiDung = jwtSevice2.getIdFromToken(token);
-//
-//			// Kiểm tra token hợp lệ
-////			if (idNguoiDung == -1) {
-////				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // Trả về 401 nếu token không hợp lệ
-////			}
-//			GioHang giohang = giohangjpa.findByIdNguoiDung(idNguoiDung);
-//			int idcart = giohang.getIdCart();
-//// Gọi Service để thêm sản phẩm vào giỏ hàng
-//			CTGioHangDTO chiTietGioHang = chiTietGiohangService.addDetailToCart(idcart, idSku, quantity);
-//
-//			// Trả về response thành công
-//			return ResponseEntity.ok(chiTietGioHang);
-//		} catch (RuntimeException e) {
-//			// Xử lý lỗi và trả về lỗi 400 Bad Request
-//			return ResponseEntity.badRequest().body(null);
-//		}
-//	}
-	
-	
 
 	@PutMapping("/updateDetail")
 	public ResponseEntity<CTGioHangDTO> updateCartDetail(HttpServletRequest request, @RequestParam Integer detailId,
@@ -149,10 +92,10 @@ public class CTGioHangController {
 		}
 
 	}
-	
+
 	@PostMapping("/addDetail")
-	public ResponseEntity<CTGioHangDTO> addDetailToCart(HttpServletRequest request,
-			@RequestParam int idSku, @RequestParam int quantity) {
+	public ResponseEntity<CTGioHangDTO> addDetailToCart(HttpServletRequest request, @RequestParam int idSku,
+			@RequestParam int quantity) {
 		try {
 			// Lấy token từ header
 			String token = request.getHeader("Authorization");
@@ -166,31 +109,29 @@ public class CTGioHangController {
 			}
 			// Kiểm tra xem người dùng đã có giỏ hàng chưa
 			GioHang gioHang = gioHangReponsitory.findByIdNguoiDung(idNguoiDung);
-			
+
 			Optional<TaiKhoanEntity> taikhoan = taikhoansevice.findById(idNguoiDung);
-			
+
 			TaiKhoanEntity taiKhoanEntity = taikhoan.get();
-			
+
 			if (gioHang == null) {
 				gioHang = new GioHang();
 				gioHang.setTaiKhoanEntity(taiKhoanEntity);
-				// Lưu giỏ hàng mới
+				// Tạo giỏ hàng mới
 				gioHang = gioHangReponsitory.save(gioHang);
 			}
 
 			// Lấy idGioHang từ idNguoiDung
-            Integer idGioHang = gioHangService.getIdCartByUserId(idNguoiDung);
-			
+			Integer idGioHang = gioHangService.getIdCartByUserId(idNguoiDung);
+
 			// Gọi Service để thêm sản phẩm vào giỏ hàng
 			CTGioHangDTO chiTietGioHang = chiTietGiohangService.addDetailToCart(idGioHang, idSku, quantity);
-		
-			
 
 			// Trả về response thành công
 			return ResponseEntity.ok(chiTietGioHang);
 		} catch (RuntimeException e) {
 			// Xử lý lỗi và trả về lỗi 400 Bad Request
-			
+
 			return ResponseEntity.badRequest().body(null);
 		}
 	}
